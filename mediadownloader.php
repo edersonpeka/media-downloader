@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: http://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder by replacing the [media] smarttag.
-Version: 0.2
+Version: 0.2.1
 Author: Ederson Peka
 Author URI: http://ederson.peka.nom.br
 Text Domain: media-downloader
@@ -242,9 +242,14 @@ function listMedia( $t ){
     $murl = get_option( 'siteurl' ) . $mdir;
     if ( function_exists( 'restore_current_blog' ) ) restore_current_blog();
     // MP3 folder relative URL
-    $mrelative = str_replace('http'.(isset($_SERVER['HTTPS'])?'s':'').'://','',$murl); $mrelative = explode( '/', $mrelative ); array_shift($mrelative); $mrelative = '/'.implode('/', $mrelative);
+    $mrelative = preg_replace( '/^https?\:/m', '', $murl );
+    $mrelative = preg_replace( '/^\/\//', '', $mrelative );
+    $mrelative = explode( '/', $mrelative );
+    array_shift($mrelative);
+    $mrelative = '/'.implode('/', $mrelative);
+
     $mpath = ABSPATH . substr($mdir, 1);
-    
+
     // Should we show the 'cover' file ('folder.jpg')?
     $mshowcover = get_option( 'showcover' );
 
@@ -260,7 +265,7 @@ function listMedia( $t ){
     $mdofnencode = get_option( 'filenameencoding' );
     if ( !$mdofnencode ) $mdofnencode = 'UTF-8';
     $mdofnencode = array_pop( explode( ' + ', $mdofnencode ) );
-    
+
     // How should we sort the files?
     $msort = get_option( 'sortfiles' );
     // "Backward compatibilaziness": it used to be a boolean value
@@ -274,7 +279,7 @@ function listMedia( $t ){
     $mshowtags = array_intersect( explode( ',', $option_showtags ), $mdtags );
     // If none, shows the first tag (title)
     if ( !count($mshowtags) ) $mshowtags = array( $mdtags[0] );
-    
+
     // Markup options
     $covermarkup = get_option( 'covermarkup' );
     $downloadtext = get_option( 'downloadtext' );
@@ -351,7 +356,7 @@ function listMedia( $t ){
                 unset( $alevel );
                 $ufolder = implode( '/', $afolder );
             }
-            
+
             $countextra = 0;
             foreach ( md_packageExtensions() as $pext ) $countextra += count( $iall[$pext] );
             if ( ( $mshowcover && $cover ) || $countextra ) {
@@ -569,7 +574,7 @@ function listMedia( $t ){
                         // If "artist", populate "Artist text"
                         if ( 'artist' == $mdtag && $tagvalue ) $iartisttext = str_replace( '-', '[_]', $tagvalue ) . ' - ';
                     }
-                    
+
                     // Getting stored markup
                     $ititle = $ititles[$ifile];
 
@@ -600,7 +605,7 @@ function listMedia( $t ){
                 $ihtml .= '</tbody></table>'."\n" ;
 
             }
-            
+
             if ( count( $errors ) ) {
                 $errorHtml = '<div class="mediaDownloaderErrors">';
                 foreach ( $errors as $error ) $errorHtml .= '<p><strong>' . _md( 'Error:' ) . '</strong> ' . $error . '</p>';
@@ -659,7 +664,7 @@ function md_plugin_dir() {
     return array_shift( explode( DIRECTORY_SEPARATOR, plugin_basename( array_pop( explode( DIRECTORY_SEPARATOR, $vdir ) ) ) ) );
 }
 function md_plugin_url() {
-    return WP_PLUGIN_URL . '/' . md_plugin_dir();
+    return preg_replace( '/^https?\:/m', '', WP_PLUGIN_URL . '/' . md_plugin_dir() );
 }
 
 function mediadownloader( $t ) {
@@ -675,7 +680,7 @@ function mediadownloader( $t ) {
     elseif ( is_feed() ) :
         $t = preg_replace( '/<p>\[media:([^\]]*)\]<\/p>/i', '<p><small>' . _md( '(See attached files...)' ) . '</small></p>', $t );
     endif;
-        
+
     /* -- CASE SPECIFIC: -- */
     $t = listarCategorias( $t );
     $t = listarCategoriasEx( $t );
@@ -752,12 +757,12 @@ function mediadownloaderEnclosures( $adjacentmarkup = false ){
         preg_match_all( '/href=[\\\'"].*\?md_getfile\=(.*)[\\\'"]/im', $cont, $newmatches );
         // It makes no sense, "there can be only one", but just in case...
         if ( count( $matches ) && count( $matches[1] ) ) $ret = array_unique( array_merge( $matches[1], $newmatches[1] ) );
-    
+
         // Should we get only the MP3 URL's?
         if ( !$adjacentmarkup ) {
             foreach ( $ret as $r ) if ( '/' == substr( $r, 0, 1 ) ) $r = 'http'.(isset($_SERVER['HTTPS'])?'s':'').'://' . $_SERVER['SERVER_NAME'] . $r;
             $allmatches[$mext] = $ret;
-        
+
         // Or get all the markup around them?
         } else {
             $markuptemplate = get_option( 'markuptemplate' );
@@ -795,7 +800,7 @@ function mediadownloaderEnclosures( $adjacentmarkup = false ){
         }
     }
     return $allmatches;
-} 
+}
 // Generate ATOM tags
 function mediadownloaderAtom(){
     $t = '';
@@ -831,9 +836,9 @@ function mediadownloaderRss(){
 	    }
 	}
     echo $t;
-    //return $t; 
+    //return $t;
 }
-  
+
 add_filter( 'the_content', 'mediadownloader' );
 
 if ( get_option( 'handlefeed' ) ) :
@@ -856,11 +861,11 @@ function mediaDownloaderEnqueueScripts() {
     wp_enqueue_script( 'jqplugin', md_plugin_url() . '/js/jquery.jqplugin.1.0.2.min.js', array('jquery'), date( 'YmdHis', filemtime( dirname(__FILE__) . '/js/jquery.jqplugin.1.0.2.min.js' ) ), get_option( 'scriptinfooter' ) );
     // Enqueuing our javascript
     wp_enqueue_script( 'mediadownloaderJs', md_plugin_url() . '/js/mediadownloader.js', array('jquery'), date( 'YmdHis', filemtime( dirname(__FILE__) . '/js/mediadownloader.js' ) ), get_option( 'scriptinfooter' ) );
-    
+
     // Passing options to our javascript
     add_action( 'get_header', 'mediaDownloaderLocalizeScript' );
 }
-    
+
 // Passing options to our javascript
 function mediaDownloaderLocalizeScript() {
     global $mdembedplayerdefaultcolors;
@@ -914,7 +919,7 @@ function mediadownloader_menu() {
 
 
 function mediadownloader_adm_add_options() {
-    $option = 'per_page'; 
+    $option = 'per_page';
     $args = array(
         'label' => sprintf( __( 'items (min: %d - max: %d)', 'media-downloader' ), 10, 100 ),
         'default' => 50,
