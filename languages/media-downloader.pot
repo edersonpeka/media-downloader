@@ -82,7 +82,11 @@ msgid "Play Text:"
 msgstr ""
 
 #: mediadownloader-more-options.php:44
-msgid "Embed Player Colors:"
+msgid "Old Embed Flash Player Colors:"
+msgstr ""
+
+#: mediadownloader-more-options.php:46
+msgid "Fallback for old browsers that don't support the <code>audio</code> tag."
 msgstr ""
 
 #: mediadownloader-more-options.php:48
@@ -170,6 +174,10 @@ msgstr ""
 
 #: mediadownloader-options.php:73
 msgid "Embed player"
+msgstr ""
+
+#: mediadownloader-options.php:106
+msgid "Autoplay next file"
 msgstr ""
 
 #: mediadownloader-options.php:78

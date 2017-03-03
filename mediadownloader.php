@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: http://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder by replacing the [media] smarttag.
-Version: 0.2.1
+Version: 0.2.2
 Author: Ederson Peka
 Author URI: http://ederson.peka.nom.br
 Text Domain: media-downloader
@@ -99,6 +99,7 @@ $mdsettings = array(
     'showcover' => 'sanitizeBoolean',
     'packageextensions' => null,
     'embedplayer' => 'sanitizeBoolean',
+    'autoplaylist' => 'sanitizeBoolean',
     'embedwhere' => 'sanitizeBeforeAfter',
     'tagencoding' => 'sanitizeTagEncoding',
     'filenameencoding' => 'sanitizeTagEncoding',
@@ -521,6 +522,7 @@ function listMedia( $t ){
                 // Building general markup
                 $tableClass = array( 'mediaTable' );
                 if ( TRUE == get_option( 'embedplayer' ) ) $tableClass[] = 'embedPlayer';
+                if ( TRUE == get_option( 'autoplaylist' ) ) $tableClass[] = 'autoPlayList';
                 $tableClass[] = 'embedpos' . $membedwhere ;
                 $ihtml .= '<table class="' . implode( ' ', $tableClass ) . '">' . "\n";
                 $ihtml .= "<thead>\n<tr>\n";

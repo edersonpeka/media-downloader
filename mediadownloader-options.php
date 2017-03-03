@@ -104,6 +104,11 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 </p>
 
 <p>
+<input type="checkbox" name="autoplaylist" id="md_autoplaylist" value="1" <?php if ( $mdoptions['autoplaylist'] ) echo ' checked="checked" ' ;?> />
+<label for="md_autoplaylist"><?php _mde( 'Autoplay next file' ) ;?></label>
+</p>
+
+<p>
 <input type="checkbox" name="scriptinfooter" id="md_scriptinfooter" value="1" <?php if ( $mdoptions['scriptinfooter'] ) echo ' checked="checked" ' ;?> />
 <label for="md_scriptinfooter"><?php _mde( 'Place embed player\'s javascript at the bottom of the <code>&lt;body&gt;</code> in <abbr title="HyperText Markup Language">HTML</abbr> code' ) ;?></label>
 </p>

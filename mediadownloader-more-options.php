@@ -41,7 +41,9 @@ $colordescriptions = array(
 <?php settings_fields( 'md_more_options' ); ?>
 
 <fieldset id="mdf_embedcolors">
-<h3><?php _mde( 'Embed Player Colors:' ) ;?></h3>
+<h3><?php _mde( 'Old Embed Flash Player Colors:' ) ;?></h3>
+<p class="description"><?php _mde( 'Fallback for old browsers that don\'t support the <code>audio</code> tag.' ); ?></p>
+<br />
 
 <table cellpadding="3">
 <thead>

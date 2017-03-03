@@ -82,8 +82,12 @@ msgid "Play Text:"
 msgstr "Texto do link \"play\":"
 
 #: mediadownloader-more-options.php:44
-msgid "Embed Player Colors:"
-msgstr "Cores do <em>Player</em> Embutido:"
+msgid "Old Embed Flash Player Colors:"
+msgstr "Cores do antigo <em>Player Flash</em> Embutido:"
+
+#: mediadownloader-more-options.php:46
+msgid "Fallback for old browsers that don't support the <code>audio</code> tag."
+msgstr "Para navegadores antigos que não suportam a tag <code>audio</code>."
 
 #: mediadownloader-more-options.php:48
 msgid "%1$s color:"
@@ -171,6 +175,10 @@ msgstr "Exemplo:"
 #: mediadownloader-options.php:73
 msgid "Embed player"
 msgstr "Embutir um <em>player</em> de MP3 na página"
+
+#: mediadownloader-options.php:106
+msgid "Autoplay next file"
+msgstr "Tocar automaticamente próximo arquivo da lista"
 
 #: mediadownloader-options.php:78
 msgid "Place embed player's javascript at the bottom of the <code>&lt;body&gt;</code> in <abbr title=\"HyperText Markup Language\">HTML</abbr> code"

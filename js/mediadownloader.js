@@ -60,7 +60,7 @@ function initMediaDownloader() {
         }
     } );
     jQuery('table.mediaTable.embedPlayer td.mediaPlay a').click( function () {
-        var link=jQuery(this).attr('href');
+        var link = jQuery(this).attr('href');
         var linkText = jQuery(this).html();
         var linkRel = unescape(jQuery(this).attr('rel'));
         if( link != mediaplayerPlayingURL ){
@@ -102,7 +102,8 @@ function mediaplayerStr( url, title, tdcolspan ) {
     if ( typeof(tdcolspan) == 'undefined' ) tdcolspan = 3;
     var strMarkupFlash = '<object type="application/x-shockwave-flash" name="audioplayer_1" style="outline: none" data="'+mediadownloaderPluginURL+'js/audio-player.swf?ver=2.0.4.1" width="100%" height="25" id="audioplayer_1">' + '<param name="bgcolor" value="#' + mdBgColor + '">' + '<param name="movie" value="'+mediadownloaderPluginURL+'js/audio-player.swf?ver=2.0.4.1">' + '<param name="menu" value="false">' + '<param name="flashvars" value="animation=yes&amp;encode=no&amp;initialvolume=80&amp;remaining=no&amp;noinfo=no&amp;buffer=5&amp;' + 'checkpolicy=no&amp;rtl=no&amp;' + strColors + 'autostart=yes&amp;soundFile=' + escape(url) + '&amp;titles=' + title + '&amp;artists=' + artist + '&amp;playerID=audioplayer_1"><a href="' + url + '">' + title + '</a></object>';
     var strMarkupHTML5 = '<audio controls="controls" preload="auto" style="width:100%; background-color: #' + mdBgColor + ';" name="browserplayer_1" id="browserplayer_1"><source src="' + url + '" type="audio/mp3" /><a href="' + url + '">' + title + '</a></audio>';
-    var strMarkup = jQuery.browser.flash ? strMarkupFlash : strMarkupHTML5;
+    var a = document.createElement( 'audio' );
+    var strMarkup = !!(a.canPlayType) ? strMarkupHTML5 : strMarkupFlash;
     return '<tr class="mediaPlayer"><td colspan="'+tdcolspan+'" align="center">' + strMarkup + '</td></tr>';
 }
     
@@ -118,7 +119,17 @@ function mediaplayerPlay( url, title ) {
             tdcolspan += currentcolspan;
         } );
         linktr.after( mediaplayerStr( url, title, tdcolspan ) );
-        if ( document.getElementById( 'browserplayer_1' ) ) document.getElementById( 'browserplayer_1' ).play();
+        var o_browser_player = document.getElementById( 'browserplayer_1' );
+        if ( o_browser_player ) {
+            if ( linktr.parents( 'table' ).hasClass( 'autoPlayList' ) ) {
+                o_browser_player.addEventListener( 'ended', function () {
+                    var o_next_tr = jQuery( this ).parents( 'tr.mediaPlayer' ).next( 'tr.mdTags' );
+                    jQuery( this ).parents( 'table' ).find( '.mediaStop' ).trigger( 'click' );
+                    if ( o_next_tr.length ) jQuery( 'td.mediaPlay a', o_next_tr ).first().trigger( 'click' );
+                }, false );
+            }
+            o_browser_player.play();
+        }
         mediaplayerPlayingURL = url;
     }
 }
