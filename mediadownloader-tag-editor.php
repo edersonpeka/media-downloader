@@ -2,7 +2,7 @@
 
 require_once( dirname( __FILE__ ) . '/getid3/getid3.php' );
 require_once( dirname( __FILE__ ) . '/getid3/write.php' );
-if( !function_exists( 'Markdown' ) ) include_once( dirname( __FILE__ ) . '/markdown/markdown.php' );
+if( !function_exists( 'Markdown' ) ) include_once( dirname( __FILE__ ) . '/lib-markdown/markdown.php' );
 
 global $mdtags, $mdsortingfields;
 
