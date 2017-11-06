@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: http://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder by replacing the [media] smarttag.
-Version: 0.2.3
+Version: 0.2.4
 Author: Ederson Peka
 Author URI: http://ederson.peka.nom.br
 Text Domain: media-downloader
@@ -277,7 +277,7 @@ function listMedia( $t ){
 
     // Which tags to show?
     $option_showtags = str_replace( 'comments', 'comment', get_option( 'showtags' ) );
-    $mshowtags = array_intersect( explode( ',', $option_showtags ), $mdtags );
+    $mshowtags = array_intersect( array_map( 'trim', explode( ',', $option_showtags ) ), $mdtags );
     // If none, shows the first tag (title)
     if ( !count($mshowtags) ) $mshowtags = array( $mdtags[0] );
 
