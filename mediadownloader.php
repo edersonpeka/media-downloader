@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: http://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder by replacing the [media] smarttag.
-Version: 0.2.4
+Version: 0.2.5
 Author: Ederson Peka
 Author URI: http://ederson.peka.nom.br
 Text Domain: media-downloader
@@ -110,7 +110,7 @@ $mdsettings = array(
     'calculateprefix' => 'sanitizeBoolean',
 );
 // Possible ID3 tags
-$mdtags = array( 'title', 'artist', 'album', 'year', 'recording_dates', 'genre', 'comment', 'track_number', 'bitrate', 'filesize', 'filedate', 'directory', 'file', 'sample_rate' );
+$mdtags = array( 'title', 'artist', 'album', 'year', 'recording_dates', 'genre', 'comment', 'track_number', 'bitrate', 'filesize', 'filedate', 'directory', 'file', 'sample_rate', 'playtime_string' );
 
 // Markup settings and respective sanitize functions
 $mdmarkupsettings = array(
@@ -430,6 +430,7 @@ function listMedia( $t ){
                     $ftags['directory'] = array( $hlevel );
                     $ftags['file'] = array( $ifile );
                     $ftags['sample_rate'] = array( hertz_convert( intval( '0' . $finfo['audio']['sample_rate'] ) ) );
+                    $ftags['playtime_string'] = array( $finfo['playtime_string'] );
                     unset( $finfo );
                     $alltags[$ifile] = $ftags;
                     // Populating array of tag values with all tags
