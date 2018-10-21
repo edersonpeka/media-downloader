@@ -359,7 +359,7 @@ function listMedia( $t ){
             }
 
             $countextra = 0;
-            foreach ( md_packageExtensions() as $pext ) $countextra += count( $iall[$pext] );
+            foreach ( md_packageExtensions() as $pext ) $countextra += is_countable( $iall[$pext] ) ? count( $iall[$pext] ) : 0;
             if ( ( $mshowcover && $cover ) || $countextra ) {
                 $ihtml .= '<div class="md_albumInfo">';
 
@@ -662,9 +662,7 @@ function orderBySampleRate( $a, $b ) {
 }
 
 function md_plugin_dir() {
-    $vdir = __DIR__;
-    if ( '__DIR__' == $vdir ) $vdir = dirname( __FILE__ );
-    return array_shift( explode( DIRECTORY_SEPARATOR, plugin_basename( array_pop( explode( DIRECTORY_SEPARATOR, $vdir ) ) ) ) );
+    return plugin_basename( __DIR__ );
 }
 function md_plugin_url() {
     return preg_replace( '/^https?\:/m', '', WP_PLUGIN_URL . '/' . md_plugin_dir() );
