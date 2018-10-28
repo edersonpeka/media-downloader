@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: http://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder by replacing the [media] smarttag.
-Version: 0.2.6
+Version: 0.2.7
 Author: Ederson Peka
 Author URI: http://ederson.peka.nom.br
 Text Domain: media-downloader
@@ -188,20 +188,20 @@ function calculatePrefix($arr){
     if ( get_option( 'calculateprefix' ) && count( $arr ) > 1 ) {
         $prefix = strip_tags( array_pop( $arr ) );
         foreach ( $arr as $i ) {
-            for ( $c=1; $c<strlen($i); $c++ ) {
+            for ( $c=1; $c<mb_strlen($i); $c++ ) {
                 if ( strncasecmp( $prefix, $i, $c ) != 0 ) break;
             }
-            $prefix = substr( $prefix, 0, $c-1 );
+            $prefix = mb_substr( $prefix, 0, $c-1 );
         }
     }
     return $prefix;
 }
 
 function replaceUnderscores( $t ) {
-    if ( $t && false === strpos(' ', $t) ) {
-        //if ( false === strpos('_', $t) ) $t = str_replace( '-', '_', $t );
-        $t = preg_replace( '/_(_+)/i', ' - ', $t );
-        $t = str_replace( '_', ' ', $t );
+    if ( $t && false === mb_strpos(' ', $t) ) {
+        //if ( false === mb_strpos('_', $t) ) $t = str_replace( '-', '_', $t );
+        $t = preg_replace( '/_(_+)/im', ' - ', $t );
+        $t = preg_replace( '/_/m', ' ', $t );
     }
     return $t ;
 }
@@ -211,7 +211,7 @@ function get_replaceheaders() {
     $arrreplaceheaders = explode( "\n", trim( get_option( 'replaceheaders' ) ) );
     foreach ( $arrreplaceheaders as $line ) {
         $arrline = explode( ':', trim( $line ) );
-        if ( count( $arrline ) >= 2 ) $replaceheaders[ strtolower( trim( array_shift( $arrline ) ) ) ] = implode( ':', $arrline );
+        if ( count( $arrline ) >= 2 ) $replaceheaders[ mb_strtolower( trim( array_shift( $arrline ) ) ) ] = implode( ':', $arrline );
     }
     return $replaceheaders;
 }
@@ -227,7 +227,7 @@ function md_mediaExtensions() {
 
 function md_packageExtensions() {
     $ret = explode( ',', get_option( 'packageextensions' ) );
-    foreach ( $ret as &$r ) $r = str_replace( '.', '', $r );
+    foreach ( $ret as &$r ) $r = preg_replace( '/\./m', '', $r );
     return array_filter( $ret );
 }
 
@@ -249,7 +249,7 @@ function listMedia( $t ){
     array_shift($mrelative);
     $mrelative = '/'.implode('/', $mrelative);
 
-    $mpath = ABSPATH . substr($mdir, 1);
+    $mpath = ABSPATH . mb_substr($mdir, 1);
 
     // Should we show the 'cover' file ('folder.jpg')?
     $mshowcover = get_option( 'showcover' );
@@ -276,7 +276,7 @@ function listMedia( $t ){
     $mreverse = ( get_option( 'reversefiles' ) == true );
 
     // Which tags to show?
-    $option_showtags = str_replace( 'comments', 'comment', get_option( 'showtags' ) );
+    $option_showtags = preg_replace( '/comments/m', 'comment', get_option( 'showtags' ) );
     $mshowtags = array_intersect( array_map( 'trim', explode( ',', $option_showtags ) ), $mdtags );
     // If none, shows the first tag (title)
     if ( !count($mshowtags) ) $mshowtags = array( $mdtags[0] );
@@ -324,7 +324,7 @@ function listMedia( $t ){
                             if ( !array_key_exists( $fext, $iall ) ) $iall[$fext] = array();
                             $iall[$fext][] = $ifile;
                         }
-                        if ( strtolower( str_ireplace( '.jpeg', '.jpg', $ifile ) ) == 'folder.jpg' ) $cover = $ifile;
+                        if ( mb_strtolower( preg_replace( '/\.jpeg/m', '.jpg', $ifile ) ) == 'folder.jpg' ) $cover = $ifile;
                     }
                 } else {
                     $errors[] = sprintf( _md( 'Could not read: %1$s' ), $ipath );
@@ -384,11 +384,11 @@ function listMedia( $t ){
                     foreach ( md_packageExtensions() as $pext ) {
                         $cpf = 0; if ( count( $iall[$pext] ) ) foreach( $iall[$pext] as $pf ) {
                             $cpf++;
-                            $ptext = _md( 'Download ' . strtoupper( $pext ) );
+                            $ptext = _md( 'Download ' . mb_strtoupper( $pext ) );
                             if ( array_key_exists( $pext, $packagetexts ) && $packagetexts[$pext] ) {
-                                $ptext = str_replace( '[filename]', $pf, $packagetexts[$pext] );
+                                $ptext = preg_replace( '/\[filename\]/m', $pf, $packagetexts[$pext] );
                             }
-                            $ihtml .= '<li class="d' . strtoupper(substr($pext,0,1)) . substr($pext,1) . '"><a href="'.$mrelative.($mrelative!='/'?'/':'').($cfolder).'/'.rawurlencode( $pf ).'" title="' . esc_attr( $pf ) . '">'.$ptext.(count($iall[$pext])>1?' ('.$cpf.')':'').'</a></li>' ;
+                            $ihtml .= '<li class="d' . mb_strtoupper(mb_substr($pext,0,1)) . mb_substr($pext,1) . '"><a href="'.$mrelative.($mrelative!='/'?'/':'').($cfolder).'/'.rawurlencode( $pf ).'" title="' . esc_attr( $pf ) . '">'.$ptext.(count($iall[$pext])>1?' ('.$cpf.')':'').'</a></li>' ;
                         }
                     }
                     $ihtml .= '</ul>';
@@ -708,7 +708,7 @@ function mediadownloaderFileInfo( $f, $ext ) {
     if ( function_exists( 'switch_to_blog' ) ) switch_to_blog(1);
     $relURL = str_replace( 'http'.(isset($_SERVER['HTTPS'])?'s':'').'://'.$_SERVER['SERVER_NAME'], '', get_option( 'siteurl' ) );
     if ( function_exists( 'restore_current_blog' ) ) restore_current_blog();
-    if ( stripos( $f, $relURL ) === 0 ) $f = substr( $f, strlen( $relURL ) );
+    if ( mb_stripos( $f, $relURL ) === 0 ) $f = mb_substr( $f, mb_strlen( $relURL ) );
     $f = ABSPATH . $f . '.' . $ext;
     $f = preg_replace( '|/+|ims', '/', $f );
 
@@ -742,8 +742,8 @@ function mediadownloaderFileInfo( $f, $ext ) {
 }
 // File size
 function mediadownloaderFileSize( $f, $ext ){
-    if ( 0 === stripos( $f, get_option( 'siteurl' ) ) ) $f = str_replace( get_option( 'siteurl' ), '', $f );
-    $f = ABSPATH . substr( $f, 1 ) . '.' . $ext;
+    if ( 0 === mb_stripos( $f, get_option( 'siteurl' ) ) ) $f = str_replace( get_option( 'siteurl' ), '', $f );
+    $f = ABSPATH . mb_substr( $f, 1 ) . '.' . $ext;
     if ( !file_exists( $f ) ) $f = urldecode( $f );
     return file_exists( $f ) ? filesize( $f ) : 0;
 }
@@ -761,7 +761,7 @@ function mediadownloaderEnclosures( $adjacentmarkup = false ){
 
         // Should we get only the MP3 URL's?
         if ( !$adjacentmarkup ) {
-            foreach ( $ret as $r ) if ( '/' == substr( $r, 0, 1 ) ) $r = 'http'.(isset($_SERVER['HTTPS'])?'s':'').'://' . $_SERVER['SERVER_NAME'] . $r;
+            foreach ( $ret as $r ) if ( '/' == mb_substr( $r, 0, 1 ) ) $r = 'http'.(isset($_SERVER['HTTPS'])?'s':'').'://' . $_SERVER['SERVER_NAME'] . $r;
             $allmatches[$mext] = $ret;
 
         // Or get all the markup around them?
@@ -775,11 +775,11 @@ function mediadownloaderEnclosures( $adjacentmarkup = false ){
                 // Dirty magic to get the markup around it...
                 $rarr = explode( $r . '.' . $mext, $cont );
                 if ( count( $rarr ) > 1 ) {
-                    $line = substr( $rarr[0], strripos( $rarr[0], '<tr class="mdTags">' ) );
-                    $line .= substr( $rarr[1], 0, stripos( $rarr[1], '</tr>' ) ) .'</tr>';
+                    $line = mb_substr( $rarr[0], mb_strripos( $rarr[0], '<tr class="mdTags">' ) );
+                    $line .= mb_substr( $rarr[1], 0, mb_stripos( $rarr[1], '</tr>' ) ) .'</tr>';
                     if ( 'definition-list' == $markuptemplate ) {
-                        $line = substr( $line, strripos( $line, '<dl class="mdTags">' ) );
-                        $line = substr( $line, 0, stripos( $line, '</dl>' ) ) . '</dl>';
+                        $line = mb_substr( $line, mb_strripos( $line, '<dl class="mdTags">' ) );
+                        $line = mb_substr( $line, 0, mb_stripos( $line, '</dl>' ) ) . '</dl>';
                         $adj[$r] = $line;
                     } elseif ( 'table-cells' == $markuptemplate ) {
 
@@ -788,8 +788,8 @@ function mediadownloaderEnclosures( $adjacentmarkup = false ){
                             preg_match_all( '/\<table([^\>]*)\>(.*?)'.$safe_r.'(.*?)\<\/table\>/ims', $cont, $adjtable );
                             if ( count( $adjtable ) && count( $adjtable[0] ) ) {
                                 $ftable = $adjtable[0][0];
-                                $ftable = substr( $ftable, strripos( $ftable, '<table' ) );
-                                $tablehead = substr( $ftable, 0, stripos( $ftable, '</thead>' ) ) . '</thead>';
+                                $ftable = mb_substr( $ftable, mb_strripos( $ftable, '<table' ) );
+                                $tablehead = mb_substr( $ftable, 0, mb_stripos( $ftable, '</thead>' ) ) . '</thead>';
                             }
                         }
 
@@ -1125,7 +1125,7 @@ function listarCategoriasEx($t){
 }
 
 function listarIdiomas($t){
-    if ( stripos($t, '[languages]')!==false && function_exists('qtrans_generateLanguageSelectCode') ){
+    if ( mb_stripos($t, '[languages]')!==false && function_exists('qtrans_generateLanguageSelectCode') ){
         ob_start();
         qtrans_generateLanguageSelectCode();
         $i=ob_get_contents();
