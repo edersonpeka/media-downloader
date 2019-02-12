@@ -708,7 +708,7 @@ function mediadownloaderFileInfo( $f, $ext ) {
     if ( function_exists( 'switch_to_blog' ) ) switch_to_blog(1);
     $relURL = str_replace( 'http'.(isset($_SERVER['HTTPS'])?'s':'').'://'.$_SERVER['SERVER_NAME'], '', get_option( 'siteurl' ) );
     if ( function_exists( 'restore_current_blog' ) ) restore_current_blog();
-    if ( mb_stripos( $f, $relURL ) === 0 ) $f = mb_substr( $f, mb_strlen( $relURL ) );
+    if ( $relURL ) if ( mb_stripos( $f, $relURL ) === 0 ) $f = mb_substr( $f, mb_strlen( $relURL ) );
     $f = ABSPATH . $f . '.' . $ext;
     $f = preg_replace( '|/+|ims', '/', $f );
 
