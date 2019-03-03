@@ -1,5 +1,8 @@
 <?php
 
+if ( !class_exists( 'Parsedown' ) ) include_once( './Parsedown.php' );
+$Parsedown = new Parsedown();
+
 // Backwards compatibility: redirecting old parameters
 if ( array_key_exists( 'folder', $_GET ) && !array_key_exists( 'md_feed', $_GET ) ) :
     $r = explode( 'wp-content', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
@@ -73,7 +76,7 @@ foreach ( $allmatches as $mext => $matches ) {
         $t .= '<item>' . "\n";
         $t .= '<title>' . $ftags['title'][0] . '</title>' . "\n";
         $t .= '<link>' . ( $m . '.' . $mext ) . '</link>' . "\n";
-        $t .= '<description><![CDATA[' . Markdown( $ftags['comment'][0] ) . ']]></description>' . "\n";
+        $t .= '<description><![CDATA[' . $Parsedown->text( $ftags['comment'][0] ) . ']]></description>' . "\n";
         $t .= '<pubDate>' . $ftags['filedaterss'][0] . '</pubDate>' . "\n";
         $t .= '<guid>' . ( $m . '.' . $mext ) . '</guid>' . "\n";
         $t .= '<enclosure url="' . ( $m . '.' . $mext ) . '" length="' . mediadownloaderFileSize( $m, $mext ) . '" type="audio/mpeg" />' . "\n";
