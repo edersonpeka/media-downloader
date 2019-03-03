@@ -2,7 +2,7 @@
 
 require_once( dirname( __FILE__ ) . '/getid3/getid3.php' );
 require_once( dirname( __FILE__ ) . '/getid3/write.php' );
-if( !function_exists( 'Markdown' ) ) include_once( dirname( __FILE__ ) . '/lib-markdown/markdown.php' );
+if( !function_exists( 'Markdown' ) ) include_once( dirname( __FILE__ ) . '/markdown-lib/Markdown.inc.php' );
 
 global $mdtags, $mdsortingfields;
 
@@ -213,7 +213,7 @@ endforeach;
                                         'year' => array( 'Year', 'number' ),
                                         'genre' => array( 'Genre', 'genre' ),
                                         'comment' => array( 'Comment', 'textarea' ),
-                                        'user_text' => array( 'Formatted Comment', 'richtext' ),
+                                        #'user_text' => array( 'Formatted Comment', 'richtext' ),
                                         'recording_dates' => array( 'Recording Date', 'date' ),
                                         'track_number' => array( 'Track Number', 'number' ),
                                     );
@@ -235,7 +235,10 @@ endforeach;
                                         <?php endforeach; ?>
                                     </select>
                                 <?php elseif ( 'textarea' == $tagoptions[1] ) : ?>
-                                    <textarea id="edit_tag_<?php echo $mdtag; ?>" name="edit_tag_<?php echo $mdtag; ?>" cols="150" rows="10" class="widefat"><?php echo $tagvalue; ?></textarea>
+				    <textarea id="edit_tag_<?php echo $mdtag; ?>" name="edit_tag_<?php echo $mdtag; ?>" cols="150" rows="10" class="widefat"><?php echo $tagvalue; ?></textarea>
+				    <?php if ( 'comment' == $mdtag ) : ?>
+                                        <p class="description"><?php printf( __( 'Supports <a href="%s" target="_blank">Markdown</a> syntax.', 'media-downloader' ), 'https://help.github.com/en/articles/basic-writing-and-formatting-syntax' ); ?></p>
+                                    <?PHP endif; ?>
                                 <?php elseif ( 'richtext' == $tagoptions[1] ) : ?>
                                     <?php wp_editor( $tagvalue, 'edit_tag_' . $mdtag, array( 'media_buttons' => false, 'textarea_rows' => 10, 'quicktags' => false ) ); ?>
                                 <?php elseif ( 'text' == $tagoptions[1] ) : ?>

@@ -4,7 +4,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Project-Id-Version: Media Downloader 0.1.99.98\n"
+"Project-Id-Version: Media Downloader 0.3.1\n"
 "Last-Translator: Ederson Peka <ederson@gmail.com>\n"
 "Language-Team: Ederson Peka <ederson@gmail.com>\n"
 
@@ -502,4 +502,7 @@ msgstr "Ir para a última página"
 #: getfile.php:25
 msgid "Error 404: File not found!"
 msgstr "Erro 404: Arquivo não encontrado!"
+
+msgid "Supports <a href=\"%s\" target=\"_blank\">Markdown</a> syntax."
+msgstr "Suporta a sintaxe <a href=\"%s\" target=\"_blank\">Markdown.</a>"
 

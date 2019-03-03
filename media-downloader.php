@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: http://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder by replacing the [media] smarttag.
-Version: 0.3
+Version: 0.3.1
 Author: Ederson Peka
 Author URI: http://ederson.peka.nom.br
 Text Domain: media-downloader
@@ -21,7 +21,7 @@ if ( ! defined( 'WP_PLUGIN_DIR' ) )
       define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 
 // MarkDown, used for text formatting
-if( !function_exists( 'Markdown' ) ) include_once( dirname( __FILE__ ) . '/lib-markdown/markdown.php' );
+if( !function_exists( 'Markdown' ) ) include_once( dirname( __FILE__ ) . '/markdown-lib/Markdown.inc.php' );
 
 
 if ( !class_exists( 'media_downloader' ) ) :
@@ -439,7 +439,7 @@ function listMedia( $t ){
                             if ( array_key_exists( 'text', $ftags ) && is_array( $ftags['text'] ) && trim( strip_tags( $ftags['text'][0] ) ) ) {
                                 $tagvalues[$mshowtag][$ifile.'.'.$iext] = $ftags['text'][0];
                             } else {
-                                $tagvalues[$mshowtag][$ifile.'.'.$iext] = Markdown( $ftags[$mshowtag][0] );
+                                $tagvalues[$mshowtag][$ifile.'.'.$iext] = Michelf\Markdown::defaultTransform( $ftags[$mshowtag][0] );
                             }
                         } else {
                             $tagvalues[$mshowtag][$ifile.'.'.$iext] = $ftags[$mshowtag][0];
