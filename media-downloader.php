@@ -2,8 +2,8 @@
 /*
 Plugin Name: Media Downloader
 Plugin URI: http://ederson.peka.nom.br
-Description: Media Downloader plugin lists MP3 files from a folder by replacing the [media] smarttag.
-Version: 0.3.3
+Description: Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.
+Version: 0.3.4
 Author: Ederson Peka
 Author URI: http://ederson.peka.nom.br
 Text Domain: media-downloader
@@ -42,6 +42,8 @@ class media_downloader {
             include( dirname( __FILE__ ) . '/mdfeed.php' );
             exit();
         endif;
+
+        add_shortcode( 'mediadownloader', array( __CLASS__, 'shortcode' ) );
     }
 
     function admin_init() {
@@ -60,6 +62,13 @@ class media_downloader {
         return $links;
     }
 
+    function shortcode( $atts ) {
+        $ret = '';
+        if ( array_key_exists( 'folder', $atts ) && $atts['folder'] ) {
+            $ret = buildMediaTable( $atts['folder'], $atts );
+        }
+	    return $ret;
+    }
 }
 
 // Initialize
@@ -182,9 +191,9 @@ if( !function_exists( 'hertz_convert' ) ){
 }
 
 // Scans an array of strings searching for a common prefix in all items
-function calculatePrefix($arr){
+function calculatePrefix( $arr, $force = false ){
     $prefix = '';
-    if ( get_option( 'calculateprefix' ) && count( $arr ) > 1 ) {
+    if ( ( $force || get_option( 'calculateprefix' ) ) && count( $arr ) > 1 ) {
         $prefix = strip_tags( array_pop( $arr ) );
         foreach ( $arr as $i ) {
             for ( $c=1; $c<mb_strlen($i); $c++ ) {
@@ -230,13 +239,19 @@ function md_packageExtensions() {
     return array_filter( $ret );
 }
 
-// Searches post content for our smarttag and do all the magic
-function listMedia( $t ){
+function buildMediaTable( $folder, $atts = false ) {
     global $mdtags, $tagvalues, $mdsortingfields, $mdmarkuptemplates;
     $errors = array();
+    
+    if ( !is_array( $atts ) ) $atts = array();
+    
+    $forcePrefix = array_key_exists( 'calculateprefix', $atts ) && ( $atts['calculateprefix'] == 'true' );
 
     // MP3 folder
     $mdir = '/' . get_option( 'mp3folder' );
+    if ( array_key_exists( 'mp3folder', $atts ) )
+        $mdir = '/' . $atts['mp3folder'];
+        
     // MP3 folder URL
     if ( function_exists( 'switch_to_blog' ) ) switch_to_blog(1);
     $murl = get_option( 'siteurl' ) . $mdir;
@@ -252,86 +267,85 @@ function listMedia( $t ){
 
     // Should we show the 'cover' file ('folder.jpg')?
     $mshowcover = get_option( 'showcover' );
+    if ( array_key_exists( 'showcover', $atts ) )
+        $mshowcover = ( $atts['showcover'] == 'true' );
 
     // Player position (before or after download link)
     $membedwhere = get_option( 'embedwhere' );
+    if ( array_key_exists( 'embedwhere', $atts ) )
+        $membedwhere = ( $atts['embedwhere'] == 'before' ) ? 'before' : 'after';
 
     // Should we re-encode the tags?
     $mdoencode = get_option( 'tagencoding' );
+    if ( array_key_exists( 'tagencoding', $atts ) )
+        $mdoencode = $atts['tagencoding'];
     if ( !$mdoencode ) $mdoencode = 'UTF-8';
     $mdoencode = array_pop( explode( ' + ', $mdoencode ) );
 
     // Should we re-encode the file names?
     $mdofnencode = get_option( 'filenameencoding' );
+    if ( array_key_exists( 'filenameencoding', $atts ) )
+        $mdofnencode = $atts['filenameencoding'];
     if ( !$mdofnencode ) $mdofnencode = 'UTF-8';
     $mdofnencode = array_pop( explode( ' + ', $mdofnencode ) );
 
     // How should we sort the files?
     $msort = get_option( 'sortfiles' );
+    if ( array_key_exists( 'sortfiles', $atts ) )
+        $msort = $atts['sortfiles'];
     // "Backward compatibilaziness": it used to be a boolean value
     if ( isset( $msort ) && !array_key_exists( $msort . '', $mdsortingfields ) ) $msort = 'title';
 
     // Should the sorting be reversed?
     $mreverse = ( get_option( 'reversefiles' ) == true );
+    if ( array_key_exists( 'reversefiles', $atts ) )
+        $mreverse = ( $atts['reversefiles'] == 'true' );
 
     // Which tags to show?
-    $option_showtags = preg_replace( '/comments/m', 'comment', get_option( 'showtags' ) );
+    $option_showtags = get_option( 'showtags' );
+    if ( array_key_exists( 'showtags', $atts ) )
+        $option_showtags = $atts['showtags'];
+    $option_showtags = preg_replace( '/comments/m', 'comment', $option_showtags );
     $mshowtags = array_intersect( array_map( 'trim', explode( ',', $option_showtags ) ), $mdtags );
     // If none, shows the first tag (title)
     if ( !count($mshowtags) ) $mshowtags = array( $mdtags[0] );
 
     // Markup options
     $covermarkup = get_option( 'covermarkup' );
+    if ( array_key_exists( 'covermarkup', $atts ) )
+        $covermarkup = $atts['covermarkup'];
+
     $downloadtext = get_option( 'downloadtext' );
+    if ( array_key_exists( 'downloadtext', $atts ) )
+        $downloadtext = $atts['downloadtext'];
+
     $playtext = get_option( 'playtext' );
+    if ( array_key_exists( 'playtext', $atts ) )
+        $playtext = $atts['playtext'];
+
     $stoptext = get_option( 'stoptext' );
+    if ( array_key_exists( 'stoptext', $atts ) )
+        $stoptext = $atts['stoptext'];
+
     $replaceheaders = get_replaceheaders();
     $markuptemplate = get_option( 'markuptemplate' );
+    if ( array_key_exists( 'markuptemplate', $atts ) )
+        $markuptemplate = $atts['markuptemplate'];
     if ( !sanitizeMarkupTemplate( $markuptemplate ) ) $markuptemplate = array_shift( array_keys( $mdmarkuptemplates ) ); // Default: first option
 
-    // Searching for our smarttags
-    $t = preg_replace( '/<p>\[media:([^\]]*)\]<\/p>/i', '[media:$1]', $t );
-    preg_match_all( '/\[media:([^\]]*)\]/i', $t, $matches );
-    // Any?
-    if ( count( $matches ) ) {
-        // Each...
-        foreach ( $matches[1] as $folder ) {
-            $cover = '';
-            // Removing paragraph
-            $t = str_replace('<p>[media:'.$folder.']</p>', '[media:'.$folder.']', $t);
-            // Initializing variables
-            $ihtml = '';
-            $iall = array();
-            $ifiles = array();
-            $ititles = array();
-            $ipath = $mpath . '/' . $folder;
-            // Populating arrays with respective files
-            if ( is_dir( $ipath ) ) {
-                $folderalone = $folder;
-                if ( is_readable( $ipath ) ) {
-                    $idir = dir( $ipath );
-                    while ( false !== ( $ifile = $idir->read() ) ) if ( !is_dir( $ifile ) ) {
-                        $arrfile = explode( '.', $ifile );
-                        if ( count( $arrfile ) > 1 ) {
-                            $fext = array_pop( $arrfile );
-                        } else {
-                            $fext = '.none';
-                        }
-                        if ( in_array( $fext, md_mediaExtensions() ) ) {
-                            $ifiles[] = $ifile;
-                        } else {
-                            if ( !array_key_exists( $fext, $iall ) ) $iall[$fext] = array();
-                            $iall[$fext][] = $ifile;
-                        }
-                        if ( mb_strtolower( preg_replace( '/\.jpeg/m', '.jpg', $ifile ) ) == 'folder.jpg' ) $cover = $ifile;
-                    }
-                } else {
-                    $errors[] = sprintf( _md( 'Could not read: %1$s' ), $ipath );
-                }
-            } elseif ( file_exists( $ipath ) && is_readable( $ipath ) ) {
-                $folderalone = implode( '/', array_slice( explode( '/', $folder ), 0, -1 ) );
-                $apath = explode( '/', $ipath );
-                $ifile = array_pop( $apath );
+    // Initializing variables
+    $cover = '';
+    $ihtml = '';
+    $iall = array();
+    $ifiles = array();
+    $ititles = array();
+    $ipath = $mpath . '/' . $folder;
+    // Populating arrays with respective files
+    if ( is_dir( $ipath ) ) {
+        $folderalone = $folder;
+        if ( is_readable( $ipath ) ) {
+            $idir = dir( $ipath );
+            while ( false !== ( $ifile = $idir->read() ) ) if ( !is_dir( $ifile ) ) {
                 $arrfile = explode( '.', $ifile );
                 if ( count( $arrfile ) > 1 ) {
                     $fext = array_pop( $arrfile );
@@ -344,283 +358,320 @@ function listMedia( $t ){
                     if ( !array_key_exists( $fext, $iall ) ) $iall[$fext] = array();
                     $iall[$fext][] = $ifile;
                 }
-                $ipath = implode( '/', $apath );
+                if ( mb_strtolower( preg_replace( '/\.jpeg/m', '.jpg', $ifile ) ) == 'folder.jpg' ) $cover = $ifile;
             }
-            // Encoding folder name
-            $pfolder = array_filter( explode( '/', $folderalone ) );
-            foreach( $pfolder as $p ) $p = rawurlencode( $p );
-            $ufolder = implode( '/', $pfolder );
-            if ( $ufolder ) {
-                $afolder = explode( '/', $ufolder );
-                foreach ( $afolder as &$alevel ) $alevel = rawurlencode( $alevel );
-                unset( $alevel );
-                $ufolder = implode( '/', $afolder );
-            }
+        } else {
+            $errors[] = sprintf( _md( 'Could not read: %1$s' ), $ipath );
+        }
+    } elseif ( file_exists( $ipath ) && is_readable( $ipath ) ) {
+        $folderalone = implode( '/', array_slice( explode( '/', $folder ), 0, -1 ) );
+        $apath = explode( '/', $ipath );
+        $ifile = array_pop( $apath );
+        $arrfile = explode( '.', $ifile );
+        if ( count( $arrfile ) > 1 ) {
+            $fext = array_pop( $arrfile );
+        } else {
+            $fext = '.none';
+        }
+        if ( in_array( $fext, md_mediaExtensions() ) ) {
+            $ifiles[] = $ifile;
+        } else {
+            if ( !array_key_exists( $fext, $iall ) ) $iall[$fext] = array();
+            $iall[$fext][] = $ifile;
+        }
+        $ipath = implode( '/', $apath );
+    }
+    // Encoding folder name
+    $pfolder = array_filter( explode( '/', $folderalone ) );
+    foreach( $pfolder as $p ) $p = rawurlencode( $p );
+    $ufolder = implode( '/', $pfolder );
+    if ( $ufolder ) {
+        $afolder = explode( '/', $ufolder );
+        foreach ( $afolder as &$alevel ) $alevel = rawurlencode( $alevel );
+        unset( $alevel );
+        $ufolder = implode( '/', $afolder );
+    }
 
-            $countextra = 0;
-            foreach ( md_packageExtensions() as $pext ) $countextra += is_countable( $iall[$pext] ) ? count( $iall[$pext] ) : 0;
-            if ( ( $mshowcover && $cover ) || $countextra ) {
-                $ihtml .= '<div class="md_albumInfo">';
+    $countextra = 0;
+    foreach ( md_packageExtensions() as $pext ) $countextra += is_countable( $iall[$pext] ) ? count( $iall[$pext] ) : 0;
+    if ( ( $mshowcover && $cover ) || $countextra ) {
+        $ihtml .= '<div class="md_albumInfo">';
 
-                if ( $mshowcover && $cover ) {
-                    $coversrc = network_home_url($mdir) . '/' . ( $ufolder ? $ufolder . '/' : '' ) . $cover;
-                    $icovermarkup = $covermarkup ? $covermarkup : '<img class="md_coverImage" src="[coverimage]" alt="' . _md( 'Album Cover' ) . '" />';
-                    $ihtml .= str_replace( '[coverimage]', $coversrc, $icovermarkup );
-                }
+        if ( $mshowcover && $cover ) {
+            $coversrc = network_home_url($mdir) . '/' . ( $ufolder ? $ufolder . '/' : '' ) . $cover;
+            $icovermarkup = $covermarkup ? $covermarkup : '<img class="md_coverImage" src="[coverimage]" alt="' . _md( 'Album Cover' ) . '" />';
+            $ihtml .= str_replace( '[coverimage]', $coversrc, $icovermarkup );
+        }
 
-                // If any "extra" files, inserting an extra table
-                // (this was very case specific and remained here)
-                if ( $countextra ) {
-                    $packagetitle = get_option( 'packagetitle' );
-                    $packagetexts = get_option( 'packagetexts' );
-                    if ( !$packagetexts ) $packagetexts = array();
-                    $ihtml .= '<div class="md_wholebook">';
-                    if ( $packagetitle ) $ihtml .= '<h3 class="md_wholebook_title">' . $packagetitle . '</h3>';
-                    $afolder = explode( '/', $folderalone );
-                    for ( $a=0; $a<count($afolder); $a++ ) $afolder[$a] = rawurlencode( $afolder[$a] );
-                    $cfolder = implode( '/', $afolder );
-                    $ihtml .= '<ul class="md_wholebook_list">';
-                    foreach ( md_packageExtensions() as $pext ) {
-                        $cpf = 0; if ( count( $iall[$pext] ) ) foreach( $iall[$pext] as $pf ) {
-                            $cpf++;
-                            $ptext = _md( 'Download ' . mb_strtoupper( $pext ) );
-                            if ( array_key_exists( $pext, $packagetexts ) && $packagetexts[$pext] ) {
-                                $ptext = preg_replace( '/\[filename\]/m', $pf, $packagetexts[$pext] );
-                            }
-                            $ihtml .= '<li class="d' . mb_strtoupper(mb_substr($pext,0,1)) . mb_substr($pext,1) . '"><a href="'.$mrelative.($mrelative!='/'?'/':'').($cfolder).'/'.rawurlencode( $pf ).'" title="' . esc_attr( $pf ) . '">'.$ptext.(count($iall[$pext])>1?' ('.$cpf.')':'').'</a></li>' ;
-                        }
+        // If any "extra" files, inserting an extra table
+        // (this was very case specific and remained here)
+        if ( $countextra ) {
+            $packagetitle = get_option( 'packagetitle' );
+            $packagetexts = get_option( 'packagetexts' );
+            if ( !$packagetexts ) $packagetexts = array();
+            $ihtml .= '<div class="md_wholebook">';
+            if ( $packagetitle ) $ihtml .= '<h3 class="md_wholebook_title">' . $packagetitle . '</h3>';
+            $afolder = explode( '/', $folderalone );
+            for ( $a=0; $a<count($afolder); $a++ ) $afolder[$a] = rawurlencode( $afolder[$a] );
+            $cfolder = implode( '/', $afolder );
+            $ihtml .= '<ul class="md_wholebook_list">';
+            foreach ( md_packageExtensions() as $pext ) {
+                $cpf = 0; if ( count( $iall[$pext] ) ) foreach( $iall[$pext] as $pf ) {
+                    $cpf++;
+                    $ptext = _md( 'Download ' . mb_strtoupper( $pext ) );
+                    if ( array_key_exists( $pext, $packagetexts ) && $packagetexts[$pext] ) {
+                        $ptext = preg_replace( '/\[filename\]/m', $pf, $packagetexts[$pext] );
                     }
-                    $ihtml .= '</ul>';
-                    $ihtml .= '</div>';
+                    $ihtml .= '<li class="d' . mb_strtoupper(mb_substr($pext,0,1)) . mb_substr($pext,1) . '"><a href="'.$mrelative.($mrelative!='/'?'/':'').($cfolder).'/'.rawurlencode( $pf ).'" title="' . esc_attr( $pf ) . '">'.$ptext.(count($iall[$pext])>1?' ('.$cpf.')':'').'</a></li>' ;
                 }
-
-                $ihtml .= '</div>';
             }
+            $ihtml .= '</ul>';
+            $ihtml .= '</div>';
+        }
 
-            // Any MP3 file?
-	    if ( count( $ifiles ) ) {
-                $Parsedown = new Parsedown();
-                // Calculating file "prefixes"
-                $prefix = calculatePrefix( $ifiles );
-                $hlevel = explode( '/', $folder ); $hlevel = array_pop( $hlevel );
+        $ihtml .= '</div>';
+    }
 
-                // Initializing array of tag values
-                $tagvalues = array();
-                foreach ( $mshowtags as $mshowtag ) $tagvalues[$mshowtag] = array();
-                $alltags = array();
-                foreach ( $ifiles as $ifile ) {
-                    $ifile = explode( '.', $ifile );
-                    $iext = array_pop( $ifile );
-                    $ifile = implode( '.', $ifile );
-                    // Getting ID3 info
-                    $finfo = mediadownloaderFileInfo( $mrelative.'/'.$folderalone.'/'.$ifile, $iext );
-                    // Loading all possible tags
-                    $ftags = array();
-                    foreach ( array( 'id3v2', 'quicktime', 'ogg', 'asf', 'flac', 'real', 'riff', 'ape', 'id3v1', 'comments' ) as $poss ) {
-                        if ( is_array( $finfo['tags'] ) && array_key_exists( $poss, $finfo['tags'] ) ) {
-                            $ftags = array_merge( $finfo['tags'][$poss], $ftags );
-                            if ( array_key_exists( 'comments', $finfo['tags'][$poss] ) ) {
-                                $ftags = array_merge( $finfo['tags'][$poss]['comments'], $ftags );
-                            }
-                        }
+    // Any MP3 file?
+    if ( count( $ifiles ) ) {
+        $Parsedown = new Parsedown();
+        // Calculating file "prefixes"
+        $prefix = calculatePrefix( $ifiles, $forcePrefix );
+        $hlevel = explode( '/', $folder ); $hlevel = array_pop( $hlevel );
+
+        // Initializing array of tag values
+        $tagvalues = array();
+        foreach ( $mshowtags as $mshowtag ) $tagvalues[$mshowtag] = array();
+        $alltags = array();
+        foreach ( $ifiles as $ifile ) {
+            $ifile = explode( '.', $ifile );
+            $iext = array_pop( $ifile );
+            $ifile = implode( '.', $ifile );
+            // Getting ID3 info
+            $finfo = mediadownloaderFileInfo( $mrelative.'/'.$folderalone.'/'.$ifile, $iext );
+            // Loading all possible tags
+            $ftags = array();
+            foreach ( array( 'id3v2', 'quicktime', 'ogg', 'asf', 'flac', 'real', 'riff', 'ape', 'id3v1', 'comments' ) as $poss ) {
+                if ( is_array( $finfo['tags'] ) && array_key_exists( $poss, $finfo['tags'] ) ) {
+                    $ftags = array_merge( $finfo['tags'][$poss], $ftags );
+                    if ( array_key_exists( 'comments', $finfo['tags'][$poss] ) ) {
+                        $ftags = array_merge( $finfo['tags'][$poss]['comments'], $ftags );
                     }
-                    $ftags['bitrate'] = array( floatval( $finfo['audio']['bitrate'] ) / 1000 . 'kbps' );
-                    $ftags['filesize'] = array( byte_convert( $finfo['filesize'] ) );
-                    $ftags['filedate'] = array( date_i18n( get_option('date_format'), filemtime( $finfo['filepath'] . '/' . $finfo['filename'] ) ) );
-                    $ftags['directory'] = array( $hlevel );
-                    $ftags['file'] = array( $ifile );
-                    $ftags['sample_rate'] = array( hertz_convert( intval( '0' . $finfo['audio']['sample_rate'] ) ) );
-                    $ftags['playtime_string'] = array( $finfo['playtime_string'] );
-                    unset( $finfo );
-                    $alltags[$ifile] = $ftags;
-                    // Populating array of tag values with all tags
-                    foreach ( $mdtags as $mshowtag )
-                        if ( 'comment' == $mshowtag ) {
-                            if ( array_key_exists( 'text', $ftags ) && is_array( $ftags['text'] ) && trim( strip_tags( $ftags['text'][0] ) ) ) {
-                                $tagvalues[$mshowtag][$ifile.'.'.$iext] = $ftags['text'][0];
-                            } else {
-                                $tagvalues[$mshowtag][$ifile.'.'.$iext] = $Parsedown->text( $ftags[$mshowtag][0] );
-                            }
+                }
+            }
+            $ftags['bitrate'] = array( floatval( $finfo['audio']['bitrate'] ) / 1000 . 'kbps' );
+            $ftags['filesize'] = array( byte_convert( $finfo['filesize'] ) );
+            $ftags['filedate'] = array( date_i18n( get_option('date_format'), filemtime( $finfo['filepath'] . '/' . $finfo['filename'] ) ) );
+            $ftags['directory'] = array( $hlevel );
+            $ftags['file'] = array( $ifile );
+            $ftags['sample_rate'] = array( hertz_convert( intval( '0' . $finfo['audio']['sample_rate'] ) ) );
+            $ftags['playtime_string'] = array( $finfo['playtime_string'] );
+            unset( $finfo );
+            $alltags[$ifile] = $ftags;
+            // Populating array of tag values with all tags
+            foreach ( $mdtags as $mshowtag )
+                if ( 'comment' == $mshowtag ) {
+                    if ( array_key_exists( 'text', $ftags ) && is_array( $ftags['text'] ) && trim( strip_tags( $ftags['text'][0] ) ) ) {
+                        $tagvalues[$mshowtag][$ifile.'.'.$iext] = $ftags['text'][0];
+                    } else {
+                        $tagvalues[$mshowtag][$ifile.'.'.$iext] = $Parsedown->text( $ftags[$mshowtag][0] );
+                    }
+                } else {
+                    $tagvalues[$mshowtag][$ifile.'.'.$iext] = $ftags[$mshowtag][0];
+                }
+            unset( $ftags );
+        }
+        // Calculating tag "prefixes"
+        $tagprefixes = array();
+        foreach ( $mshowtags as $mshowtag )
+            if ( 'file' == $mshowtag || 'title' == $mshowtag )
+                $tagprefixes[$mshowtag] = calculatePrefix( $tagvalues[$mshowtag], $forcePrefix );
+        // If set, sorting array
+        if ( $msort != 'none' ) {
+            sort( $ifiles );
+            uasort( $ifiles, $mdsortingfields[$msort] );
+        }
+        // If set, reversing array
+        if ( $mreverse ) $ifiles = array_reverse( $ifiles );
+
+        $tablecellsmode_header = '';
+        $tablecellsmode_firstfile = true;
+        // Building markup for each file...
+        foreach ( $ifiles as $ifile ) {
+            $ifile = explode( '.', $ifile );
+            $iext = array_pop( $ifile );
+            $ifile = implode( '.', $ifile );
+            $ititle = '';
+            // Each tag list item
+            foreach ( $mshowtags as $mshowtag ) {
+                $tagvalue = $tagvalues[$mshowtag][$ifile.'.'.$iext];
+                if ( '' == $tagvalue ) {
+                    $tagvalue = '&nbsp;';
+                } else {
+                    // Removing "prefix" of this tag
+                    if ( '' != $tagprefixes[$mshowtag] )
+                        $tagvalue = str_replace( $tagprefixes[$mshowtag], '', $tagvalue );
+                    // $tagvalue = str_replace( $prefix, '', $tagvalue ); // Causing weird behavior in some cases
+                    // Cleaning...
+                    $tagvalue = replaceUnderscores( $tagvalue );
+                    // Encoding...
+                    if ( 'file' == $mshowtag || 'directory' == $mshowtag ) {
+                        if ( $mdofnencode != 'UTF-8' ) $tagvalue = iconv( $mdofnencode, 'UTF-8', $tagvalue );
+                    } elseif ( 'recording_dates' == $mshowtag ) {
+                        if ( $tagtime = strtotime( $tagvalue ) ) {
+                            $tagvalue = date_i18n( get_option('date_format'), $tagtime );
                         } else {
-                            $tagvalues[$mshowtag][$ifile.'.'.$iext] = $ftags[$mshowtag][0];
+                            $tagvalue = '';
                         }
-                    unset( $ftags );
-                }
-                // Calculating tag "prefixes"
-                $tagprefixes = array();
-                foreach ( $mshowtags as $mshowtag )
-                    if ( 'file' == $mshowtag || 'title' == $mshowtag )
-                        $tagprefixes[$mshowtag] = calculatePrefix( $tagvalues[$mshowtag] );
-                // If set, sorting array
-                if ( $msort != 'none' ) {
-                    sort( $ifiles );
-                    uasort( $ifiles, $mdsortingfields[$msort] );
-                }
-                // If set, reversing array
-                if ( $mreverse ) $ifiles = array_reverse( $ifiles );
-
-                $tablecellsmode_header = '';
-                $tablecellsmode_firstfile = true;
-                // Building markup for each file...
-                foreach ( $ifiles as $ifile ) {
-                    $ifile = explode( '.', $ifile );
-                    $iext = array_pop( $ifile );
-                    $ifile = implode( '.', $ifile );
-                    $ititle = '';
-                    // Each tag list item
-                    foreach ( $mshowtags as $mshowtag ) {
-                        $tagvalue = $tagvalues[$mshowtag][$ifile.'.'.$iext];
-                        if ( '' == $tagvalue ) {
-                            $tagvalue = '&nbsp;';
-                        } else {
-                            // Removing "prefix" of this tag
-                            if ( '' != $tagprefixes[$mshowtag] )
-                                $tagvalue = str_replace( $tagprefixes[$mshowtag], '', $tagvalue );
-                            // $tagvalue = str_replace( $prefix, '', $tagvalue ); // Causing weird behavior in some cases
-                            // Cleaning...
-                            $tagvalue = replaceUnderscores( $tagvalue );
-                            // Encoding...
-                            if ( 'file' == $mshowtag || 'directory' == $mshowtag ) {
-                                if ( $mdofnencode != 'UTF-8' ) $tagvalue = iconv( $mdofnencode, 'UTF-8', $tagvalue );
-                            } elseif ( 'recording_dates' == $mshowtag ) {
-                                if ( $tagtime = strtotime( $tagvalue ) ) {
-                                    $tagvalue = date_i18n( get_option('date_format'), $tagtime );
-                                } else {
-                                    $tagvalue = '';
-                                }
-                            } elseif ( $mdoencode != 'UTF-8' ) {
-                                $tagvalue = iconv( $mdoencode, 'UTF-8', $tagvalue );
-                            }
-                        }
-                        // Item markup
-                        $columnheader = ucwords( _md( $mshowtag ) );
-                        if ( array_key_exists( $mshowtag, $replaceheaders ) ) $columnheader = $replaceheaders[$mshowtag];
-                        if ( 'table-cells' == $markuptemplate ) {
-                            // For "table cells" markup template,
-                            // we store a "row with headers", so it
-                            // just needs to run once
-                            if ( $tablecellsmode_firstfile ) {
-                                $tablecellsmode_header .= '<th class="mdTag'.$mshowtag.'">'.$columnheader.'</th>' ;
-                            }
-                            $ititle .= '<td class="mdTag'.$mshowtag.'">'.$tagvalue.'</td>' ;
-                        } elseif ( 'definition-list' == $markuptemplate )  {
-                            $ititle .= '<dt class="mdTag'.$mshowtag.'">'.$columnheader.':</dt>' ;
-                            $ititle .= '<dd class="mdTag'.$mshowtag.'">'.$tagvalue.'</dd>' ;
-                        }
+                    } elseif ( $mdoencode != 'UTF-8' ) {
+                        $tagvalue = iconv( $mdoencode, 'UTF-8', $tagvalue );
                     }
-                    // List markup (if any item)
-                    if ( '' != $ititle ) {
-                        if ( 'definition-list' == $markuptemplate ) {
-                            $ititle = '<dl class="mdTags">' . $ititle . '</dl>' ;
-                        }
-                    }
-                    $ititles[$ifile] = $ititle ;
-                    // "Row with headers" is stored already,
-                    // so skip the task next iteration
-                    $tablecellsmode_firstfile = false;
                 }
-
-                // Building general markup
-                $tableClass = array( 'mediaTable' );
-                if ( TRUE == get_option( 'embedplayer' ) ) $tableClass[] = 'embedPlayer';
-                if ( TRUE == get_option( 'autoplaylist' ) ) $tableClass[] = 'autoPlayList';
-                $tableClass[] = 'embedpos' . $membedwhere ;
-                $ihtml .= '<table class="' . implode( ' ', $tableClass ) . '">' . "\n";
-                $ihtml .= "<thead>\n<tr>\n";
+                // Item markup
+                $columnheader = ucwords( _md( $mshowtag ) );
+                if ( array_key_exists( $mshowtag, $replaceheaders ) ) $columnheader = $replaceheaders[$mshowtag];
                 if ( 'table-cells' == $markuptemplate ) {
-                    $ihtml .= $tablecellsmode_header;
-                } elseif ( 'definition-list' == $markuptemplate ) {
-                    $ihtml .= "\n" . '<th class="mediaTitle">&nbsp;</th>' . "\n";
+                    // For "table cells" markup template,
+                    // we store a "row with headers", so it
+                    // just needs to run once
+                    if ( $tablecellsmode_firstfile ) {
+                        $tablecellsmode_header .= '<th class="mdTag'.$mshowtag.'">'.$columnheader.'</th>' ;
+                    }
+                    $ititle .= '<td class="mdTag'.$mshowtag.'">'.$tagvalue.'</td>' ;
+                } elseif ( 'definition-list' == $markuptemplate )  {
+                    $ititle .= '<dt class="mdTag'.$mshowtag.'">'.$columnheader.':</dt>' ;
+                    $ititle .= '<dd class="mdTag'.$mshowtag.'">'.$tagvalue.'</dd>' ;
                 }
-                $downloadheader = _md( 'Download' );
-                if ( array_key_exists( 'download', $replaceheaders ) ) $downloadheader = $replaceheaders['download'];
-                $ihtml .= '<th class="mediaDownload">'.$downloadheader.'</th>
+            }
+            // List markup (if any item)
+            if ( '' != $ititle ) {
+                if ( 'definition-list' == $markuptemplate ) {
+                    $ititle = '<dl class="mdTags">' . $ititle . '</dl>' ;
+                }
+            }
+            $ititles[$ifile] = $ititle ;
+            // "Row with headers" is stored already,
+            // so skip the task next iteration
+            $tablecellsmode_firstfile = false;
+        }
+
+        // Building general markup
+        $tableClass = array( 'mediaTable' );
+        if ( TRUE == get_option( 'embedplayer' ) ) $tableClass[] = 'embedPlayer';
+        if ( TRUE == get_option( 'autoplaylist' ) ) $tableClass[] = 'autoPlayList';
+        $tableClass[] = 'embedpos' . $membedwhere ;
+        $ihtml .= '<table class="' . implode( ' ', $tableClass ) . '">' . "\n";
+        $ihtml .= "<thead>\n<tr>\n";
+        if ( 'table-cells' == $markuptemplate ) {
+            $ihtml .= $tablecellsmode_header;
+        } elseif ( 'definition-list' == $markuptemplate ) {
+            $ihtml .= "\n" . '<th class="mediaTitle">&nbsp;</th>' . "\n";
+        }
+        $downloadheader = _md( 'Download' );
+        if ( array_key_exists( 'download', $replaceheaders ) ) $downloadheader = $replaceheaders['download'];
+        $ihtml .= '<th class="mediaDownload">'.$downloadheader.'</th>
 </tr>
 </thead>
 <tbody>';
 
 
-                // Each file...
-                foreach ( $ifiles as $ifile ) {
-                    $ifile = explode( '.', $ifile );
-                    $iext = array_pop( $ifile );
-                    $ifile = implode( '.', $ifile );
-                    // File name
-                    $showifile = $ifile ;
-                    // Removing prefix
-                    if ( array_key_exists( 'file', $tagprefixes ) )
-                        $showifile = str_replace( $tagprefixes['file'], '', $showifile );
-                    // Cleaning
-                    $showifile = replaceUnderscores( $showifile );
-                    $alltags[$ifile]['file'][0] = $showifile;
-                    // Download text
-                    $idownloadtext = $downloadtext ? $downloadtext : 'Download: [file]';
-                    // Play, Stop, Title and Artist texts (for embed player)
-                    $iplaytext = $playtext ? $playtext : 'Play: [file]';
-                    $istoptext = $stoptext ? $stoptext : 'Stop: [file]';
-                    $ititletext = $showifile;
-                    $iartisttext = '';
-                    foreach ( $mdtags as $mdtag ) {
-                        if ( !array_key_exists( $mdtag, $alltags[$ifile] ) ) $alltags[$ifile][$mdtag] = array( '' );
-                        $tagvalue = $alltags[$ifile][$mdtag][0];
-                        if ( 'file' == $mdtag || 'directory' == $mdtag ) {
-                            if ( $mdofnencode != 'UTF-8' ) $tagvalue = iconv( $mdofnencode, 'UTF-8', $tagvalue );
-                        } elseif ( $mdoencode != 'UTF-8' ) {
-                            $tagvalue = iconv( $mdoencode, 'UTF-8', $tagvalue );
-                        }
-                        // Replacing wildcards
-                        $idownloadtext = str_replace( '[' . $mdtag . ']', $tagvalue, $idownloadtext );
-                        $iplaytext = str_replace( '[' . $mdtag . ']', $tagvalue, $iplaytext );
-                        $istoptext = str_replace( '[' . $mdtag . ']', $tagvalue, $istoptext );
-                        // If "title", populate "Title text"
-                        if ( 'title' == $mdtag ) $ititletext = $tagvalue;
-                        // If "artist", populate "Artist text"
-                        if ( 'artist' == $mdtag && $tagvalue ) $iartisttext = str_replace( '-', '[_]', $tagvalue ) . ' - ';
-                    }
-
-                    // Getting stored markup
-                    $ititle = $ititles[$ifile];
-
-                    // $ititle = str_replace( $prefix, '', $ititle ); // Causing weird behavior in some cases
-
-                    // Markup
-                    // 20100107 - I took it away: strtoupper( $hlevel )
-                    $ihtml .= '<tr class="mdTags">'."\n" ;
-                    if ( 'table-cells' == $markuptemplate ) {
-                        // a group of "td's"
-                        $ihtml .= $ititle . "\n";
-                    } elseif ( 'definition-list' == $markuptemplate ) {
-                        // one "td" with a "dl" inside
-                        $ihtml .= '<td class="mediaTitle">'.$ititle.'</td>'."\n" ;
-                    }
-                    // Play, Stop and Title (concatenated with Artist) texts
-                    // all packed in rel attribute, for embed player to read
-                    // and do its black magic
-                    $irel = array();
-                    if ( $iplaytext ) $irel[] = 'mediaDownloaderPlayText:' . htmlentities( $iplaytext, ENT_COMPAT, 'UTF-8' );
-                    if ( $istoptext ) $irel[] = 'mediaDownloaderStopText:' . htmlentities( $istoptext, ENT_COMPAT, 'UTF-8' );
-                    $ititletext = $iartisttext . $ititletext;
-                    if ( $ititletext ) $irel[] = 'mediaDownloaderTitleText:' . htmlentities( $ititletext, ENT_COMPAT, 'UTF-8' );
-                    $irel = implode( ';', $irel );
-                    $ihtml .= '<td class="mediaDownload"><a href="'.network_home_url($mdir).'/'.($ufolder?$ufolder.'/':'').rawurlencode( $ifile ).'.'.$iext.'" title="' . htmlentities( $showifile, ENT_COMPAT, 'UTF-8' ) . '" ' . ( $irel ? 'rel="' . $irel . '"' : '' ) . ' id="mdfile_' . sanitize_title( $ifile ) . '">'.$idownloadtext.'</a></td>'."\n" ;
-                    $ihtml .= '</tr>'."\n" ;
+        // Each file...
+        foreach ( $ifiles as $ifile ) {
+            $ifile = explode( '.', $ifile );
+            $iext = array_pop( $ifile );
+            $ifile = implode( '.', $ifile );
+            // File name
+            $showifile = $ifile ;
+            // Removing prefix
+            if ( array_key_exists( 'file', $tagprefixes ) )
+                $showifile = str_replace( $tagprefixes['file'], '', $showifile );
+            // Cleaning
+            $showifile = replaceUnderscores( $showifile );
+            $alltags[$ifile]['file'][0] = $showifile;
+            // Download text
+            $idownloadtext = $downloadtext ? $downloadtext : 'Download: [file]';
+            // Play, Stop, Title and Artist texts (for embed player)
+            $iplaytext = $playtext ? $playtext : 'Play: [file]';
+            $istoptext = $stoptext ? $stoptext : 'Stop: [file]';
+            $ititletext = $showifile;
+            $iartisttext = '';
+            foreach ( $mdtags as $mdtag ) {
+                if ( !array_key_exists( $mdtag, $alltags[$ifile] ) ) $alltags[$ifile][$mdtag] = array( '' );
+                $tagvalue = $alltags[$ifile][$mdtag][0];
+                if ( 'file' == $mdtag || 'directory' == $mdtag ) {
+                    if ( $mdofnencode != 'UTF-8' ) $tagvalue = iconv( $mdofnencode, 'UTF-8', $tagvalue );
+                } elseif ( $mdoencode != 'UTF-8' ) {
+                    $tagvalue = iconv( $mdoencode, 'UTF-8', $tagvalue );
                 }
-                $ihtml .= '</tbody></table>'."\n" ;
-
+                // Replacing wildcards
+                $idownloadtext = str_replace( '[' . $mdtag . ']', $tagvalue, $idownloadtext );
+                $iplaytext = str_replace( '[' . $mdtag . ']', $tagvalue, $iplaytext );
+                $istoptext = str_replace( '[' . $mdtag . ']', $tagvalue, $istoptext );
+                // If "title", populate "Title text"
+                if ( 'title' == $mdtag ) $ititletext = $tagvalue;
+                // If "artist", populate "Artist text"
+                if ( 'artist' == $mdtag && $tagvalue ) $iartisttext = str_replace( '-', '[_]', $tagvalue ) . ' - ';
             }
 
-            if ( count( $errors ) ) {
-                $errorHtml = '<div class="mediaDownloaderErrors">';
-                foreach ( $errors as $error ) $errorHtml .= '<p><strong>' . _md( 'Error:' ) . '</strong> ' . $error . '</p>';
-                $errorHtml .= '</div>';
-                $ihtml .= $errorHtml;
+            // Getting stored markup
+            $ititle = $ititles[$ifile];
+
+            // $ititle = str_replace( $prefix, '', $ititle ); // Causing weird behavior in some cases
+
+            // Markup
+            // 20100107 - I took it away: strtoupper( $hlevel )
+            $ihtml .= '<tr class="mdTags">'."\n" ;
+            if ( 'table-cells' == $markuptemplate ) {
+                // a group of "td's"
+                $ihtml .= $ititle . "\n";
+            } elseif ( 'definition-list' == $markuptemplate ) {
+                // one "td" with a "dl" inside
+                $ihtml .= '<td class="mediaTitle">'.$ititle.'</td>'."\n" ;
             }
+            // Play, Stop and Title (concatenated with Artist) texts
+            // all packed in rel attribute, for embed player to read
+            // and do its black magic
+            $irel = array();
+            if ( $iplaytext ) $irel[] = 'mediaDownloaderPlayText:' . htmlentities( $iplaytext, ENT_COMPAT, 'UTF-8' );
+            if ( $istoptext ) $irel[] = 'mediaDownloaderStopText:' . htmlentities( $istoptext, ENT_COMPAT, 'UTF-8' );
+            $ititletext = $iartisttext . $ititletext;
+            if ( $ititletext ) $irel[] = 'mediaDownloaderTitleText:' . htmlentities( $ititletext, ENT_COMPAT, 'UTF-8' );
+            $irel = implode( ';', $irel );
+            $ihtml .= '<td class="mediaDownload"><a href="'.network_home_url($mdir).'/'.($ufolder?$ufolder.'/':'').rawurlencode( $ifile ).'.'.$iext.'" title="' . htmlentities( $showifile, ENT_COMPAT, 'UTF-8' ) . '" ' . ( $irel ? 'rel="' . $irel . '"' : '' ) . ' id="mdfile_' . sanitize_title( $ifile ) . '">'.$idownloadtext.'</a></td>'."\n" ;
+            $ihtml .= '</tr>'."\n" ;
+        }
+        $ihtml .= '</tbody></table>'."\n" ;
+
+    }
+
+    if ( count( $errors ) ) {
+        $errorHtml = '<div class="mediaDownloaderErrors">';
+        foreach ( $errors as $error ) $errorHtml .= '<p><strong>' . _md( 'Error:' ) . '</strong> ' . $error . '</p>';
+        $errorHtml .= '</div>';
+        $ihtml .= $errorHtml;
+    }
+    return $ihtml;
+}
+
+// Searches post content for our smarttag and do all the magic
+function listMedia( $t ){
+    // Searching for our smarttags
+    $t = preg_replace( '/<p>\[media:([^\]]*)\]<\/p>/i', '[media:$1]', $t );
+    preg_match_all( '/\[media:([^\]]*)\]/i', $t, $matches );
+    // Any?
+    if ( count( $matches ) ) {
+        // Each...
+        foreach ( $matches[1] as $folder ) {
+            // Removing paragraph
+            $t = str_replace('<p>[media:'.$folder.']</p>', '[media:'.$folder.']', $t);
+            $ihtml = buildMediaTable( $folder );
             // Finally, replacing our smart tag
             $t = str_replace( '[media:'.$folder.']', $ihtml, $t );
         }
     }
     return $t ;
 }
+
 // To sort file array by some tag
 function orderByTag( $a, $b, $tag ) {
     if ( !is_array( $tag ) ) $tag = array( $tag );

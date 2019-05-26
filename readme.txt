@@ -3,7 +3,7 @@ Contributors: Ederson Peka, Jonathan Jose from www.flowconversatilidad.net (Span
 Tags: media, audio, podcast, post, player, mp3, flash
 Requires at least: 4.0
 Tested up to: 5.2.2
-Stable tag: 0.3.3
+Stable tag: 0.3.4
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ederson@gmail.com&lc=BR&currency_code=BRL&item_name=Media%20Downloader%20Wordpress%20Plugin
 
 Lists MP3 files from a folder. Portuguese: Lista arquivos MP3 de um diretório. Spanish: Lista todos los MP3 de un directorio.
@@ -12,13 +12,13 @@ Lists MP3 files from a folder. Portuguese: Lista arquivos MP3 de um diretório. 
 
 **Note: Updating from versions prior to 0.3 requires reactivating!**
 
-Media Downloader plugin lists MP3 files from a folder by replacing the [media] smart tag. It reads MP3 information directly from the files. It also can try to get rid of stupid content blockers (mainly corporatives), changing all links to .MP3 files into some download URL without the string "MP3".
+Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode. It reads MP3 information directly from the files. It also can try to get rid of stupid content blockers (mainly corporatives), changing all links to .MP3 files into some download URL without the string "MP3".
 
 = Portuguese: Descrição =
-O plugin Media Downloader lista os arquivos MP3 de um diretório, substituindo a "smart tag" [media]. Ele lê a meta-informação diretamente dos arquivos MP3. Também pode tentar se livrar de bloqueadores de conteúdo idiotas (geralmente corporativos), transformando todos os links para arquivos .MP3 em alguma URL de download sem o texto "MP3".
+O plugin Media Downloader lista os arquivos MP3 de um diretório, através do "shortcode" [mediadownloader]. Ele lê a meta-informação diretamente dos arquivos MP3. Também pode tentar se livrar de bloqueadores de conteúdo idiotas (geralmente corporativos), transformando todos os links para arquivos .MP3 em alguma URL de download sem o texto "MP3".
 
 = Spanish: Descripcion =
-El plugin Media Downloader lista archivos MP3 de un directorio cambiando [media] tag. Lee informacion de los MP3 directamente desde el archivo. También puede intentar deshacerse de estúpidos bloqueadores de contenido (principalmente corporativos), cambiando todos los enlaces a .MP3 en alguna URL de descarga sin la cadena "MP3".
+El plugin Media Downloader lista archivos MP3 de un directorio cambiando [mediadownloader] shortcode. Lee informacion de los MP3 directamente desde el archivo. También puede intentar deshacerse de estúpidos bloqueadores de contenido (principalmente corporativos), cambiando todos los enlaces a .MP3 en alguna URL de descarga sin la cadena "MP3".
 
 == Installation ==
 
@@ -50,7 +50,7 @@ An example may help... Say you have a folder called "music" under your root fold
 
 First of all, you should configure Media Downloader by typing "music" in the "MP3 Folder" field, on settings page (and then clicking on "Update Options", for sure).
 
-That done, you can edit a post talking 'bout Johann Sebastian Bach and insert anywhere on it the smart tag, "[media:Bach]". Media Downloader will create a list of all files under the "music/Bach" directory. This is actually very simple. ;-)
+That done, you can edit a post talking 'bout Johann Sebastian Bach and insert anywhere on it the shortcode, [mediadownloader folder="Bach"]. Media Downloader will create a list of all files under the "music/Bach" directory. This is actually very simple. ;-)
 
 = Portuguese: Perguntas Freqüentes =
 = Como configurar? Onde jogar os arquivos MP3? Como eu uso essa tranqueira? Qual é a sintaxe da "smart tag"? =
@@ -59,7 +59,7 @@ Um exemplo deve ajudar... Digamos que você tenha um diretório chamado "musica"
 
 Antes de tudo, você deve configurar o Media Downloader, digitando "musica" no campo "MP3 Folder", na página de configurações (e clicando em "Atualizar Opções", claro).
 
-Feito isto, você pode editar um post falando sobre João Carlos Martins e inserir em qualquer lugar a smart tag: "[media:Martins]". O Media Downloader vai criar uma lista de todos os arquivos no diretório "musica/Martins". Na verdade, é tudo bem simples. ;-)
+Feito isto, você pode editar um post falando sobre João Carlos Martins e inserir em qualquer lugar o shortcode: [mediadownloader folder="Martins"]. O Media Downloader vai criar uma lista de todos os arquivos no diretório "musica/Martins". Na verdade, é tudo bem simples. ;-)
 
 = Spanish: Preguntas Frecuentes =
 = ¿Cómo debo configurar? ¿Dónde puedo tirar mis archivos MP3? ¿Cómo puedo usar esta cosa? ¿Cuál es el smart tag sintaxis? =
@@ -68,4 +68,4 @@ Un ejemplo puede ayudar... Digamos que usted tiene una carpeta llamada "musica" 
 
 En primer lugar, deberá configurar Media Downloader tecleando "clásica" en la "MP3 Carpeta" sobre el terreno, sobre los parámetros página (y luego hacer clic en "Actualización Opciones", de seguro).
 
-Ese hecho, puede editar un puesto hablando sobre Johann Sebastian Bach y insertar en cualquier lugar en el la smart tag "[media:Bach]". Media Downloader creará una lista de todos los archivos del "musica/Bach" directorio. Este es realmente muy simple. ;-)
+Ese hecho, puede editar un puesto hablando sobre Johann Sebastian Bach y insertar en cualquier lugar en el lo shortcode [mediadownloader folder="Bach"]. Media Downloader creará una lista de todos los archivos del "musica/Bach" directorio. Este es realmente muy simple. ;-)

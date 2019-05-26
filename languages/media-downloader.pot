@@ -81,6 +81,10 @@ msgstr ""
 msgid "Play Text:"
 msgstr ""
 
+#: mediadownloader-markup-options.php
+msgid "Stop Text:"
+msgstr ""
+
 #: mediadownloader-more-options.php:44
 msgid "Old Embed Flash Player Colors:"
 msgstr ""
