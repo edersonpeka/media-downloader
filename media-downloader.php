@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: http://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.
-Version: 0.3.4
+Version: 0.3.5
 Author: Ederson Peka
 Author URI: http://ederson.peka.nom.br
 Text Domain: media-downloader
@@ -904,7 +904,7 @@ endif;
 function mediaDownloaderEnqueueScripts() {
     // If any custom css, we enqueue our php that throws this css
     $customcss = trim( get_option( 'customcss' ) );
-    if ( '' != $customcss ) {
+    if ( ( '' != $customcss ) && ( !is_admin() ) ) {
         wp_register_style( 'mediadownloaderCss', md_plugin_url() . '/css/mediadownloader-css.php' );
         wp_enqueue_style( 'mediadownloaderCss' );
     }
