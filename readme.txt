@@ -1,5 +1,5 @@
 === Media Downloader ===
-Contributors: Ederson Peka, Jonathan Jose from www.flowconversatilidad.net (Spanish Translation)
+Contributors: edersonpeka, Jonathan Jose from www.flowconversatilidad.net (Spanish Translation)
 Tags: media, audio, podcast, post, player, mp3, flash
 Requires at least: 4.0
 Tested up to: 5.3.1
