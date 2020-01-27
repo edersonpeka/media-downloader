@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: https://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.
-Version: 0.3.5
+Version: 0.3.6
 Author: Ederson Peka
 Author URI: https://profiles.wordpress.org/edersonpeka/
 Text Domain: media-downloader
@@ -85,6 +85,7 @@ $mdencodings = array_merge( $mdencodings, $md_comp_encs );
 // and respective sorting functions
 $mdsortingfields = array(
     'none' => null,
+    'file name' => 'orderByFileName',
     'title' => 'orderByTitle',
     'file date' => 'orderByFileDate',
     'recording dates' => 'orderByRecordingDates',
@@ -687,6 +688,9 @@ function orderByTag( $a, $b, $tag ) {
 function orderByTitle( $a, $b ) {
     return orderByTag( $a, $b, array( 'title', 'filedate' ) );
 }
+function orderByFileName( $a, $b ) {
+    return orderByTag( $a, $b, 'file' );
+}
 function orderByFileDate( $a, $b ) {
     return orderByTag( $a, $b, 'filedate' );
 }
@@ -973,7 +977,8 @@ function mediadownloader_menu() {
 function mediadownloader_adm_add_options() {
     $option = 'per_page';
     $args = array(
-        'label' => sprintf( __( 'items (min: %d - max: %d)', 'media-downloader' ), 10, 100 ),
+        /* translators: Placeholders receive min and max 'per page' values (10 and 100) */
+        'label' => sprintf( __( 'items (min: %1$d - max: %2$d)', 'media-downloader' ), 10, 100 ),
         'default' => 50,
         'option' => 'mediadownloader_adm_items_per_page'
     );

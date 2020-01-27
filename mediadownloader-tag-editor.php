@@ -235,7 +235,8 @@ endforeach;
                                     </select>
                                 <?php elseif ( 'textarea' == $tagoptions[1] ) : ?>
 				    <textarea id="edit_tag_<?php echo $mdtag; ?>" name="edit_tag_<?php echo $mdtag; ?>" cols="150" rows="10" class="widefat"><?php echo $tagvalue; ?></textarea>
-				    <?php if ( 'comment' == $mdtag ) : ?>
+                    <?php if ( 'comment' == $mdtag ) : ?>
+                        <?php /* translators: Placeholder receives markdown syntax documentation link */ ?>
                                         <p class="description"><?php printf( __( 'Supports <a href="%s" target="_blank">Markdown</a> syntax.', 'media-downloader' ), 'https://help.github.com/en/articles/basic-writing-and-formatting-syntax' ); ?></p>
                                     <?PHP endif; ?>
                                 <?php elseif ( 'richtext' == $tagoptions[1] ) : ?>

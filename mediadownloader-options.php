@@ -184,9 +184,10 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 <hr />
 
 <h2><?php _mde( 'Sample Usage' ) ;?></h2>
-<p><?php _mde( 'Media Downloader plugin lists MP3 files from a folder by replacing the <code>[media]</code> smart tag.' ) ;?></p>
+<p><?php _mde( 'Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.' ) ;?></p>
 
 <p><?php _mde( 'An example may help... Say you have a folder called <em>"music"</em> under your root folder, and it has some subfolders, as: <em>"Beethoven",</em> <em>"Mozart",</em> <em>"Bach"</em> and <em>"Haendel".</em>' ) ;?></p>
 
-<p><?php _mde( 'First of all, you should configure Media Downloader by typing <em>"music"</em> in the <label for="md_mp3folder"><em>"MP3 Folder"</em> field.</label> That done, you can edit a post talking about Johann Sebastian Bach and insert anywhere on it the smart tag <code>[media:Bach]</code>, then Media Downloader will create a list of all files under the <em>"music/Bach"</em> directory.' ) ;?></p>
+<p><?php _mde( 'First of all, you should configure Media Downloader by typing <em>"music"</em> in the <label for="md_mp3folder"><em>"MP3 Folder"</em> field.</label> That done, you can edit a post talking about Johann Sebastian Bach and insert anywhere on it the shortcode <code>[mediadownloader folder="Bach"]</code>, then Media Downloader will create a list of all files under the <em>"music/Bach"</em> directory.' ) ;?></p>
+
 </div>
