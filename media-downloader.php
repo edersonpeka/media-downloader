@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: https://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.
-Version: 0.3.6
+Version: 0.3.7
 Author: Ederson Peka
 Author URI: https://profiles.wordpress.org/edersonpeka/
 Text Domain: media-downloader
@@ -423,7 +423,7 @@ function buildMediaTable( $folder, $atts = false ) {
                     if ( array_key_exists( $pext, $packagetexts ) && $packagetexts[$pext] ) {
                         $ptext = preg_replace( '/\[filename\]/m', $pf, $packagetexts[$pext] );
                     }
-                    $ihtml .= '<li class="d' . mb_strtoupper(mb_substr($pext,0,1)) . mb_substr($pext,1) . '"><a href="'.$mrelative.($mrelative!='/'?'/':'').($cfolder).'/'.rawurlencode( $pf ).'" title="' . esc_attr( $pf ) . '">'.$ptext.(count($iall[$pext])>1?' ('.$cpf.')':'').'</a></li>' ;
+                    $ihtml .= '<li class="d' . mb_strtoupper(mb_substr($pext,0,1)) . mb_substr($pext,1) . '"><a href="'.$mrelative.($mrelative!='/'?'/':'').($cfolder).'/'.rawurlencode( $pf ).'" title="' . esc_attr( $pf ) . '" download>'.$ptext.(count($iall[$pext])>1?' ('.$cpf.')':'').'</a></li>' ;
                 }
             }
             $ihtml .= '</ul>';
@@ -638,7 +638,7 @@ function buildMediaTable( $folder, $atts = false ) {
             $ititletext = $iartisttext . $ititletext;
             if ( $ititletext ) $irel[] = 'mediaDownloaderTitleText:' . htmlentities( $ititletext, ENT_COMPAT, 'UTF-8' );
             $irel = implode( ';', $irel );
-            $ihtml .= '<td class="mediaDownload"><a href="'.network_home_url($mdir).'/'.($ufolder?$ufolder.'/':'').rawurlencode( $ifile ).'.'.$iext.'" title="' . htmlentities( $showifile, ENT_COMPAT, 'UTF-8' ) . '" ' . ( $irel ? 'rel="' . $irel . '"' : '' ) . ' id="mdfile_' . sanitize_title( $ifile ) . '">'.$idownloadtext.'</a></td>'."\n" ;
+            $ihtml .= '<td class="mediaDownload"><a href="'.network_home_url($mdir).'/'.($ufolder?$ufolder.'/':'').rawurlencode( $ifile ).'.'.$iext.'" title="' . htmlentities( $showifile, ENT_COMPAT, 'UTF-8' ) . '" ' . ( $irel ? 'rel="' . $irel . '"' : '' ) . ' id="mdfile_' . sanitize_title( $ifile ) . '" download>'.$idownloadtext.'</a></td>'."\n" ;
             $ihtml .= '</tr>'."\n" ;
         }
         $ihtml .= '</tbody></table>'."\n" ;
