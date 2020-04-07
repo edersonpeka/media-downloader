@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: https://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.
-Version: 0.3.7
+Version: 0.3.8
 Author: Ederson Peka
 Author URI: https://profiles.wordpress.org/edersonpeka/
 Text Domain: media-downloader
@@ -28,7 +28,7 @@ if ( !class_exists( 'media_downloader' ) ) :
 class media_downloader {
 
     // Init
-    function init() {
+    public static function init() {
         // Internationalization
         load_plugin_textdomain( 'media-downloader', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
         // Hooking into admin's screens
@@ -46,14 +46,14 @@ class media_downloader {
         add_shortcode( 'mediadownloader', array( __CLASS__, 'shortcode' ) );
     }
 
-    function admin_init() {
+    public static function admin_init() {
         // Create "settings" link for this plugin on plugins list
         add_filter( 'plugin_action_links', array( __CLASS__, 'settings_link' ), 10, 2 );
     }
 
     // Add Settings link to plugins - code from GD Star Ratings
     // (as seen in http://www.whypad.com/posts/wordpress-add-settings-link-to-plugins-page/785/ )
-    function settings_link( $links, $file ) {
+    public static function settings_link( $links, $file ) {
         $this_plugin = plugin_basename(__FILE__);
         if ( $file == $this_plugin ) {
             $settings_link = '<a href="' . admin_url( 'options-general.php?page=mediadownloader-options' ) . '">' . __( 'Settings', 'media-downloader' ) . '</a>';
@@ -62,7 +62,7 @@ class media_downloader {
         return $links;
     }
 
-    function shortcode( $atts ) {
+    public static function shortcode( $atts ) {
         $ret = '';
         if ( array_key_exists( 'folder', $atts ) && $atts['folder'] ) {
             $ret = buildMediaTable( $atts['folder'], $atts );
@@ -281,14 +281,16 @@ function buildMediaTable( $folder, $atts = false ) {
     if ( array_key_exists( 'tagencoding', $atts ) )
         $mdoencode = $atts['tagencoding'];
     if ( !$mdoencode ) $mdoencode = 'UTF-8';
-    $mdoencode = array_pop( explode( ' + ', $mdoencode ) );
+    $_a = explode( ' + ', $mdoencode );
+    $mdoencode = array_pop( $_a );
 
     // Should we re-encode the file names?
     $mdofnencode = get_option( 'filenameencoding' );
     if ( array_key_exists( 'filenameencoding', $atts ) )
         $mdofnencode = $atts['filenameencoding'];
     if ( !$mdofnencode ) $mdofnencode = 'UTF-8';
-    $mdofnencode = array_pop( explode( ' + ', $mdofnencode ) );
+    $_a = explode( ' + ', $mdofnencode );
+    $mdofnencode = array_pop( $_a );
 
     // How should we sort the files?
     $msort = get_option( 'sortfiles' );
@@ -470,16 +472,18 @@ function buildMediaTable( $folder, $atts = false ) {
             unset( $finfo );
             $alltags[$ifile] = $ftags;
             // Populating array of tag values with all tags
-            foreach ( $mdtags as $mshowtag )
+            foreach ( $mdtags as $mshowtag ) {
+                $_v = array_key_exists( $mshowtag, $ftags ) ? $ftags[$mshowtag][0] : '';
                 if ( 'comment' == $mshowtag ) {
                     if ( array_key_exists( 'text', $ftags ) && is_array( $ftags['text'] ) && trim( strip_tags( $ftags['text'][0] ) ) ) {
                         $tagvalues[$mshowtag][$ifile.'.'.$iext] = $ftags['text'][0];
                     } else {
-                        $tagvalues[$mshowtag][$ifile.'.'.$iext] = $Parsedown->text( $ftags[$mshowtag][0] );
+                        $tagvalues[$mshowtag][$ifile.'.'.$iext] = $Parsedown->text( $_v );
                     }
                 } else {
-                    $tagvalues[$mshowtag][$ifile.'.'.$iext] = $ftags[$mshowtag][0];
+                    $tagvalues[$mshowtag][$ifile.'.'.$iext] = $_v;
                 }
+            }
             unset( $ftags );
         }
         // Calculating tag "prefixes"
@@ -505,13 +509,15 @@ function buildMediaTable( $folder, $atts = false ) {
             $ititle = '';
             // Each tag list item
             foreach ( $mshowtags as $mshowtag ) {
-                $tagvalue = $tagvalues[$mshowtag][$ifile.'.'.$iext];
+                $_t = $tagvalues[$mshowtag];
+                $tagvalue = array_key_exists( $ifile.'.'.$iext, $_t ) ? $_t[$ifile.'.'.$iext] : '';
                 if ( '' == $tagvalue ) {
                     $tagvalue = '&nbsp;';
                 } else {
                     // Removing "prefix" of this tag
-                    if ( '' != $tagprefixes[$mshowtag] )
-                        $tagvalue = str_replace( $tagprefixes[$mshowtag], '', $tagvalue );
+                    if ( array_key_exists( $mshowtag, $tagprefixes ) )
+                        if ( '' != $tagprefixes[$mshowtag] )
+                            $tagvalue = str_replace( $tagprefixes[$mshowtag], '', $tagvalue );
                     // $tagvalue = str_replace( $prefix, '', $tagvalue ); // Causing weird behavior in some cases
                     // Cleaning...
                     $tagvalue = replaceUnderscores( $tagvalue );
@@ -679,6 +685,7 @@ function orderByTag( $a, $b, $tag ) {
     global $tagvalues;
     $ret = 0;
     foreach ( $tag as $t ) {
+        if ( ( !$tagvalues ) || ( !array_key_exists( $t, $tagvalues ) ) ) break;
         $ret = strnatcmp( $tagvalues[$t][$a], $tagvalues[$t][$b] );
         if ( 0 != $ret ) break;
     }
@@ -902,7 +909,11 @@ if ( get_option( 'handlefeed' ) ) :
     //add_action( 'rss_item', 'mediadownloaderRss' );
     add_action( 'rss2_item', 'mediadownloaderRss' );
     // Lowering cache lifetime to 4 hours
-    add_filter( 'wp_feed_cache_transient_lifetime', create_function('$a','$newvalue = 4*3600; if ( $a < $newvalue ) $a = $newvalue; return $a;') );
+    add_filter( 'wp_feed_cache_transient_lifetime', function( $a ) {
+        $newvalue = 4*3600;
+        if ( $a < $newvalue ) $a = $newvalue;
+        return $a;
+    } );
 endif;
 
 function mediaDownloaderEnqueueScripts() {
@@ -1005,7 +1016,8 @@ function mediadownloader_options() {
 // Add Settings link to plugins - code from GD Star Ratings
 // (as seen in http://www.whypad.com/posts/wordpress-add-settings-link-to-plugins-page/785/ )
 function mediadownloader_settings_link( $links, $file ) {
-    $this_plugin = plugin_basename( array_pop( explode( DIRECTORY_SEPARATOR, dirname( __FILE__ ) ) ) );
+    $_f = explode( DIRECTORY_SEPARATOR, dirname( __FILE__ ) );
+    $this_plugin = plugin_basename( array_pop( $_f ) );
     if ( $file == $this_plugin ) {
         $settings_link = '<a href="options-general.php?page=mediadownloader-options">' . _md( 'Settings' ) . '</a>';
         array_unshift( $links, $settings_link );

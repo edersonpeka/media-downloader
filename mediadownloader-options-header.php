@@ -15,7 +15,8 @@ $mdtabs = array(
 // If no tab is set as active, we set the first
 $anyTab = false;
 foreach ( $mdtabs as $tabSlug => $tabText ) if ( isset( $_GET[$tabSlug] ) ) $anyTab = true;
-if ( !$anyTab ) $_GET[array_shift(array_keys($mdtabs))] = true;
+$_tabs = array_keys($mdtabs);
+if ( !$anyTab ) $_GET[array_shift($_tabs)] = true;
 
 // Building tab's markup
 foreach ( $mdtabs as $tabSlug => $tabText ) :

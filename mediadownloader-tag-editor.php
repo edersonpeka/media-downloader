@@ -24,13 +24,15 @@ $mpath = ABSPATH . substr($mdir, 1);
 // Should we re-encode the tags?
 $mdoencode = get_option( 'tagencoding' );
 if ( !$mdoencode ) $mdoencode = 'UTF-8';
-$mdoencode_writing = array_shift( explode( ' + ', $mdoencode ) );
-$mdoencode = array_pop( explode( ' + ', $mdoencode ) );
+$_a = explode( ' + ', $mdoencode );
+$mdoencode_writing = array_shift( $_a );
+$mdoencode = array_pop( $_a );
 
 // Should we re-encode the file names?
 $mdofnencode = get_option( 'filenameencoding' );
 if ( !$mdofnencode ) $mdofnencode = 'UTF-8';
-$mdofnencode = array_pop( explode( ' + ', $mdofnencode ) );
+$_a = explode( ' + ', $mdofnencode );
+$mdofnencode = array_pop( $_a );
 
 // How should we sort the files?
 $msort = get_option( 'sortfiles' );
@@ -217,7 +219,8 @@ endforeach;
                                         'track_number' => array( 'Track Number', 'number' ),
                                     );
                     foreach ( $edit_tags as $mdtag => $tagoptions ) :
-                        $tagvalue = stripslashes( $ftags[ $mdtag ][0] );
+                        $_t = array_key_exists( $mdtag, $ftags ) ? $ftags[ $mdtag ][0] : '';
+                        $tagvalue = stripslashes( $_t );
                         if ( $mdoencode != 'UTF-8' ) $tagvalue = iconv( $mdoencode, 'UTF-8', $tagvalue );
                         ?>
                         <tr>
