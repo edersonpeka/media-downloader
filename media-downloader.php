@@ -37,6 +37,11 @@ class media_downloader {
         if ( array_key_exists( 'md_getfile', $_GET ) ) :
             include( dirname( __FILE__ ) . '/getfile.php' );
             exit();
+        // If query string 'md_getcss' parameter is set, we stream the custom CSS option value
+        elseif ( array_key_exists( 'md_getcss', $_GET ) ) :
+            header( 'Content-Type: text/css' );
+            echo get_option( 'customcss' );
+            exit();
         // If query string 'md_feed' parameter is set, we stream the RSS feed and quit
         elseif ( array_key_exists( 'md_feed', $_GET ) ) :
             include( dirname( __FILE__ ) . '/mdfeed.php' );
@@ -916,16 +921,31 @@ if ( get_option( 'handlefeed' ) ) :
     } );
 endif;
 
+// Uses bcmath extension, if available, to generate a smaller hash than md5's one.
+function mediaDownloaderStrHash( $customcss ) {
+    $converted = md5( $customcss );
+    if ( extension_loaded( 'bcmath' ) ) {
+        $n = base_convert( $converted, 16, 10 );
+        $codeset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-';
+        $base = strlen( $codeset );
+        $converted = '';
+        while ( $n > 0 ) {
+            $bcmod = bcmod( $n, $base );
+            $converted = substr( $codeset, $bcmod, 1 ) . $converted;
+            $n = bcdiv( $n, $base );
+        }
+    }
+    return $converted;
+}
+
 function mediaDownloaderEnqueueScripts() {
     // If any custom css, we enqueue our php that throws this css
     $customcss = trim( get_option( 'customcss' ) );
     if ( ( '' != $customcss ) && ( !is_admin() ) ) {
-        wp_register_style( 'mediadownloaderCss', md_plugin_url() . '/css/mediadownloader-css.php' );
+        wp_register_style( 'mediadownloaderCss', home_url() . '?md_getcss', array(), mediaDownloaderStrHash( $customcss ) );
         wp_enqueue_style( 'mediadownloaderCss' );
     }
 
-    // Enqueuing JQPlugin (browser plugins detection)
-    wp_enqueue_script( 'jqplugin', md_plugin_url() . '/js/jquery.jqplugin.1.0.2.min.js', array('jquery'), date( 'YmdHis', filemtime( dirname(__FILE__) . '/js/jquery.jqplugin.1.0.2.min.js' ) ), get_option( 'scriptinfooter' ) );
     // Enqueuing our javascript
     wp_enqueue_script( 'mediadownloaderJs', md_plugin_url() . '/js/mediadownloader.js', array('jquery'), date( 'YmdHis', filemtime( dirname(__FILE__) . '/js/mediadownloader.js' ) ), get_option( 'scriptinfooter' ) );
 

@@ -1,12 +1,10 @@
 <?php
-// Load WordPress "framework"
-require_once( '../../../../wp-load.php' );
 
-header( 'Content-Type: text/css' );
-//header( 'Cache-Control: no-cache' );
-//header( 'Pragma: no-cache' );
-
-// Throw "custom css" option value
-echo get_option( 'customcss' );
+// Backwards compatibility: redirecting old parameters
+if ( !array_key_exists( 'md_getcss', $_GET ) ) :
+    $r = explode( 'wp-content', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+    header( 'Location: ' . '//' . $r[0] . '?md_getcss' );
+    exit();
+endif;
 
 ?>

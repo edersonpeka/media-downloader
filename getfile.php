@@ -8,11 +8,15 @@ if ( array_key_exists( 'f', $_GET ) && !array_key_exists( 'md_getfile', $_GET ) 
 endif;
 
 // Calculate file path
+$op_siteurl = get_option( 'siteurl' );
+$op_mp3folder = get_option( 'mp3folder' );
+$mp3_folder_url = $op_siteurl . '/' . $op_mp3folder;
+$mp3_folder_path = ABSPATH . $op_mp3folder;
+$current_req_base = 'http' . ( isset( $_SERVER['HTTPS'] ) ? 's' : '' ) . '://' .$_SERVER['SERVER_NAME'];
 $file = urldecode( $_GET['md_getfile'] );
-$file = str_replace( get_option( 'siteurl' ), '', $file );
-$relURL=str_replace( 'http'.(isset($_SERVER['HTTPS'])?'s':'').'://'.$_SERVER['SERVER_NAME'], '', get_option( 'siteurl' ) );
-$filepath = ABSPATH . str_replace( $relURL, '', $file ) . '.mp3';
-if(substr($file,0,1)=='/') $file=substr($file,1);
+$file = str_replace( $mp3_folder_url, '', $file );
+$file = preg_replace( '|\.\./|ms', '', $file );
+$filepath = $mp3_folder_path . $file . '.mp3';
 // Serve file
 dl_file_resumable($filepath);
 
