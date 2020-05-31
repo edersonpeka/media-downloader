@@ -3,7 +3,7 @@ Contributors: edersonpeka, Jonathan Jose from www.flowconversatilidad.net (Spani
 Tags: media, audio, podcast, post, player, mp3, flash
 Requires at least: 4.0
 Tested up to: 5.4
-Stable tag: 0.3.9
+Stable tag: 0.4.1
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ederson@gmail.com&lc=BR&currency_code=BRL&item_name=Media%20Downloader%20Wordpress%20Plugin
 
 Lists MP3 files from a folder. Portuguese: Lista arquivos MP3 de um diretório. Spanish: Lista todos los MP3 de un directorio.
@@ -52,6 +52,8 @@ First of all, you should configure Media Downloader by typing "music" in the "MP
 
 That done, you can edit a post talking 'bout Johann Sebastian Bach and insert anywhere on it the shortcode, [mediadownloader folder="Bach"]. Media Downloader will create a list of all files under the "music/Bach" directory. This is actually very simple. ;-)
 
+(The [mediadownloader] shortcode accepts several parameters. You can learn more about them in plugin's settings page.)
+
 = Portuguese: Perguntas Freqüentes =
 = Como configurar? Onde jogar os arquivos MP3? Como eu uso essa tranqueira? Qual é a sintaxe da "smart tag"? =
 
@@ -61,6 +63,8 @@ Antes de tudo, você deve configurar o Media Downloader, digitando "musica" no c
 
 Feito isto, você pode editar um post falando sobre João Carlos Martins e inserir em qualquer lugar o shortcode: [mediadownloader folder="Martins"]. O Media Downloader vai criar uma lista de todos os arquivos no diretório "musica/Martins". Na verdade, é tudo bem simples. ;-)
 
+(O shortcode [mediadownloader] aceita diversos parâmetros. Você pode descobrir mais sobre eles na página de configurações do plugin.)
+
 = Spanish: Preguntas Frecuentes =
 = ¿Cómo debo configurar? ¿Dónde puedo tirar mis archivos MP3? ¿Cómo puedo usar esta cosa? ¿Cuál es el smart tag sintaxis? =
 
@@ -69,3 +73,5 @@ Un ejemplo puede ayudar... Digamos que usted tiene una carpeta llamada "musica" 
 En primer lugar, deberá configurar Media Downloader tecleando "clásica" en la "MP3 Carpeta" sobre el terreno, sobre los parámetros página (y luego hacer clic en "Actualización Opciones", de seguro).
 
 Ese hecho, puede editar un puesto hablando sobre Johann Sebastian Bach y insertar en cualquier lugar en el lo shortcode [mediadownloader folder="Bach"]. Media Downloader creará una lista de todos los archivos del "musica/Bach" directorio. Este es realmente muy simple. ;-)
+
+(Lo shortcode [mediadownloader] acepta varios parámetros. Puede obtener más información sobre ellos en la página de configuración del plugin.)

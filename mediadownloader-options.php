@@ -201,4 +201,99 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 
 <p><?php _mde( 'First of all, you should configure Media Downloader by typing <em>"music"</em> in the <label for="md_mp3folder"><em>"MP3 Folder"</em> field.</label> That done, you can edit a post talking about Johann Sebastian Bach and insert anywhere on it the shortcode <code>[mediadownloader folder="Bach"]</code>, then Media Downloader will create a list of all files under the <em>"music/Bach"</em> directory.' ) ;?></p>
 
+<p><?php _mde( 'The [mediadownloader] shortcode also accepts the following parameters:' ); ?></p>
+
+<dl class="md_sample_atts">
+
+<dt>showtags</dt>
+<dd>
+<p><?php _mde( 'Comma-separated MP3 info to show for each file on the list' ) ;?></p>
+<p><small><?php _mde( 'Possible values:' ) ;?> <code><?php echo implode( '</code>, <code>', $mdtags ) ;?></code></small></p>
+</dd>
+
+<dt>showplaylist</dt>
+<dd>
+<p><?php _mde( 'Show media playlist and player' ) ;?></p>
+<small><?php _mde( 'Possible values:' ) ;?> <code>true</code>, <code>false</code></small>
+</dd>
+
+<dt>showpackages</dt>
+<dd>
+<p><?php _mde( 'Show links for compacted files' ) ;?></p>
+<p><small><?php _mde( 'Possible values:' ) ;?> <code>true</code> <?php _mde( 'or comma-separated extensions' ); ?></small></p>
+</dd>
+
+<dt>showcover</dt>
+<dd>
+<p><?php _mde( 'Show cover (if a <code>folder.jpg</code> file is found)' ) ;?></p>
+<p><small><?php _mde( 'Possible values:' ) ;?> <code>true</code>, <code>false</code></small></p>
+</dd>
+
+<dt>showfeatured</dt>
+<dd>
+<p><?php _mde( 'Show post thumbnail' ) ;?></p>
+<p><small><?php _mde( 'Possible values:' ) ;?> <code><?php echo implode( '</code>, <code>', array_merge( array( 'fallback' ), get_intermediate_image_sizes() ) ) ;?></code></small></p>
+<p><small><?php printf( _md( '(If set to %s, the post thumbnail will be shown only if there is no "cover" image)' ), '<code>fallback</code>' ); ?></small></p>
+</dd>
+
+<dt>embedwhere</dt>
+<dd>
+<p><?php _mde( 'Embed player\'s button position' ) ;?></p>
+<p><small><?php _mde( 'Possible values:' ) ;?> <code>before</code>, <code>after</code></small></p>
+</dd>
+
+<dt>calculateprefix</dt>
+<dd>
+<p><?php _mde( 'Try to guess and remove a common "prefix" to all the files of the same folder' ) ;?></p>
+<p><small><?php _mde( 'Possible values:' ) ;?> <code>true</code>, <code>false</code></small></p>
+<p><small><?php _mde( '(though a very helpful "magic" sometimes, this feature behaves in a unpredictably wild way)' ) ;?></small></p>
+</dd>
+
+<dt>mp3folder</dt>
+<dd>
+<p><?php _mde( 'MP3 Folder.' ) ;?></p>
+<p><small><?php echo sprintf( _md('(must be <a href="%s">readable</a>)'), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small></p>
+</dd>
+
+<dt>tagencoding</dt>
+<dd>
+<p><?php _mde( 'MP3 tag encoding' ) ;?></p>
+<p><small><?php _mde( 'Possible values:' ) ;?> <code><?php echo implode( '</code>, <code>', $mdencodings ); ?></code></small></p>
+</dd>
+
+<dt>filenameencoding</dt>
+<dd>
+<p><?php _mde( 'File name encoding' ) ;?></p>
+<p><small><?php _mde( 'Possible values:' ) ;?> <code><?php echo implode( '</code>, <code>', $mdencodings ); ?></code></small></p>
+</dd>
+
+<dt>sortfiles</dt>
+<dd>
+<p><?php _mde( 'Sort files by' ) ;?></p>
+<p><small><?php _mde( 'Possible values:' ) ;?> <code><?php echo implode( '</code>, <code>', array_keys( $mdsortingfields ) ); ?></code></small></p>
+</dd>
+
+<dt>reversefiles</dt>
+<dd>
+<p><?php _mde( 'Reverse order' ) ;?></p>
+<p><small><?php _mde( 'Possible values:' ) ;?> <code>true</code>, <code>false</code></small></p>
+</dd>
+
+<dt>downloadtext</dt>
+<dd>
+<p><?php _mde( 'Download button\'s text' ) ;?></p>
+</dd>
+
+<dt>playtext</dt>
+<dd>
+<p><?php _mde( 'Play button\'s text' ) ;?></p>
+</dd>
+
+<dt>stoptext</dt>
+<dd>
+<p><?php _mde( 'Stop button\'s text' ) ;?></p>
+</dd>
+
+</dl>
+
 </div>

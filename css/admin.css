@@ -16,3 +16,7 @@ div.batchedit a:hover {
 table.batchedit select.disabled {
     background-color: #ccc;
 }
+
+dl.md_sample_atts dt {
+    font-weight: bold;
+}

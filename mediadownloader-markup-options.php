@@ -16,7 +16,7 @@ foreach( $mdmarkupsettings as $mdmarkupsetting => $mdsanitizefunction ) $mdoptio
 
 <fieldset id="mdf_replaceheaders">
 
-<h2><?php _mde('General tag info template'); ?></h2>
+<h2><?php _mde( 'General tag info template' ); ?></h2>
 
 <p>
 <?php
@@ -51,7 +51,7 @@ if ( !sanitizeMarkupTemplate( $markuptemplate ) ) $markuptemplate = array_shift(
 
 <h4><label for="md_covermarkup"><?php _mde( 'Wildcards:' ) ;?> <code>[coverimage]</code></label></h4>
 <p>
-<input type="text" name="covermarkup" id="md_covermarkup" value="<?php echo esc_attr( $mdoptions['covermarkup'] ) ;?>" size="75" />
+<input type="text" name="covermarkup" id="md_covermarkup" value="<?php echo esc_attr( $mdoptions['covermarkup'] ) ;?>" size="75" /><br />
 <small><?php _mde( 'Default:' ); ?> <i><code>&lt;img class="md_coverImage" src="[coverimage]" alt="<?php _mde( 'Album Cover' ); ?>" /&gt;</code></i></small>
 </p>
 
@@ -76,10 +76,14 @@ if ( count( $pexts ) ) :
     </p>
     
     <h3><?php _mde( 'Links texts:' ); ?></h3>
-    <?php foreach ( $pexts as $pext ) : ?>
+    <?php foreach ( $pexts as $pext ) : $pext = trim( $pext ); ?>
+        <?php
+        $ptexts = $mdoptions['packagetexts'];
+        $pext_text = array_key_exists( $pext, $ptexts ) ? $ptexts[$pext] : ''; ?>
         <p>
         <label for="md_packagetext_<?php echo $pext; ?>"><?php printf( _md( '<code>%s</code> file link text:' ), $pext ) ;?></label> <br />
-        <input type="text" name="packagetexts[<?php echo $pext; ?>]" id="md_packagetext_<?php echo $pext; ?>" value="<?php echo esc_attr( $mdoptions['packagetexts'][$pext] ) ;?>" size="75" /> <small><?php _mde( 'Default:' ); ?> <i><code><?php _mde( 'Download ' . strtoupper( $pext ) ); ?></code></i></small>
+        <input type="text" name="packagetexts[<?php echo $pext; ?>]" id="md_packagetext_<?php echo $pext; ?>" value="<?php echo esc_attr( $pext_text ) ;?>" size="75" /><br />
+        <small><?php _mde( 'Default:' ); ?> <i><code><?php _mde( 'Download ' . strtoupper( $pext ) ); ?></code></i></small>
         </p>
     <?php endforeach; ?>
     <h4><?php _mde( 'Wildcards:' ) ;?> <code>[filename]</code></h4>
@@ -100,19 +104,19 @@ if ( count( $pexts ) ) :
 
 <p>
 <label for="md_downloadtext"><?php _mde( 'Download Text:' ) ;?></label> <br />
-<input type="text" name="downloadtext" id="md_downloadtext" value="<?php echo esc_attr( $mdoptions['downloadtext'] ) ;?>" size="75" />
+<input type="text" name="downloadtext" id="md_downloadtext" value="<?php echo esc_attr( $mdoptions['downloadtext'] ) ;?>" size="75" /><br />
 <small><?php _mde( 'Default:' ); ?> <i><code>Download: [title]</code></i></small>
 </p>
 
 <p>
 <label for="md_playtext"><?php _mde( 'Play Text:' ) ;?></label> <br />
-<input type="text" name="playtext" id="md_playtext" value="<?php echo esc_attr( $mdoptions['playtext'] ) ;?>" size="75" />
+<input type="text" name="playtext" id="md_playtext" value="<?php echo esc_attr( $mdoptions['playtext'] ) ;?>" size="75" /><br />
 <small><?php _mde( 'Default:' ); ?> <i><code>Play: [title]</code></i></small>
 </p>
 
 <p>
 <label for="md_stoptext"><?php _mde( 'Stop Text:' ) ;?></label> <br />
-<input type="text" name="stoptext" id="md_stoptext" value="<?php echo esc_attr( $mdoptions['stoptext'] ) ;?>" size="75" />
+<input type="text" name="stoptext" id="md_stoptext" value="<?php echo esc_attr( $mdoptions['stoptext'] ) ;?>" size="75" /><br />
 <small><?php _mde( 'Default:' ); ?> <i><code>Stop: [title]</code></i></small>
 </p>
 

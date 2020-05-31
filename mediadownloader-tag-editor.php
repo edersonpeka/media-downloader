@@ -192,7 +192,8 @@ endforeach;
                         }
                     }
                 }
-                $ftags['user_text'] = array_key_exists( 'text', $ftags ) ? $ftags['text'] : $ftags['comment'];
+                $ftags['user_text'] = array_key_exists( 'comment', $ftags ) ? $ftags['comment'] : '';
+                $ftags['user_text'] = array_key_exists( 'text', $ftags ) ? $ftags['text'] : $ftags['user_text'];
                 
                 $current_img = '';
                 if ( array_key_exists( 'comments', $finfo ) && is_array( $finfo['comments'] ) && array_key_exists( 'picture', $finfo['comments'] ) && is_array( $finfo['comments']['picture'] ) && is_array( $finfo['comments']['picture'][0] ) && array_key_exists( 'data', $finfo['comments']['picture'][0] ) )
@@ -503,18 +504,22 @@ endforeach;
 
 </div>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css" />
-<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-<script>
-jQuery( document ).ready( function () {
-    if ( typeof SimpleMDE != 'undefined' ) {
-	var tarea = document.getElementById( 'edit_tag_comment' );
-	var simplemde = new SimpleMDE({ element: tarea, spellChecker: false, hideIcons: [ 'side-by-side', 'fullscreen' ], status: false });
-	var tdesc = tarea.parentNode.getElementsByClassName( 'description' );
-        if ( tdesc.length ) for ( var t = 0; t < tdesc.length; t++ ) tdesc[t].setAttribute( 'hidden', true );
-    }
-} );
-</script>
+<?php if ( $mdfile ) : ?>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css" />
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script>
+    jQuery( document ).ready( function () {
+        if ( typeof SimpleMDE != 'undefined' ) {
+            var tarea = document.getElementById( 'edit_tag_comment' );
+            if ( tarea ) {
+                var simplemde = new SimpleMDE({ element: tarea, spellChecker: false, hideIcons: [ 'side-by-side', 'fullscreen' ], status: false });
+                var tdesc = tarea.parentNode.getElementsByClassName( 'description' );
+                if ( tdesc.length ) for ( var t = 0; t < tdesc.length; t++ ) tdesc[t].setAttribute( 'hidden', true );
+            }
+        }
+    } );
+    </script>
+<?php endif; ?>
 
 <?php
 

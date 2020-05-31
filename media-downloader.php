@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: https://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.
-Version: 0.3.9
+Version: 0.4.1
 Author: Ederson Peka
 Author URI: https://profiles.wordpress.org/edersonpeka/
 Text Domain: media-downloader
@@ -284,8 +284,14 @@ function buildMediaTable( $folder, $atts = false ) {
 
     // Should we show the packages' links?
     $mshowpackages = true;
+    $packageextensions = md_packageExtensions();
     if ( array_key_exists( 'showpackages', $atts ) ) {
-        $mshowpackages = ( $atts['showpackages'] != 'false' );
+        if ( $atts['showpackages'] == 'false' ) {
+            $mshowpackages = false;
+            $packageextensions = array();
+        } elseif ( $atts['showpackages'] != 'true' ) {
+            $packageextensions = array_filter( explode( ',', $atts['showpackages'] ) );
+        }
     }
 
     // Should we show the 'cover' file ('folder.jpg')?
@@ -448,9 +454,13 @@ function buildMediaTable( $folder, $atts = false ) {
     }
 
     $countextra = 0;
-    foreach ( md_packageExtensions() as $pext ) {
-        if ( is_countable( $iall[$pext] ) ) {
-            $countextra += count( $iall[$pext] );
+    foreach ( $packageextensions as $pext ) {
+        if ( array_key_exists( $pext, $iall ) ) {
+            if ( is_countable( $iall[$pext] ) ) {
+                $countextra += count( $iall[$pext] );
+            }
+        } else {
+            $iall[ $pext ] = array();
         }
     }
     if ( 'fallback' == $mshowfeatured ) {
@@ -485,7 +495,7 @@ function buildMediaTable( $folder, $atts = false ) {
             for ( $a=0; $a<count($afolder); $a++ ) $afolder[$a] = rawurlencode( $afolder[$a] );
             $cfolder = implode( '/', $afolder );
             $ihtml .= '<ul class="md_wholebook_list">';
-            foreach ( md_packageExtensions() as $pext ) {
+            foreach ( $packageextensions as $pext ) {
                 $cpf = 0; if ( count( $iall[$pext] ) ) foreach( $iall[$pext] as $pf ) {
                     $cpf++;
                     $ptext = _md( 'Download ' . mb_strtoupper( $pext ) );
@@ -1000,6 +1010,14 @@ function mediaDownloaderStrHash( $customcss ) {
     return $converted;
 }
 
+function mediaDownloaderModificationTime( $file ) {
+    $filepath = dirname(__FILE__) . $file;
+    if ( file_exists( $filepath ) ) {
+        return date( 'YmdHis', filemtime( $filepath ) );
+    }
+    return date( 'YmdHis' );
+}
+
 function mediaDownloaderEnqueueScripts() {
     // If any custom css, we enqueue our php that throws this css
     $customcss = trim( get_option( 'customcss' ) );
@@ -1009,7 +1027,7 @@ function mediaDownloaderEnqueueScripts() {
     }
 
     // Enqueuing our javascript
-    wp_enqueue_script( 'mediadownloaderJs', md_plugin_url() . '/js/mediadownloader.js', array('jquery'), date( 'YmdHis', filemtime( dirname(__FILE__) . '/js/mediadownloader.js' ) ), get_option( 'scriptinfooter' ) );
+    wp_enqueue_script( 'mediadownloaderJs', md_plugin_url() . '/js/mediadownloader.js', array('jquery'), mediaDownloaderModificationTime( '/js/mediadownloader.js' ), get_option( 'scriptinfooter' ) );
 
     // Passing options to our javascript
     add_action( 'get_header', 'mediaDownloaderLocalizeScript' );
@@ -1042,12 +1060,21 @@ function mediaDownloaderInit() {
 }
 add_action( 'init', 'mediaDownloaderInit' );
 
-
 add_action( 'admin_init', 'md_admin_init' );
 
 function md_admin_init() {
-    wp_register_style( 'md-admin-css', md_plugin_url() . '/css/admin.css' );
-    wp_register_script( 'md-admin-script', md_plugin_url() . '/js/admin.js' );
+    wp_register_style(
+        'md-admin-css',
+        md_plugin_url() . '/css/admin.css',
+        array(),
+        mediaDownloaderModificationTime( '/css/admin.css' )
+    );
+    wp_register_script(
+        'md-admin-script',
+        md_plugin_url() . '/js/admin.js',
+        array(),
+        mediaDownloaderModificationTime( '/js/admin.js' )
+    );
 }
 function md_admin_styles() {
     wp_enqueue_style( 'md-admin-css' );
