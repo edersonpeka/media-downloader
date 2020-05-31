@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: https://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.
-Version: 0.3.8
+Version: 0.3.9
 Author: Ederson Peka
 Author URI: https://profiles.wordpress.org/edersonpeka/
 Text Domain: media-downloader
@@ -84,7 +84,11 @@ endif;
 // Possible encodings
 $mdencodings = array( 'UTF-8', 'ISO-8859-1', 'ISO-8859-15', 'cp866', 'cp1251', 'cp1252', 'KOI8-R', 'BIG5', 'GB2312', 'BIG5-HKSCS', 'Shift_JIS', 'EUC-JP' );
 $md_comp_encs = array();
-foreach ( $mdencodings as $mdenc ) if ( 'ISO-8859-1'!=$mdenc ) $md_comp_encs[] = 'ISO-8859-1 + '.$mdenc;
+foreach ( $mdencodings as $mdenc ) {
+    if ( 'ISO-8859-1' != $mdenc ) {
+        $md_comp_encs[] = 'ISO-8859-1 + ' . $mdenc;
+    }
+}
 $mdencodings = array_merge( $mdencodings, $md_comp_encs );
 // Possible fields by which file list should be sorted,
 // and respective sorting functions
@@ -111,6 +115,7 @@ $mdsettings = array(
     'customcss' => null,
     'removeextension' => 'sanitizeBoolean',
     'showcover' => 'sanitizeBoolean',
+    'showfeatured' => 'sanitizeImageSize',
     'packageextensions' => null,
     'embedplayer' => 'sanitizeBoolean',
     'autoplaylist' => 'sanitizeBoolean',
@@ -266,80 +271,122 @@ function buildMediaTable( $folder, $atts = false ) {
     $mrelative = preg_replace( '/^https?\:/m', '', $murl );
     $mrelative = preg_replace( '/^\/\//', '', $mrelative );
     $mrelative = explode( '/', $mrelative );
-    array_shift($mrelative);
-    $mrelative = '/'.implode('/', $mrelative);
+    array_shift( $mrelative );
+    $mrelative = '/' . implode( '/', $mrelative );
 
-    $mpath = ABSPATH . mb_substr($mdir, 1);
+    $mpath = ABSPATH . mb_substr( $mdir, 1 );
+
+    // Should we show the mp3 file list?
+    $mshowplaylist = true;
+    if ( array_key_exists( 'showplaylist', $atts ) ) {
+        $mshowplaylist = ( $atts['showplaylist'] != 'false' );
+    }
+
+    // Should we show the packages' links?
+    $mshowpackages = true;
+    if ( array_key_exists( 'showpackages', $atts ) ) {
+        $mshowpackages = ( $atts['showpackages'] != 'false' );
+    }
 
     // Should we show the 'cover' file ('folder.jpg')?
     $mshowcover = get_option( 'showcover' );
-    if ( array_key_exists( 'showcover', $atts ) )
-        $mshowcover = ( $atts['showcover'] == 'true' );
+    if ( array_key_exists( 'showcover', $atts ) ) {
+        $mshowcover = ( $atts['showcover'] != 'false' );
+    }
+
+    $mshowfeatured = get_option( 'showfeatured' );
+    if ( array_key_exists( 'showfeatured', $atts ) ) {
+        $mshowfeatured = $atts['showfeatured'];
+    }
+    if ( !sanitizeImageSize( $mshowfeatured ) ) {
+        $mshowfeatured = false;
+    }
 
     // Player position (before or after download link)
     $membedwhere = get_option( 'embedwhere' );
-    if ( array_key_exists( 'embedwhere', $atts ) )
+    if ( array_key_exists( 'embedwhere', $atts ) ) {
         $membedwhere = ( $atts['embedwhere'] == 'before' ) ? 'before' : 'after';
+    }
 
     // Should we re-encode the tags?
     $mdoencode = get_option( 'tagencoding' );
-    if ( array_key_exists( 'tagencoding', $atts ) )
+    if ( array_key_exists( 'tagencoding', $atts ) ) {
         $mdoencode = $atts['tagencoding'];
-    if ( !$mdoencode ) $mdoencode = 'UTF-8';
+    }
+    if ( !$mdoencode ) {
+        $mdoencode = 'UTF-8';
+    }
     $_a = explode( ' + ', $mdoencode );
     $mdoencode = array_pop( $_a );
 
     // Should we re-encode the file names?
     $mdofnencode = get_option( 'filenameencoding' );
-    if ( array_key_exists( 'filenameencoding', $atts ) )
+    if ( array_key_exists( 'filenameencoding', $atts ) ) {
         $mdofnencode = $atts['filenameencoding'];
-    if ( !$mdofnencode ) $mdofnencode = 'UTF-8';
+    }
+    if ( !$mdofnencode ) {
+        $mdofnencode = 'UTF-8';
+    }
     $_a = explode( ' + ', $mdofnencode );
     $mdofnencode = array_pop( $_a );
 
     // How should we sort the files?
     $msort = get_option( 'sortfiles' );
-    if ( array_key_exists( 'sortfiles', $atts ) )
+    if ( array_key_exists( 'sortfiles', $atts ) ) {
         $msort = $atts['sortfiles'];
+    }
     // "Backward compatibilaziness": it used to be a boolean value
-    if ( isset( $msort ) && !array_key_exists( $msort . '', $mdsortingfields ) ) $msort = 'title';
+    if ( isset( $msort ) && !array_key_exists( $msort . '', $mdsortingfields ) ) {
+        $msort = 'title';
+    }
 
     // Should the sorting be reversed?
     $mreverse = ( get_option( 'reversefiles' ) == true );
-    if ( array_key_exists( 'reversefiles', $atts ) )
+    if ( array_key_exists( 'reversefiles', $atts ) ) {
         $mreverse = ( $atts['reversefiles'] == 'true' );
+    }
 
     // Which tags to show?
     $option_showtags = get_option( 'showtags' );
-    if ( array_key_exists( 'showtags', $atts ) )
+    if ( array_key_exists( 'showtags', $atts ) ) {
         $option_showtags = $atts['showtags'];
+    }
     $option_showtags = preg_replace( '/comments/m', 'comment', $option_showtags );
     $mshowtags = array_intersect( array_map( 'trim', explode( ',', $option_showtags ) ), $mdtags );
     // If none, shows the first tag (title)
-    if ( !count($mshowtags) ) $mshowtags = array( $mdtags[0] );
+    if ( !count($mshowtags) ) {
+        $mshowtags = array( $mdtags[0] );
+    }
 
     // Markup options
     $covermarkup = get_option( 'covermarkup' );
-    if ( array_key_exists( 'covermarkup', $atts ) )
+    if ( array_key_exists( 'covermarkup', $atts ) ) {
         $covermarkup = $atts['covermarkup'];
+    }
 
     $downloadtext = get_option( 'downloadtext' );
-    if ( array_key_exists( 'downloadtext', $atts ) )
+    if ( array_key_exists( 'downloadtext', $atts ) ) {
         $downloadtext = $atts['downloadtext'];
+    }
 
     $playtext = get_option( 'playtext' );
-    if ( array_key_exists( 'playtext', $atts ) )
+    if ( array_key_exists( 'playtext', $atts ) ) {
         $playtext = $atts['playtext'];
+    }
 
     $stoptext = get_option( 'stoptext' );
-    if ( array_key_exists( 'stoptext', $atts ) )
+    if ( array_key_exists( 'stoptext', $atts ) ) {
         $stoptext = $atts['stoptext'];
+    }
 
     $replaceheaders = get_replaceheaders();
     $markuptemplate = get_option( 'markuptemplate' );
-    if ( array_key_exists( 'markuptemplate', $atts ) )
+    if ( array_key_exists( 'markuptemplate', $atts ) ) {
         $markuptemplate = $atts['markuptemplate'];
-    if ( !sanitizeMarkupTemplate( $markuptemplate ) ) $markuptemplate = array_shift( array_keys( $mdmarkuptemplates ) ); // Default: first option
+    }
+    if ( !sanitizeMarkupTemplate( $markuptemplate ) ) {
+        $markuptemplate = array_shift( array_keys( $mdmarkuptemplates ) ); // Default: first option
+    }
 
     // Initializing variables
     $cover = '';
@@ -401,8 +448,19 @@ function buildMediaTable( $folder, $atts = false ) {
     }
 
     $countextra = 0;
-    foreach ( md_packageExtensions() as $pext ) $countextra += is_countable( $iall[$pext] ) ? count( $iall[$pext] ) : 0;
-    if ( ( $mshowcover && $cover ) || $countextra ) {
+    foreach ( md_packageExtensions() as $pext ) {
+        if ( is_countable( $iall[$pext] ) ) {
+            $countextra += count( $iall[$pext] );
+        }
+    }
+    if ( 'fallback' == $mshowfeatured ) {
+        if ( $mshowcover && $cover ) {
+            $mshowfeatured = false;
+        } else {
+            $mshowfeatured = 'large';
+        }
+    }
+    if ( ( $mshowcover && $cover ) || ( $mshowfeatured && has_post_thumbnail() ) || $countextra ) {
         $ihtml .= '<div class="md_albumInfo">';
 
         if ( $mshowcover && $cover ) {
@@ -411,9 +469,13 @@ function buildMediaTable( $folder, $atts = false ) {
             $ihtml .= str_replace( '[coverimage]', $coversrc, $icovermarkup );
         }
 
-        // If any "extra" files, inserting an extra table
-        // (this was very case specific and remained here)
-        if ( $countextra ) {
+        if ( $mshowfeatured && has_post_thumbnail() ) {
+            $coversrc = get_the_post_thumbnail_url( null, $mshowfeatured );
+            $icovermarkup = $covermarkup ? $covermarkup : '<img class="md_coverImage md_postThumbnail" src="[coverimage]" alt="' . _md( 'Album Cover' ) . '" />';
+            $ihtml .= str_replace( '[coverimage]', $coversrc, $icovermarkup );
+        }
+
+        if ( $mshowpackages && $countextra ) {
             $packagetitle = get_option( 'packagetitle' );
             $packagetexts = get_option( 'packagetexts' );
             if ( !$packagetexts ) $packagetexts = array();
@@ -441,7 +503,7 @@ function buildMediaTable( $folder, $atts = false ) {
     }
 
     // Any MP3 file?
-    if ( count( $ifiles ) ) {
+    if ( $mshowplaylist && count( $ifiles ) ) {
         $Parsedown = new Parsedown();
         // Calculating file "prefixes"
         $prefix = calculatePrefix( $ifiles, $forcePrefix );
@@ -1103,6 +1165,11 @@ function sanitizeTagEncoding( $t ){
 }
 function sanitizeBoolean( $b ){
     return $b == 1 ;
+}
+function sanitizeImageSize( $size ){
+    $sizes = get_intermediate_image_sizes();
+    array_unshift( $sizes, 'fallback' );
+    return sanitizeArray( $size, $sizes );
 }
 function sanitizeHEXColor( $c ){
     return preg_match( '/^\s*#?[0-9A-F]{3,6}\s*$/i', $c, $m ) ? trim( str_replace( '#', '', $c ) ) : '';

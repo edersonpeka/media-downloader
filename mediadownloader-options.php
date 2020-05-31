@@ -93,6 +93,17 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 </p>
 
 <p>
+<label for="md_showfeatured"><?php _mde( 'Show post thumbnail:' ) ;?></label>
+<select name="showfeatured" id="md_showfeatured">
+    <option><?php _mde( 'Never' ) ;?></option>
+    <option value="fallback" <?php if ( 'fallback' == $mdoptions['showfeatured'] ) echo 'selected="selected"' ;?> ><?php _mde( 'If there is no "cover" image' ) ;?></option>
+    <?php foreach ( get_intermediate_image_sizes() as $mdsize ) { ?>
+        <option value="<?php echo $mdsize ;?>" <?php if ( $mdsize == $mdoptions['showfeatured'] ) echo 'selected="selected"' ;?> ><?php _mde( 'Size:' ); ?> <?php echo $mdsize ;?></option>
+    <?php } ;?>
+</select>
+</p>
+
+<p>
 <label for="md_packageextensions"><?php _mde( 'Comma-separated extensions for compacted files:' ) ;?></label><br />
 <input type="text" id="md_packageextensions" name="packageextensions" size="75" value="<?php echo $mdoptions['packageextensions'] ;?>" /><br />
 <small><?php _mde( 'Example:' ); ?> <code>zip</code>, <code>rar</code>, <code>tgz</code></small>
