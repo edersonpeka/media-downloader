@@ -232,7 +232,7 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 <dt>showfeatured</dt>
 <dd>
 <p><?php _mde( 'Show post thumbnail' ) ;?></p>
-<p><small><?php _mde( 'Possible values:' ) ;?> <code><?php echo implode( '</code>, <code>', array_merge( array( 'fallback' ), get_intermediate_image_sizes() ) ) ;?></code></small></p>
+<p><small><?php _mde( 'Possible values:' ) ;?> <code><?php echo implode( '</code>, <code>', array_merge( array( 'false', 'fallback' ), get_intermediate_image_sizes() ) ) ;?></code></small></p>
 <p><small><?php printf( _md( '(If set to %s, the post thumbnail will be shown only if there is no "cover" image)' ), '<code>fallback</code>' ); ?></small></p>
 </dd>
 
