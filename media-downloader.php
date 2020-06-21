@@ -396,6 +396,12 @@ function buildMediaTable( $folder, $atts = false ) {
         $markuptemplate = array_shift( array_keys( $mdmarkuptemplates ) ); // Default: first option
     }
 
+    // Should the ".mp3" file extension be removed from download links?
+    $removeextension = ( get_option( 'removeextension' ) == true );
+    if ( array_key_exists( 'removeextension', $atts ) ) {
+        $removeextension = ( $atts['removeextension'] == 'true' );
+    }
+
     // Initializing variables
     $cover = '';
     $ihtml = '';
@@ -504,7 +510,7 @@ function buildMediaTable( $folder, $atts = false ) {
                     if ( array_key_exists( $pext, $packagetexts ) && $packagetexts[$pext] ) {
                         $ptext = preg_replace( '/\[filename\]/m', $pf, $packagetexts[$pext] );
                     }
-                    $ihtml .= '<li class="d' . mb_strtoupper(mb_substr($pext,0,1)) . mb_substr($pext,1) . '"><a href="'.$mrelative.($mrelative!='/'?'/':'').($cfolder).'/'.rawurlencode( $pf ).'" title="' . esc_attr( $pf ) . '" download>'.$ptext.(count($iall[$pext])>1?' ('.$cpf.')':'').'</a></li>' ;
+                    $ihtml .= '<li class="d' . mb_strtoupper(mb_substr($pext,0,1)) . mb_substr($pext,1) . '"><a href="'.$mrelative.($mrelative!='/'?'/':'').($cfolder).'/'.rawurlencode( $pf ).'" title="' . esc_attr( $pf ) . '" download="' . esc_attr( $pf ) . '">'.$ptext.(count($iall[$pext])>1?' ('.$cpf.')':'').'</a></li>' ;
                 }
             }
             $ihtml .= '</ul>';
@@ -723,7 +729,7 @@ function buildMediaTable( $folder, $atts = false ) {
             $ititletext = $iartisttext . $ititletext;
             if ( $ititletext ) $irel[] = 'mediaDownloaderTitleText:' . htmlentities( $ititletext, ENT_COMPAT, 'UTF-8' );
             $irel = implode( ';', $irel );
-            $ihtml .= '<td class="mediaDownload"><a href="'.network_home_url($mdir).'/'.($ufolder?$ufolder.'/':'').rawurlencode( $ifile ).'.'.$iext.'" title="' . htmlentities( $showifile, ENT_COMPAT, 'UTF-8' ) . '" ' . ( $irel ? 'rel="' . $irel . '"' : '' ) . ' id="mdfile_' . sanitize_title( $ifile ) . '" download>'.$idownloadtext.'</a></td>'."\n" ;
+            $ihtml .= '<td class="mediaDownload"><a href="'.network_home_url($mdir).'/'.($ufolder?$ufolder.'/':'').rawurlencode( $ifile ).'.'.$iext.'" title="' . htmlentities( $showifile, ENT_COMPAT, 'UTF-8' ) . '" ' . ( $irel ? 'rel="' . $irel . '"' : '' ) . ' id="mdfile_' . sanitize_title( $ifile ) . '" download="' . esc_attr( $ifile . '.' . $iext ) . '">'.$idownloadtext.'</a></td>'."\n" ;
             $ihtml .= '</tr>'."\n" ;
         }
         $ihtml .= '</tbody></table>'."\n" ;
@@ -736,6 +742,15 @@ function buildMediaTable( $folder, $atts = false ) {
         $errorHtml .= '</div>';
         $ihtml .= $errorHtml;
     }
+
+    if ( $removeextension ) {
+        $ihtml = preg_replace(
+            '/href\=[\\\'\"](.*?)'.preg_quote('.mp3').'[\\\'\"]/im',
+            "href=\"?md_getfile=$1\"",
+            $ihtml
+        );
+    };
+
     return $ihtml;
 }
 
@@ -814,7 +829,7 @@ function mediadownloader( $t ) {
         $t = listMedia( $t );
         if ( TRUE == get_option( 'removeextension' ) ) {
             $t = preg_replace(
-                '/href\=[\\\'\"](.*)'.preg_quote('.mp3').'[\\\'\"]/im',
+                '/href\=[\\\'\"](.*?)'.preg_quote('.mp3').'[\\\'\"]/im',
                 "href=\"?md_getfile=$1\"",
                 $t
             );

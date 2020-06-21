@@ -279,6 +279,12 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 <p><small><?php _mde( 'Possible values:' ) ;?> <code>true</code>, <code>false</code></small></p>
 </dd>
 
+<dt>removeextension</dt>
+<dd>
+<p><?php _mde( 'Remove ".mp3" from download URL' ) ;?></p>
+<p><small><?php _mde( 'Possible values:' ) ;?> <code>true</code>, <code>false</code></small></p>
+</dd>
+
 <dt>downloadtext</dt>
 <dd>
 <p><?php _mde( 'Download button\'s text' ) ;?></p>
