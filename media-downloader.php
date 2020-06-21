@@ -20,6 +20,8 @@ if ( ! defined( 'WP_PLUGIN_URL' ) )
 if ( ! defined( 'WP_PLUGIN_DIR' ) )
       define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 
+include_once( dirname( __FILE__ ) . '/multibyte-functions.php' );
+
 // MarkDown, used for text formatting
 if( !class_exists( 'Parsedown' ) ) include_once( dirname( __FILE__ ) . '/Parsedown.php' );
 
