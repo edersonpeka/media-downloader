@@ -319,6 +319,18 @@ msgstr "Links para arquivos compactados"
 msgid "or comma-separated extensions"
 msgstr "ou extensões de arquivos separadas por vírgulas"
 
+#: mediadownloader-options.php
+msgid "Compacted files list title"
+msgstr "Título da lista de arquivos compactados"
+
+#: mediadownloader-options.php
+msgid "Compacted files link texts"
+msgstr "Textos dos links de arquivos compactados"
+
+#: mediadownloader-options.php
+msgid "zip: Download ZIP; rar: Download RAR;"
+msgstr "zip: Baixar ZIP; rar: Baixar RAR;"
+
 #: mediadownloader-options.php:234
 msgid "Show post thumbnail"
 msgstr "Exibir imagem destacada"

@@ -402,6 +402,22 @@ function buildMediaTable( $folder, $atts = false ) {
         $removeextension = ( $atts['removeextension'] == 'true' );
     }
 
+    $packagetitle = get_option( 'packagetitle' );
+    if ( array_key_exists( 'packagetitle', $atts ) ) {
+        $packagetitle = $atts['packagetitle'];
+    }
+    $packagetexts = get_option( 'packagetexts' );
+    if ( !is_array( $packagetexts ) ) $packagetexts = array();
+    if ( array_key_exists( 'packagetexts', $atts ) ) {
+        $_packagetexts = explode( ';', $atts['packagetexts'] );
+        foreach ( $_packagetexts as $_packagetext ) :
+            $_pieces = array_map( 'trim', array_filter( explode( ':', $_packagetext ) ) );
+            if ( count( $_pieces ) > 1 ) :
+                $packagetexts[ array_shift( $_pieces ) ] = implode( ':', $_pieces );
+            endif;
+        endforeach;
+    }
+
     // Initializing variables
     $cover = '';
     $ihtml = '';
@@ -494,9 +510,6 @@ function buildMediaTable( $folder, $atts = false ) {
         }
 
         if ( $mshowpackages && $countextra ) {
-            $packagetitle = get_option( 'packagetitle' );
-            $packagetexts = get_option( 'packagetexts' );
-            if ( !$packagetexts ) $packagetexts = array();
             $ihtml .= '<div class="md_wholebook">';
             if ( $packagetitle ) $ihtml .= '<h3 class="md_wholebook_title">' . $packagetitle . '</h3>';
             $afolder = explode( '/', $folderalone );

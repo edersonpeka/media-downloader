@@ -297,6 +297,18 @@ msgstr ""
 msgid "or comma-separated extensions"
 msgstr ""
 
+#: mediadownloader-options.php
+msgid "Compacted files list title"
+msgstr ""
+
+#: mediadownloader-options.php
+msgid "Compacted files link texts"
+msgstr ""
+
+#: mediadownloader-options.php
+msgid "zip: Download ZIP; rar: Download RAR;"
+msgstr ""
+
 #: mediadownloader-options.php:234
 msgid "Show post thumbnail"
 msgstr ""

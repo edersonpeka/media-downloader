@@ -223,6 +223,19 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 <p><small><?php _mde( 'Possible values:' ) ;?> <code>true</code> <?php _mde( 'or comma-separated extensions' ); ?></small></p>
 </dd>
 
+
+<dt>packagetitle</dt>
+<dd>
+<p><?php _mde( 'Compacted files list title' ) ;?></p>
+<p><small><?php _mde( 'Example:' ) ;?> <code><?php _mde( 'Compacted Files' ); ?></code></small></p>
+</dd>
+
+<dt>packagetexts</dt>
+<dd>
+<p><?php _mde( 'Compacted files link texts' ) ;?></p>
+<p><small><?php _mde( 'Example:' ) ;?> <code><?php _mde( 'zip: Download ZIP; rar: Download RAR;' ); ?></code></small></p>
+</dd>
+
 <dt>showcover</dt>
 <dd>
 <p><?php _mde( 'Show cover (if a <code>folder.jpg</code> file is found)' ) ;?></p>
