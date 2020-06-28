@@ -141,8 +141,9 @@ endforeach;
 	                                                                    'mime' => $uploadedfile['type'],
 	                                                                ),
 	                                                        );
-	                    else :
-        	                $picwarnings[] = sprintf( __( 'File type not allowed: <code>%s</code>', 'media-downloader' ), $uploadedfile['type'] );
+                        else :
+                            /* translators: %1$s will be replaced by the prohibited file type on upload attempt */
+        	                $picwarnings[] = sprintf( __( 'File type not allowed: <code>%1$s</code>', 'media-downloader' ), $uploadedfile['type'] );
 	                    endif;
 	                elseif ( is_array( $uploadedfile ) && array_key_exists( 'error', $uploadedfile ) && array_key_exists( 'name', $uploadedfile ) && $uploadedfile['name'] ) :
 	                    $responses = array(
@@ -201,7 +202,8 @@ endforeach;
                 
                 unset( $finfo );
                 ?>
-                <h3><?php printf( __( 'Editing File: <code>%s</code>', 'media-downloader' ), $mdbreadcrumbs . ' /' . stripslashes( $mdfile ) ); ?></h3>
+                <?php /* translators: %1$s will be replaced by the name of the file being edited */ ?>
+                <h3><?php printf( __( 'Editing File: <code>%1$s</code>', 'media-downloader' ), $mdbreadcrumbs . ' /' . stripslashes( $mdfile ) ); ?></h3>
                 
                 <form method="post" action="<?php self_link(); ?>" enctype="multipart/form-data">
                 <input type="hidden" name="mdaction" value="updatefile" />
@@ -308,12 +310,12 @@ endforeach;
 
                 </form>
             <?php else: ?>
-                <div class="error settings-error"><p><strong><?php printf( __( 'Could not read: <code>%s</code>', 'media-downloader' ), $mdfolder . '/' . stripslashes( $mdfile ) ); ?></strong></p></div>
+                <div class="error settings-error"><p><strong><?php printf( __( 'Could not read: <code>%1$s</code>', 'media-downloader' ), $mdfolder . '/' . stripslashes( $mdfile ) ); ?></strong></p></div>
             <?php endif; ?>
 
         <?php elseif ( '*' == $mdfile ) : ?>
-        
-                <h3><?php printf( __( 'Batch editing: <code>%s</code>', 'media-downloader' ), $mdbreadcrumbs . ' /' . stripslashes( $mdfile ) ); ?></h3>
+                <?php /* translators: %1$s will be replaced by the name of the file being edited */ ?>
+                <h3><?php printf( __( 'Batch editing: <code>%1$s</code>', 'media-downloader' ), $mdbreadcrumbs . ' /' . stripslashes( $mdfile ) ); ?></h3>
                 
                 <form method="post" action="<?php self_link(); ?>" enctype="multipart/form-data">
                 <input type="hidden" name="mdaction" value="batchedit" />
@@ -418,8 +420,7 @@ endforeach;
                 </form>
 
         <?php else: ?>
-
-            <div class="error settings-error"><p><strong><?php printf( __( 'Could not read: <code>%s</code>', 'media-downloader' ), $mdfolder . '/' . stripslashes( $mdfile ) ); ?></strong></p></div>
+            <div class="error settings-error"><p><strong><?php printf( __( 'Could not read: <code>%1$s</code>', 'media-downloader' ), $mdfolder . '/' . stripslashes( $mdfile ) ); ?></strong></p></div>
 
         <?php endif; ?>
 
@@ -438,7 +439,8 @@ endforeach;
                 }
             }
         } else {
-            $errors[] = sprintf( __( 'Could not read: <code>%s</code>', 'media-downloader' ), $ipath );
+            /* translators: %1$s will be replaced by the name of the unreadable resource */
+            $errors[] = sprintf( __( 'Could not read: <code>%1$s</code>', 'media-downloader' ), $ipath );
         }
 
         // If set, sorting array
@@ -484,14 +486,17 @@ endforeach;
                 <?php endforeach; ?>
                 <div class="tablenav top">
                 <div class="alignleft actions">
-                    <h3><?php printf( __( 'Directory: <code>%s</code>', 'media-downloader' ), $mdbreadcrumbs ); ?></h3>
+                    <?php /* translators: %1$s will be replaced by the name of the directory being displayed */ ?>
+                    <h3><?php printf( __( 'Directory: <code>%1$s</code>', 'media-downloader' ), $mdbreadcrumbs ); ?></h3>
                 </div>
                 <div class="tablenav-pages">
+                    <?php /* translators: %d will be replaced by the number of files in the current directory */ ?>
                     <span class="displaying-num"><?php printf( _n( '%d item', '%d items', count( $iall ) ), count( $iall ), 'media-downloader' ); ?></span>
                     <?php if ( $ipages > 1 ) : ?>
                         <span class="pagination-links"><a class="first-page<?php if ( $ipaged <= 1 ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to first page', 'media-downloader' ); ?>" href="<?php echo add_query_arg( array( 'paged' => null ) ); ?>">«</a>
                         <a class="prev-page<?php if ( $ipaged <= 1 ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to previous page', 'media-downloader' ); ?>" href="<?php echo add_query_arg( array( 'paged' => $ipaged > 1 ? $ipaged - 1 : null ) ); ?>">‹</a>
-                        <span class="paging-input"><?php printf( __( '%s of <span class="total-pages">%d</span>', 'media-downloader' ), '<input class="current-page" title="' . __( 'Current page', 'media-downloader' ) . '" type="text" name="paged" value="' . $ipaged . '" size="1">', $ipages ); ?></span>
+                        <?php /* translators: %1$s will be replaced by a HTML input displaying the number of the current page, and %2$d will be replaced by the number of pages */ ?>
+                        <span class="paging-input"><?php printf( __( '%1$s of <span class="total-pages">%2$d</span>', 'media-downloader' ), '<input class="current-page" title="' . __( 'Current page', 'media-downloader' ) . '" type="text" name="paged" value="' . $ipaged . '" size="1">', $ipages ); ?></span>
                         <a class="next-page<?php if ( $ipaged >= $ipages ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to next page', 'media-downloader' ); ?>" href="<?php echo add_query_arg( array( 'paged' => min( $ipaged + 1, $ipages ) ) ); ?>">›</a>
                         <a class="last-page<?php if ( $ipaged >= $ipages ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to last page', 'media-downloader' ); ?>" href="<?php echo add_query_arg( array( 'paged' => $ipages ) ); ?>">»</a></span>
                     <?php endif; ?>
@@ -536,6 +541,7 @@ endforeach;
                                 <tr>
                                     <td><a href="<?php echo add_query_arg( array( 'mdfile' => $ifile ) ); ?>"><?php echo $ifile; ?></a></td>
                                     <td><?php echo byte_convert( filesize( $ipath . '/' . $ifile ) ); ?></td>
+                                    <?php /* translators: %1$s will be replaced by the modification date, and %2$s by the modification time. Every other character must be escaped by a backslash. */ ?>
                                     <td><?php $timemask = sprintf( __( '%1$s \a\t %2$s', 'media-downloader' ), get_option('date_format'), get_option('time_format') ); echo date_i18n( $timemask, filemtime( $ipath . '/' . $ifile ) ); ?></td>                    
                                 </tr>
                             <?php else: ?>
@@ -550,7 +556,7 @@ endforeach;
                 </tbody>
             </table>
         <?php else: ?>
-            <h3><?php printf( __( 'Directory: <code>%s</code>', 'media-downloader' ), $mdbreadcrumbs ); ?></h3>
+            <h3><?php printf( __( 'Directory: <code>%1$s</code>', 'media-downloader' ), $mdbreadcrumbs ); ?></h3>
             <div class="error settings-error"><p><strong><?php _e( 'Empty directory?', 'media-downloader' ); ?></strong></p></div>
         <?php endif; ?>
 

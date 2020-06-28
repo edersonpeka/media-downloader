@@ -146,8 +146,8 @@ $mdmarkupsettings = array(
 );
 // Possible markup templates
 $mdmarkuptemplates = array(
-    'definition-list' => '<strong>"DL" mode:</strong> One table cell containing a definition list (one definition term for each tag)',
-    'table-cells' => '<strong>"TR" mode:</strong> One table cell for each tag'
+    'definition-list' => __( '<strong>"DL" mode:</strong> One table cell containing a definition list (one definition term for each tag)', 'media-downloader' ),
+    'table-cells' => __( '<strong>"TR" mode:</strong> One table cell for each tag', 'media-downloader' ),
 );
 
 // Default player colors
@@ -446,6 +446,7 @@ function buildMediaTable( $folder, $atts = false ) {
                 if ( mb_strtolower( preg_replace( '/\.jpeg/m', '.jpg', $ifile ) ) == 'folder.jpg' ) $cover = $ifile;
             }
         } else {
+            /* translators: %1$s will be replaced by the unreadable path */
             $errors[] = sprintf( __( 'Could not read: %1$s', 'media-downloader' ), $ipath );
         }
     } elseif ( file_exists( $ipath ) && is_readable( $ipath ) ) {
@@ -519,7 +520,8 @@ function buildMediaTable( $folder, $atts = false ) {
             foreach ( $packageextensions as $pext ) {
                 $cpf = 0; if ( count( $iall[$pext] ) ) foreach( $iall[$pext] as $pf ) {
                     $cpf++;
-                    $ptext = sprintf( __( 'Download %s', 'media-downloader' ), mb_strtoupper( $pext ) );
+                    /* translators: %1$s will be replaced by the file extension */
+                    $ptext = sprintf( __( 'Download %1$s', 'media-downloader' ), mb_strtoupper( $pext ) );
                     if ( array_key_exists( $pext, $packagetexts ) && $packagetexts[$pext] ) {
                         $ptext = preg_replace( '/\[filename\]/m', $pf, $packagetexts[$pext] );
                     }
@@ -1005,6 +1007,7 @@ function mediadownloaderRss(){
             //$t .= '<enclosure title="' . basename( $m ) . '" url="' . ( $m . '.' . $mext ) . '" length="' . mediadownloaderFileSize( $m, $mext ) . '" type="audio/mpeg" />';
             $t .= '</item>';
             $t .= '<item>';
+            /* translators: on this rss feed item, %1$s and %2$s will be replaced by file name and post title, respectively */
             $t .= '<title>' . sprintf( __( 'Attached file: %1$s - %2$s', 'media-downloader' ), urldecode( basename( $m ) ), get_the_title($post->ID) ) . '</title>';
             $t .= '<link>' . get_permalink($post->ID) . '#mdfile_' . sanitize_title( basename( urldecode( $m ) ) ) . '</link>';
             $t .= '<description><![CDATA[' . $adjacentmarkup . ']]></description>';

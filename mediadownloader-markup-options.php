@@ -24,7 +24,7 @@ $markuptemplate = $mdoptions['markuptemplate'];
 if ( !sanitizeMarkupTemplate( $markuptemplate ) ) $markuptemplate = array_shift( array_keys( $mdmarkuptemplates ) );
 ?>
 <?php foreach ( $mdmarkuptemplates as $key => $value ) : ?>
-    <label for="md_markuptemplate_<?php echo $key; ?>"><input type="radio" name="markuptemplate" id="md_markuptemplate_<?php echo $key; ?>" value="<?php echo $key; ?>" <?php if ( $key == $markuptemplate ) : ?>checked="checked"<?php endif; ?> /> <?php _e( $value, 'media-downloader' ) ;?></label> <br />
+    <label for="md_markuptemplate_<?php echo $key; ?>"><input type="radio" name="markuptemplate" id="md_markuptemplate_<?php echo $key; ?>" value="<?php echo $key; ?>" <?php if ( $key == $markuptemplate ) : ?>checked="checked"<?php endif; ?> /> <?php echo __( $value, 'media-downloader' ); ?></label> <br />
 <?php endforeach; ?>
 </p>
 
@@ -72,7 +72,7 @@ if ( count( $pexts ) ) :
     <h3><label for="md_packagetitle"><?php _e( 'File list title:', 'media-downloader' ); ?></label></h3>
     <p>
     <input type="text" name="packagetitle" id="md_packagetitle" value="<?php echo esc_attr( $mdoptions['packagetitle'] ) ;?>" size="75" /><br />
-    <small><?php _e( 'Example:', 'media-downloader' ); ?> <i><code><?php _e( 'Compacted Files' ); ?></code></i></small>
+    <small><?php _e( 'Example:', 'media-downloader' ); ?> <i><code><?php _e( 'Compacted Files', 'media-downloader' ); ?></code></i></small>
     </p>
     
     <h3><?php _e( 'Links texts:', 'media-downloader' ); ?></h3>
@@ -81,9 +81,10 @@ if ( count( $pexts ) ) :
         $ptexts = $mdoptions['packagetexts'];
         $pext_text = array_key_exists( $pext, $ptexts ) ? $ptexts[$pext] : ''; ?>
         <p>
-        <label for="md_packagetext_<?php echo $pext; ?>"><?php printf( __( '<code>%s</code> file link text:', 'media-downloader' ), $pext ) ;?></label> <br />
+        <?php /* translators: %1$s will be replaced by the file extensions */ ?>
+        <label for="md_packagetext_<?php echo $pext; ?>"><?php printf( __( '<code>%1$s</code> file link text:', 'media-downloader' ), $pext ) ;?></label> <br />
         <input type="text" name="packagetexts[<?php echo $pext; ?>]" id="md_packagetext_<?php echo $pext; ?>" value="<?php echo esc_attr( $pext_text ) ;?>" size="75" /><br />
-        <small><?php _e( 'Default:', 'media-downloader' ); ?> <i><code><?php echo sprintf( __( 'Download %', 'media-downloader' ), mb_strtoupper( $pext ) ); ?></code></i></small>
+        <small><?php _e( 'Default:', 'media-downloader' ); ?> <i><code><?php echo sprintf( __( 'Download %1$s', 'media-downloader' ), mb_strtoupper( $pext ) ); ?></code></i></small>
         </p>
     <?php endforeach; ?>
     <h4><?php _e( 'Wildcards:', 'media-downloader' ) ;?> <code>[filename]</code></h4>

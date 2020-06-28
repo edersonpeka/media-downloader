@@ -18,7 +18,8 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 <h3><label for="md_mp3folder"><?php _e( 'MP3 Folder:', 'media-downloader' ) ;?></label></h3>
 <p>
 <label for="md_mp3folder"><code><?php echo ABSPATH ;?></code></label>
-<input type="text" name="mp3folder" id="md_mp3folder" value="<?php echo $mdoptions['mp3folder'] ;?>" size="20" /> <small><?php echo sprintf( __( '(must be <a href="%s">readable</a>)', 'media-downloader' ), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small>
+<?php /* translators: %1$s will be replaced by the URL for wordpress documentation on file permissions */ ?>
+<input type="text" name="mp3folder" id="md_mp3folder" value="<?php echo $mdoptions['mp3folder'] ;?>" size="20" /> <small><?php echo sprintf( __( '(must be <a href="%1$s">readable</a>)', 'media-downloader' ), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small>
 
 <?php if( '' != trim( $mdoptions['mp3folder'] ) ){
     $dirok = is_readable( ABSPATH . '/' . $mdoptions['mp3folder'] ) ;?>
@@ -164,11 +165,12 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 
 <p>
 <label for="md_cachedir"><?php _e( 'Cache dir:', 'media-downloader' );?> <code><?php echo ABSPATH ;?></code></label>
-<input type="text" name="cachedir" id="md_cachedir" value="<?php echo $mdoptions['cachedir'] ;?>" size="20" /> <small><?php echo sprintf( __( '(must be <a href="%s">writable</a>)', 'media-downloader' ), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small>
+<?php /* translators: %1$s will be replaced by the URL for wordpress documentation on file permissions */ ?>
+<input type="text" name="cachedir" id="md_cachedir" value="<?php echo $mdoptions['cachedir'] ;?>" size="20" /> <small><?php echo sprintf( __( '(must be <a href="%1$s">writable</a>)', 'media-downloader' ), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small>
 
 <?php if( '' != trim( $mdoptions['cachedir'] ) ){
     $dirok = is_writeable( ABSPATH . '/' . $mdoptions['cachedir'] ) ;?>
-    <br /><small style="color:#999;background-color:#<?php echo $dirok ? 'DFD' : 'FDD' ;?>"><?php _e( $dirok ? 'Folder successfully written on.' : 'Could not write on folder.', 'media-downloader' );?></small>
+    <br /><small style="color:#999;background-color:#<?php echo $dirok ? 'DFD' : 'FDD' ;?>"><?php echo $dirok ? __( 'Folder successfully written on.', 'media-downloader' ) : __( 'Could not write on folder.', 'media-downloader' );?></small>
 <?php };?>
 
 </p>
@@ -246,7 +248,8 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 <dd>
 <p><?php _e( 'Show post thumbnail', 'media-downloader' );?></p>
 <p><small><?php _e( 'Possible values:', 'media-downloader' );?> <code><?php echo implode( '</code>, <code>', array_merge( array( 'false', 'fallback' ), get_intermediate_image_sizes() ) ) ;?></code></small></p>
-<p><small><?php printf( __( '(If set to %s, the post thumbnail will be shown only if there is no "cover" image)', 'media-downloader' ), '<code>fallback</code>' ); ?></small></p>
+<?php /* translators: %1$s will be replaced by the "fallback" keyword (used in a shortcode attribute) */ ?>
+<p><small><?php printf( __( '(If set to %1$s, the post thumbnail will be shown only if there is no "cover" image)', 'media-downloader' ), '<code>fallback</code>' ); ?></small></p>
 </dd>
 
 <dt>embedwhere</dt>
@@ -265,7 +268,8 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 <dt>mp3folder</dt>
 <dd>
 <p><?php _e( 'MP3 Folder.', 'media-downloader' );?></p>
-<p><small><?php echo sprintf( __( '(must be <a href="%s">readable</a>)', 'media-downloader' ), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small></p>
+<?php /* translators: %1$s will be replaced by the URL for wordpress documentation on file permissions */ ?>
+<p><small><?php echo sprintf( __( '(must be <a href="%1$s">readable</a>)', 'media-downloader' ), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small></p>
 </dd>
 
 <dt>tagencoding</dt>
