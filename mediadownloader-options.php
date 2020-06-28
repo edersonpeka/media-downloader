@@ -15,21 +15,21 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 <?php settings_fields( 'md_options' ); ?>
 
 <fieldset id="mdf_mp3folder">
-<h3><label for="md_mp3folder"><?php _mde( 'MP3 Folder:' ) ;?></label></h3>
+<h3><label for="md_mp3folder"><?php _e( 'MP3 Folder:', 'media-downloader' ) ;?></label></h3>
 <p>
 <label for="md_mp3folder"><code><?php echo ABSPATH ;?></code></label>
-<input type="text" name="mp3folder" id="md_mp3folder" value="<?php echo $mdoptions['mp3folder'] ;?>" size="20" /> <small><?php echo sprintf( _md('(must be <a href="%s">readable</a>)'), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small>
+<input type="text" name="mp3folder" id="md_mp3folder" value="<?php echo $mdoptions['mp3folder'] ;?>" size="20" /> <small><?php echo sprintf( __( '(must be <a href="%s">readable</a>)', 'media-downloader' ), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small>
 
 <?php if( '' != trim( $mdoptions['mp3folder'] ) ){
     $dirok = is_readable( ABSPATH . '/' . $mdoptions['mp3folder'] ) ;?>
-    <br /><small style="color:#999;background-color:#<?php echo $dirok ? 'DFD' : 'FDD' ;?>"><?php _mde( $dirok ? 'Folder successfully read.' : 'Could not read folder.') ;?></small>
+    <br /><small style="color:#999;background-color:#<?php echo $dirok ? 'DFD' : 'FDD' ;?>"><?php echo $dirok ? __( 'Folder successfully read.', 'media-downloader' ) : __( 'Could not read folder.', 'media-downloader' ) ;?></small>
 <?php };?>
 
 </p>
 
 
 <p>
-<h4><?php _mde( 'Media files:' ) ;?></h4>
+<h4><?php _e( 'Media files:', 'media-downloader' ) ;?></h4>
 <?php foreach ( md_mediaAllExtensions() as $mext ) :
     $checked = in_array( $mext, md_mediaExtensions() ) ? ' checked="checked"' : '';
     ?>
@@ -38,102 +38,102 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 </p>
 
 <p class="submit">
-<input type="submit" class="button button-primary" value="<?php _mde( 'Update Options' ) ;?>" />
+<input type="submit" class="button button-primary" value="<?php _e( 'Update Options', 'media-downloader' ) ;?>" />
 </p>
 </fieldset>
 
 <hr />
 
 <fieldset id="mdf_customcss">
-<h3><label for="md_showtags"><?php _mde( 'Show MP3 Info:' ) ;?></label></h3>
+<h3><label for="md_showtags"><?php _e( 'Show MP3 Info:', 'media-downloader' ) ;?></label></h3>
 <p>
-<label for="md_showtags"><?php _mde( 'Comma-separated MP3 info to show for each file on the list:' ) ;?></label><br />
+<label for="md_showtags"><?php _e( 'Comma-separated MP3 info to show for each file on the list:', 'media-downloader' ) ;?></label><br />
 <input type="text" id="md_showtags" name="showtags" size="75" value="<?php echo $mdoptions['showtags'] ;?>" />
 <br />
-<small><?php _mde( 'Possible values:' ) ;?> <code><?php echo implode( '</code>, <code>', $mdtags ) ;?></code>.</small>
+<small><?php _e( 'Possible values:', 'media-downloader' ) ;?> <code><?php echo implode( '</code>, <code>', $mdtags ) ;?></code>.</small>
 <br />
-<small><?php _mde( 'Default:' ) ;?> <code><?php echo $mdtags[0] ;?></code>.</small>
+<small><?php _e( 'Default:', 'media-downloader' ) ;?> <code><?php echo $mdtags[0] ;?></code>.</small>
 </p>
 
-<h3><label for="md_customcss"><?php _mde( 'Custom CSS:' ) ;?></label></h3>
+<h3><label for="md_customcss"><?php _e( 'Custom CSS:', 'media-downloader' ) ;?></label></h3>
 <p>
 <textarea id="md_customcss" name="customcss" cols="75" rows="7"><?php echo $mdoptions['customcss'] ;?></textarea>
 </p>
 
 <p class="submit">
-<input type="submit" class="button button-primary" value="<?php _mde( 'Update Options' ) ;?>" />
+<input type="submit" class="button button-primary" value="<?php _e( 'Update Options', 'media-downloader' ) ;?>" />
 </p>
 </fieldset>
 
 <hr />
 
 <fieldset id="mdf_advanced">
-<h3><?php _mde( 'Advanced:' ) ;?></h3>
+<h3><?php _e( 'Advanced:',  'media-downloader' ) ;?></h3>
 <p>
 <input type="checkbox" name="removeextension" id="md_removeextension" value="1" <?php if ( $mdoptions['removeextension'] ) echo ' checked="checked" ' ;?> />
 <label for="md_removeextension">
-<?php _mde( 'Remove ".mp3" from download URL' ) ;?>
+<?php _e( 'Remove ".mp3" from download URL', 'media-downloader' ) ;?>
 <br />
-<small><?php _mde( '(checking it may cause some server overloading)' ) ;?></small>
+<small><?php _e( '(checking it may cause some server overloading)', 'media-downloader' ) ;?></small>
 </label>
 </p>
 
 <p>
 <input type="checkbox" name="calculateprefix" id="md_calculateprefix" value="1" <?php if ( $mdoptions['calculateprefix'] ) echo ' checked="checked" ' ;?> />
 <label for="md_calculateprefix">
-<?php _mde( 'Try to guess and remove a common "prefix" to all the files of the same folder' ) ;?>
+<?php _e( 'Try to guess and remove a common "prefix" to all the files of the same folder', 'media-downloader' ) ;?>
 <br />
-<small><?php _mde( '(though a very helpful "magic" sometimes, this feature behaves in a unpredictably wild way)' ) ;?></small>
+<small><?php _e( '(though a very helpful "magic" sometimes, this feature behaves in a unpredictably wild way)', 'media-downloader' ) ;?></small>
 </label>
 </p>
 
 <p>
 <input type="checkbox" name="showcover" id="md_showcover" value="1" <?php if ( $mdoptions['showcover'] ) echo ' checked="checked" ' ;?> />
-<label for="md_showcover"><?php _mde( 'Show cover (if a <code>folder.jpg</code> file is found)' ) ;?></label>
+<label for="md_showcover"><?php _e( 'Show cover (if a <code>folder.jpg</code> file is found)', 'media-downloader' ) ;?></label>
 </p>
 
 <p>
-<label for="md_showfeatured"><?php _mde( 'Show post thumbnail:' ) ;?></label>
+<label for="md_showfeatured"><?php _e( 'Show post thumbnail:', 'media-downloader' ) ;?></label>
 <select name="showfeatured" id="md_showfeatured">
-    <option><?php _mde( 'Never' ) ;?></option>
-    <option value="fallback" <?php if ( 'fallback' == $mdoptions['showfeatured'] ) echo 'selected="selected"' ;?> ><?php _mde( 'If there is no "cover" image' ) ;?></option>
+    <option><?php _e( 'Never', 'media-downloader' ) ;?></option>
+    <option value="fallback" <?php if ( 'fallback' == $mdoptions['showfeatured'] ) echo 'selected="selected"' ;?> ><?php _e( 'If there is no "cover" image', 'media-downloader' ) ;?></option>
     <?php foreach ( get_intermediate_image_sizes() as $mdsize ) { ?>
-        <option value="<?php echo $mdsize ;?>" <?php if ( $mdsize == $mdoptions['showfeatured'] ) echo 'selected="selected"' ;?> ><?php _mde( 'Size:' ); ?> <?php echo $mdsize ;?></option>
+        <option value="<?php echo $mdsize ;?>" <?php if ( $mdsize == $mdoptions['showfeatured'] ) echo 'selected="selected"' ;?> ><?php _e( 'Size:', 'media-downloader' ); ?> <?php echo $mdsize ;?></option>
     <?php } ;?>
 </select>
 </p>
 
 <p>
-<label for="md_packageextensions"><?php _mde( 'Comma-separated extensions for compacted files:' ) ;?></label><br />
+<label for="md_packageextensions"><?php _e( 'Comma-separated extensions for compacted files:', 'media-downloader' ) ;?></label><br />
 <input type="text" id="md_packageextensions" name="packageextensions" size="75" value="<?php echo $mdoptions['packageextensions'] ;?>" /><br />
-<small><?php _mde( 'Example:' ); ?> <code>zip</code>, <code>rar</code>, <code>tgz</code></small>
+<small><?php _e( 'Example:', 'media-downloader' ); ?> <code>zip</code>, <code>rar</code>, <code>tgz</code></small>
 </p>
 
 <p>
 <input type="checkbox" name="embedplayer" id="md_embedplayer" value="1" <?php if ( $mdoptions['embedplayer'] ) echo ' checked="checked" ' ;?> />
-<label for="md_embedplayer"><?php _mde( 'Embed player' ) ;?></label>
+<label for="md_embedplayer"><?php _e( 'Embed player', 'media-downloader' ) ;?></label>
 </p>
 
 <p>
 <input type="checkbox" name="autoplaylist" id="md_autoplaylist" value="1" <?php if ( $mdoptions['autoplaylist'] ) echo ' checked="checked" ' ;?> />
-<label for="md_autoplaylist"><?php _mde( 'Autoplay next file' ) ;?></label>
+<label for="md_autoplaylist"><?php _e( 'Autoplay next file', 'media-downloader' );?></label>
 </p>
 
 <p>
 <input type="checkbox" name="scriptinfooter" id="md_scriptinfooter" value="1" <?php if ( $mdoptions['scriptinfooter'] ) echo ' checked="checked" ' ;?> />
-<label for="md_scriptinfooter"><?php _mde( 'Place embed player\'s javascript at the bottom of the <code>&lt;body&gt;</code> in <abbr title="HyperText Markup Language">HTML</abbr> code' ) ;?></label>
+<label for="md_scriptinfooter"><?php _e( 'Place embed player\'s javascript at the bottom of the <code>&lt;body&gt;</code> in <abbr title="HyperText Markup Language">HTML</abbr> code', 'media-downloader' );?></label>
 </p>
 
 <p>
-<label for="md_embedwhere"><?php _mde( 'Embed player\'s button position:' ) ;?></label>
+<label for="md_embedwhere"><?php _e( 'Embed player\'s button position:', 'media-downloader' );?></label>
 <select name="embedwhere" id="md_embedwhere">
-    <option value="before" <?php if ( 'before' == $mdoptions['embedwhere'] ) echo 'selected="selected"' ;?> ><?php _mde( 'Before download link' ) ;?></option>
-    <option value="after" <?php if ( 'after' == $mdoptions['embedwhere'] ) echo 'selected="selected"' ;?> ><?php _mde( 'After download link' ) ;?></option>
+    <option value="before" <?php if ( 'before' == $mdoptions['embedwhere'] ) echo 'selected="selected"' ;?> ><?php _e( 'Before download link', 'media-downloader' );?></option>
+    <option value="after" <?php if ( 'after' == $mdoptions['embedwhere'] ) echo 'selected="selected"' ;?> ><?php _e( 'After download link', 'media-downloader' );?></option>
 </select>
 </p>
 
 <p>
-<label for="md_sortfiles"><?php _mde( 'Sort by:' ) ;?></label>
+<label for="md_sortfiles"><?php _e( 'Sort by:', 'media-downloader' );?></label>
 <select name="sortfiles" id="md_sortfiles">
 <?php foreach ( $mdsortingfields as $mdsortingfield => $mdsanitizefunction ) { ?>
     <option value="<?php echo $mdsortingfield ;?>" <?php if ( $mdsortingfield == $mdoptions['sortfiles'] ) echo 'selected="selected"' ;?> ><?php echo $mdsortingfield ;?></option>
@@ -141,11 +141,11 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 </select>
 
 <input type="checkbox" name="reversefiles" id="md_reversefiles" value="1" <?php if ( $mdoptions['reversefiles'] ) echo ' checked="checked" ' ;?> />
-<label for="md_reversefiles"><?php _mde( 'Reverse order' ) ;?></label>
+<label for="md_reversefiles"><?php _e( 'Reverse order', 'media-downloader' );?></label>
 </p>
 
 <p>
-<label for="md_tagencoding"><?php _mde( 'MP3 tag encoding:' ) ;?></label>
+<label for="md_tagencoding"><?php _e( 'MP3 tag encoding:', 'media-downloader' );?></label>
 <select name="tagencoding" id="md_tagencoding">
 <?php foreach ( $mdencodings as $mdencoding ) { ?>
     <option value="<?php echo $mdencoding ;?>" <?php if ( $mdencoding == $mdoptions['tagencoding'] ) echo 'selected="selected"' ;?> ><?php echo $mdencoding ;?></option>
@@ -154,7 +154,7 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 </p>
 
 <p>
-<label for="md_filenameencoding"><?php _mde( 'File name encoding:' ) ;?></label>
+<label for="md_filenameencoding"><?php _e( 'File name encoding:', 'media-downloader' );?></label>
 <select name="filenameencoding" id="md_filenameencoding">
 <?php foreach ( $mdencodings as $mdencoding ) { ?>
     <option value="<?php echo $mdencoding ;?>" <?php if ( $mdencoding == $mdoptions['filenameencoding'] ) echo 'selected="selected"' ;?> ><?php echo $mdencoding ;?></option>
@@ -163,12 +163,12 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 </p>
 
 <p>
-<label for="md_cachedir"><?php _mde( 'Cache dir:' ) ;?> <code><?php echo ABSPATH ;?></code></label>
-<input type="text" name="cachedir" id="md_cachedir" value="<?php echo $mdoptions['cachedir'] ;?>" size="20" /> <small><?php echo sprintf( _md('(must be <a href="%s">writable</a>)'), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small>
+<label for="md_cachedir"><?php _e( 'Cache dir:', 'media-downloader' );?> <code><?php echo ABSPATH ;?></code></label>
+<input type="text" name="cachedir" id="md_cachedir" value="<?php echo $mdoptions['cachedir'] ;?>" size="20" /> <small><?php echo sprintf( __( '(must be <a href="%s">writable</a>)', 'media-downloader' ), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small>
 
 <?php if( '' != trim( $mdoptions['cachedir'] ) ){
     $dirok = is_writeable( ABSPATH . '/' . $mdoptions['cachedir'] ) ;?>
-    <br /><small style="color:#999;background-color:#<?php echo $dirok ? 'DFD' : 'FDD' ;?>"><?php _mde( $dirok ? 'Folder successfully written on.' : 'Could not write on folder.') ;?></small>
+    <br /><small style="color:#999;background-color:#<?php echo $dirok ? 'DFD' : 'FDD' ;?>"><?php _e( $dirok ? 'Folder successfully written on.' : 'Could not write on folder.', 'media-downloader' );?></small>
 <?php };?>
 
 </p>
@@ -176,17 +176,17 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 <p>
 <input type="checkbox" name="handlefeed" id="md_handlefeed" value="1" <?php if ( $mdoptions['handlefeed'] ) echo ' checked="checked" ' ;?> />
 <label for="md_handlefeed">
-<?php _mde( 'Include MP3 files in wordpress feeds' ) ;?>
+<?php _e( 'Include MP3 files in wordpress feeds', 'media-downloader' );?>
 </label>
 </p>
 
 <p>
-<label for="md_overwritefeedlink"><?php _mde( 'Overwrite feed link:' ) ;?></label><br />
+<label for="md_overwritefeedlink"><?php _e( 'Overwrite feed link:', 'media-downloader' );?></label><br />
 <input type="text" id="md_overwritefeedlink" name="overwritefeedlink" size="75" value="<?php echo $mdoptions['overwritefeedlink'] ;?>" />
 </p>
 
 <p class="submit">
-<input type="submit" class="button button-primary" value="<?php _mde( 'Update Options' ) ;?>" />
+<input type="submit" class="button button-primary" value="<?php _e( 'Update Options', 'media-downloader' );?>" />
 </p>
 </fieldset>
 
@@ -194,123 +194,123 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 
 <hr />
 
-<h2><?php _mde( 'Sample Usage' ) ;?></h2>
-<p><?php _mde( 'Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.' ) ;?></p>
+<h2><?php _e( 'Sample Usage', 'media-downloader' );?></h2>
+<p><?php _e( 'Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.', 'media-downloader' );?></p>
 
-<p><?php _mde( 'An example may help... Say you have a folder called <em>"music"</em> under your root folder, and it has some subfolders, as: <em>"Beethoven",</em> <em>"Mozart",</em> <em>"Bach"</em> and <em>"Haendel".</em>' ) ;?></p>
+<p><?php _e( 'An example may help... Say you have a folder called <em>"music"</em> under your root folder, and it has some subfolders, as: <em>"Beethoven",</em> <em>"Mozart",</em> <em>"Bach"</em> and <em>"Haendel".</em>', 'media-downloader' ) ;?></p>
 
-<p><?php _mde( 'First of all, you should configure Media Downloader by typing <em>"music"</em> in the <label for="md_mp3folder"><em>"MP3 Folder"</em> field.</label> That done, you can edit a post talking about Johann Sebastian Bach and insert anywhere on it the shortcode <code>[mediadownloader folder="Bach"]</code>, then Media Downloader will create a list of all files under the <em>"music/Bach"</em> directory.' ) ;?></p>
+<p><?php _e( 'First of all, you should configure Media Downloader by typing <em>"music"</em> in the <label for="md_mp3folder"><em>"MP3 Folder"</em> field.</label> That done, you can edit a post talking about Johann Sebastian Bach and insert anywhere on it the shortcode <code>[mediadownloader folder="Bach"]</code>, then Media Downloader will create a list of all files under the <em>"music/Bach"</em> directory.', 'media-downloader' ) ;?></p>
 
-<p><?php _mde( 'The [mediadownloader] shortcode also accepts the following parameters:' ); ?></p>
+<p><?php _e( 'The [mediadownloader] shortcode also accepts the following parameters:', 'media-downloader' ); ?></p>
 
 <dl class="md_sample_atts">
 
 <dt>showtags</dt>
 <dd>
-<p><?php _mde( 'Comma-separated MP3 info to show for each file on the list' ) ;?></p>
-<p><small><?php _mde( 'Possible values:' ) ;?> <code><?php echo implode( '</code>, <code>', $mdtags ) ;?></code></small></p>
+<p><?php _e( 'Comma-separated MP3 info to show for each file on the list', 'media-downloader' );?></p>
+<p><small><?php _e( 'Possible values:', 'media-downloader' );?> <code><?php echo implode( '</code>, <code>', $mdtags ) ;?></code></small></p>
 </dd>
 
 <dt>showplaylist</dt>
 <dd>
-<p><?php _mde( 'Show media playlist and player' ) ;?></p>
-<small><?php _mde( 'Possible values:' ) ;?> <code>true</code>, <code>false</code></small>
+<p><?php _e( 'Show media playlist and player', 'media-downloader' );?></p>
+<small><?php _e( 'Possible values:', 'media-downloader' );?> <code>true</code>, <code>false</code></small>
 </dd>
 
 <dt>showpackages</dt>
 <dd>
-<p><?php _mde( 'Show links for compacted files' ) ;?></p>
-<p><small><?php _mde( 'Possible values:' ) ;?> <code>true</code> <?php _mde( 'or comma-separated extensions' ); ?></small></p>
+<p><?php _e( 'Show links for compacted files', 'media-downloader' );?></p>
+<p><small><?php _e( 'Possible values:', 'media-downloader' );?> <code>true</code> <?php _e( 'or comma-separated extensions', 'media-downloader' ); ?></small></p>
 </dd>
 
 
 <dt>packagetitle</dt>
 <dd>
-<p><?php _mde( 'Compacted files list title' ) ;?></p>
-<p><small><?php _mde( 'Example:' ) ;?> <code><?php _mde( 'Compacted Files' ); ?></code></small></p>
+<p><?php _e( 'Compacted files list title', 'media-downloader' );?></p>
+<p><small><?php _e( 'Example:', 'media-downloader' );?> <code><?php _e( 'Compacted Files', 'media-downloader' ); ?></code></small></p>
 </dd>
 
 <dt>packagetexts</dt>
 <dd>
-<p><?php _mde( 'Compacted files link texts' ) ;?></p>
-<p><small><?php _mde( 'Example:' ) ;?> <code><?php _mde( 'zip: Download ZIP; rar: Download RAR;' ); ?></code></small></p>
+<p><?php _e( 'Compacted files link texts', 'media-downloader' );?></p>
+<p><small><?php _e( 'Example:', 'media-downloader' );?> <code><?php _e( 'zip: Download ZIP; rar: Download RAR;', 'media-downloader' ); ?></code></small></p>
 </dd>
 
 <dt>showcover</dt>
 <dd>
-<p><?php _mde( 'Show cover (if a <code>folder.jpg</code> file is found)' ) ;?></p>
-<p><small><?php _mde( 'Possible values:' ) ;?> <code>true</code>, <code>false</code></small></p>
+<p><?php _e( 'Show cover (if a <code>folder.jpg</code> file is found)', 'media-downloader' );?></p>
+<p><small><?php _e( 'Possible values:', 'media-downloader' );?> <code>true</code>, <code>false</code></small></p>
 </dd>
 
 <dt>showfeatured</dt>
 <dd>
-<p><?php _mde( 'Show post thumbnail' ) ;?></p>
-<p><small><?php _mde( 'Possible values:' ) ;?> <code><?php echo implode( '</code>, <code>', array_merge( array( 'false', 'fallback' ), get_intermediate_image_sizes() ) ) ;?></code></small></p>
-<p><small><?php printf( _md( '(If set to %s, the post thumbnail will be shown only if there is no "cover" image)' ), '<code>fallback</code>' ); ?></small></p>
+<p><?php _e( 'Show post thumbnail', 'media-downloader' );?></p>
+<p><small><?php _e( 'Possible values:', 'media-downloader' );?> <code><?php echo implode( '</code>, <code>', array_merge( array( 'false', 'fallback' ), get_intermediate_image_sizes() ) ) ;?></code></small></p>
+<p><small><?php printf( __( '(If set to %s, the post thumbnail will be shown only if there is no "cover" image)', 'media-downloader' ), '<code>fallback</code>' ); ?></small></p>
 </dd>
 
 <dt>embedwhere</dt>
 <dd>
-<p><?php _mde( 'Embed player\'s button position' ) ;?></p>
-<p><small><?php _mde( 'Possible values:' ) ;?> <code>before</code>, <code>after</code></small></p>
+<p><?php _e( 'Embed player\'s button position', 'media-downloader' );?></p>
+<p><small><?php _e( 'Possible values:', 'media-downloader' );?> <code>before</code>, <code>after</code></small></p>
 </dd>
 
 <dt>calculateprefix</dt>
 <dd>
-<p><?php _mde( 'Try to guess and remove a common "prefix" to all the files of the same folder' ) ;?></p>
-<p><small><?php _mde( 'Possible values:' ) ;?> <code>true</code>, <code>false</code></small></p>
-<p><small><?php _mde( '(though a very helpful "magic" sometimes, this feature behaves in a unpredictably wild way)' ) ;?></small></p>
+<p><?php _e( 'Try to guess and remove a common "prefix" to all the files of the same folder', 'media-downloader' );?></p>
+<p><small><?php _e( 'Possible values:', 'media-downloader' );?> <code>true</code>, <code>false</code></small></p>
+<p><small><?php _e( '(though a very helpful "magic" sometimes, this feature behaves in a unpredictably wild way)', 'media-downloader' ) ;?></small></p>
 </dd>
 
 <dt>mp3folder</dt>
 <dd>
-<p><?php _mde( 'MP3 Folder.' ) ;?></p>
-<p><small><?php echo sprintf( _md('(must be <a href="%s">readable</a>)'), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small></p>
+<p><?php _e( 'MP3 Folder.', 'media-downloader' );?></p>
+<p><small><?php echo sprintf( __( '(must be <a href="%s">readable</a>)', 'media-downloader' ), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small></p>
 </dd>
 
 <dt>tagencoding</dt>
 <dd>
-<p><?php _mde( 'MP3 tag encoding' ) ;?></p>
-<p><small><?php _mde( 'Possible values:' ) ;?> <code><?php echo implode( '</code>, <code>', $mdencodings ); ?></code></small></p>
+<p><?php _e( 'MP3 tag encoding', 'media-downloader' );?></p>
+<p><small><?php _e( 'Possible values:', 'media-downloader' );?> <code><?php echo implode( '</code>, <code>', $mdencodings ); ?></code></small></p>
 </dd>
 
 <dt>filenameencoding</dt>
 <dd>
-<p><?php _mde( 'File name encoding' ) ;?></p>
-<p><small><?php _mde( 'Possible values:' ) ;?> <code><?php echo implode( '</code>, <code>', $mdencodings ); ?></code></small></p>
+<p><?php _e( 'File name encoding', 'media-downloader' );?></p>
+<p><small><?php _e( 'Possible values:', 'media-downloader' );?> <code><?php echo implode( '</code>, <code>', $mdencodings ); ?></code></small></p>
 </dd>
 
 <dt>sortfiles</dt>
 <dd>
-<p><?php _mde( 'Sort files by' ) ;?></p>
-<p><small><?php _mde( 'Possible values:' ) ;?> <code><?php echo implode( '</code>, <code>', array_keys( $mdsortingfields ) ); ?></code></small></p>
+<p><?php _e( 'Sort files by', 'media-downloader' );?></p>
+<p><small><?php _e( 'Possible values:', 'media-downloader' );?> <code><?php echo implode( '</code>, <code>', array_keys( $mdsortingfields ) ); ?></code></small></p>
 </dd>
 
 <dt>reversefiles</dt>
 <dd>
-<p><?php _mde( 'Reverse order' ) ;?></p>
-<p><small><?php _mde( 'Possible values:' ) ;?> <code>true</code>, <code>false</code></small></p>
+<p><?php _e( 'Reverse order', 'media-downloader' );?></p>
+<p><small><?php _e( 'Possible values:', 'media-downloader' );?> <code>true</code>, <code>false</code></small></p>
 </dd>
 
 <dt>removeextension</dt>
 <dd>
-<p><?php _mde( 'Remove ".mp3" from download URL' ) ;?></p>
-<p><small><?php _mde( 'Possible values:' ) ;?> <code>true</code>, <code>false</code></small></p>
+<p><?php _e( 'Remove ".mp3" from download URL', 'media-downloader' );?></p>
+<p><small><?php _e( 'Possible values:', 'media-downloader' );?> <code>true</code>, <code>false</code></small></p>
 </dd>
 
 <dt>downloadtext</dt>
 <dd>
-<p><?php _mde( 'Download button\'s text' ) ;?></p>
+<p><?php _e( 'Download button\'s text', 'media-downloader' );?></p>
 </dd>
 
 <dt>playtext</dt>
 <dd>
-<p><?php _mde( 'Play button\'s text' ) ;?></p>
+<p><?php _e( 'Play button\'s text', 'media-downloader' );?></p>
 </dd>
 
 <dt>stoptext</dt>
 <dd>
-<p><?php _mde( 'Stop button\'s text' ) ;?></p>
+<p><?php _e( 'Stop button\'s text', 'media-downloader' );?></p>
 </dd>
 
 </dl>

@@ -65,7 +65,7 @@ endforeach;
     
         $mdaction = array_key_exists( 'mdaction', $_REQUEST ) ? $_REQUEST[ 'mdaction' ] : '';
         if ( 'batchedit' == $mdaction ) {
-            die( '<div class="error settings-error"><p>' . _md( 'Batch save not implemented yet.' ) . ' <a href="' . add_query_arg() . '">' . _md( 'Back' ) . '</a></p></div>' );
+            die( '<div class="error settings-error"><p>' . __( 'Batch save not implemented yet.', 'media-downloader' ) . ' <a href="' . add_query_arg() . '">' . __( 'Back', 'media-downloader' ) . '</a></p></div>' );
         }
 
         if ( file_exists( $mpath . '/' . $mdfolder . '/' . $mdfile ) ) :
@@ -142,21 +142,21 @@ endforeach;
 	                                                                ),
 	                                                        );
 	                    else :
-        	                $picwarnings[] = sprintf( _md( 'File type not allowed: <code>%s</code>' ), $uploadedfile['type'] );
+        	                $picwarnings[] = sprintf( __( 'File type not allowed: <code>%s</code>', 'media-downloader' ), $uploadedfile['type'] );
 	                    endif;
 	                elseif ( is_array( $uploadedfile ) && array_key_exists( 'error', $uploadedfile ) && array_key_exists( 'name', $uploadedfile ) && $uploadedfile['name'] ) :
 	                    $responses = array(
-                            'err_' . UPLOAD_ERR_OK => 'There is no error, the file uploaded with success.',
-                            'err_' . UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',
-                            'err_' . UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',
-                            'err_' . UPLOAD_ERR_PARTIAL => 'The uploaded file was only partially uploaded.',
-                            'err_' . UPLOAD_ERR_NO_FILE => 'No file was uploaded.',
-                            'err_' . UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder. Introduced in PHP 4.3.10 and PHP 5.0.3.',
-                            'err_' . UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk. Introduced in PHP 5.1.0.',
-                            'err_' . UPLOAD_ERR_EXTENSION => 'File upload stopped by extension. Introduced in PHP 5.2.0.',
+                            'err_' . UPLOAD_ERR_OK => __( 'There is no error, the file uploaded with success.', 'media-downloader' ),
+                            'err_' . UPLOAD_ERR_INI_SIZE => __( 'The uploaded file exceeds the upload_max_filesize directive in php.ini.', 'media-downloader' ),
+                            'err_' . UPLOAD_ERR_FORM_SIZE => __( 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.', 'media-downloader' ),
+                            'err_' . UPLOAD_ERR_PARTIAL => __( 'The uploaded file was only partially uploaded.', 'media-downloader' ),
+                            'err_' . UPLOAD_ERR_NO_FILE => __( 'No file was uploaded.', 'media-downloader' ),
+                            'err_' . UPLOAD_ERR_NO_TMP_DIR => __( 'Missing a temporary folder. Introduced in PHP 4.3.10 and PHP 5.0.3.', 'media-downloader' ),
+                            'err_' . UPLOAD_ERR_CANT_WRITE => __( 'Failed to write file to disk. Introduced in PHP 5.1.0.', 'media-downloader' ),
+                            'err_' . UPLOAD_ERR_EXTENSION => __( 'File upload stopped by extension. Introduced in PHP 5.2.0.', 'media-downloader' ),
                         );
                         $ekey = 'err_' . $uploadedfile['error'];
-	                    $picwarnings[] = _md( array_key_exists( $ekey, $responses ) ? $responses[ $ekey ] : 'Unknown upload error.' );
+	                    $picwarnings[] = array_key_exists( $ekey, $responses ) ? $responses[ $ekey ] : __( 'Unknown upload error.', 'media-downloader' );
 	                endif;
                 endif;
 
@@ -165,15 +165,15 @@ endforeach;
                 $ret = array();
                 // write tags
                 if ( $tagwriter->WriteTags() ) {
-	                $ret[] = '<strong>' . _md( 'File saved!' ) . '</strong><br /><a href="' . add_query_arg( array( 'mdfile' => null ) ) . '">' . _md( '&larr; Back' ) . '</a>';
+	                $ret[] = '<strong>' . __( 'File saved!', 'media-downloader' ) . '</strong><br /><a href="' . add_query_arg( array( 'mdfile' => null ) ) . '">' . __( '&larr; Back', 'media-downloader' ) . '</a>';
 	                $allwarnings = $tagwriter->warnings;
 	                if ( !empty( $picwarnings ) ) $allwarnings = array_merge( $allwarnings, $picwarnings );
 	                if ( !empty( $allwarnings ) ) {
-		                $ret[] = '<p><em>' . _md( 'Warnings:' ) . '</em></p> <ul><li>' . implode( '</li><li>', $allwarnings ) . '</li></ul>';
+		                $ret[] = '<p><em>' . __( 'Warnings:', 'media-downloader' ) . '</em></p> <ul><li>' . implode( '</li><li>', $allwarnings ) . '</li></ul>';
 	                }
                 } else {
-	                $ret[] = '<strong>' . _md( 'Failed!' ) . '</strong><br />';
-	                $ret[] = '<p><em>' . _md( 'Errors:' ) . '</em></p><ul><li>' . implode( '</li><li>', $tagwriter->errors ) . '</li></ul>';
+	                $ret[] = '<strong>' . __( 'Failed!', 'media-downloader' ) . '</strong><br />';
+	                $ret[] = '<p><em>' . __( 'Errors:', 'media-downloader' ) . '</em></p><ul><li>' . implode( '</li><li>', $tagwriter->errors ) . '</li></ul>';
                 }
                 echo '<div id="setting-error-settings_updated" class="updated settings-error"><p>' . implode( "\n", $ret ) . '</p></div>';
             }
@@ -201,7 +201,7 @@ endforeach;
                 
                 unset( $finfo );
                 ?>
-                <h3><?php printf( _md( 'Editing File: <code>%s</code>' ), $mdbreadcrumbs . ' /' . stripslashes( $mdfile ) ); ?></h3>
+                <h3><?php printf( __( 'Editing File: <code>%s</code>', 'media-downloader' ), $mdbreadcrumbs . ' /' . stripslashes( $mdfile ) ); ?></h3>
                 
                 <form method="post" action="<?php self_link(); ?>" enctype="multipart/form-data">
                 <input type="hidden" name="mdaction" value="updatefile" />
@@ -209,16 +209,43 @@ endforeach;
                 <tbody>
                     <?php
                     $edit_tags = array(
-                                        'title' => array( 'Title', 'text' ),
-                                        'artist' => array( 'Artist', 'text' ),
-                                        'album' => array( 'Album', 'text' ),
-                                        'year' => array( 'Year', 'number' ),
-                                        'genre' => array( 'Genre', 'genre' ),
-                                        'comment' => array( 'Comment', 'textarea' ),
-                                        #'user_text' => array( 'Formatted Comment', 'richtext' ),
-                                        'recording_dates' => array( 'Recording Date', 'date' ),
-                                        'track_number' => array( 'Track Number', 'number' ),
-                                    );
+                        'title' => array(
+                            __( 'Title', 'media-downloader' ),
+                            'text'
+                        ),
+                        'artist' => array(
+                            __( 'Artist', 'media-downloader' ),
+                            'text'
+                        ),
+                        'album' => array(
+                            __( 'Album', 'media-downloader' ),
+                            'text'
+                        ),
+                        'year' => array(
+                            __( 'Year', 'media-downloader' ),
+                            'number'
+                        ),
+                        'genre' => array(
+                            __( 'Genre', 'media-downloader' ),
+                            'genre'
+                        ),
+                        'comment' => array(
+                            __( 'Comment', 'media-downloader' ),
+                            'textarea'
+                        ),
+                        #'user_text' => array(
+                        #    __( 'Formatted Comment', 'media-downloader' ),
+                        #    'richtext'
+                        #),
+                        'recording_dates' => array(
+                            __( 'Recording Date', 'media-downloader' ),
+                            'date'
+                        ),
+                        'track_number' => array(
+                            __( 'Track Number', 'media-downloader' ),
+                            'number'
+                        ),
+                    );
                     foreach ( $edit_tags as $mdtag => $tagoptions ) :
                         $_t = array_key_exists( $mdtag, $ftags ) ? $ftags[ $mdtag ][0] : '';
                         $tagvalue = stripslashes( $_t );
@@ -227,7 +254,7 @@ endforeach;
                         <tr>
                             <td>
                                 <label for="edit_tag_<?php echo $mdtag; ?>">
-                                    <?php _mde( $tagoptions[0] ); ?>
+                                    <?php echo $tagoptions[0]; ?>
                                 </label>
                             </td>
                             <td>
@@ -258,14 +285,14 @@ endforeach;
                     <tr>
                         <td>
                             <label for="edit_tag_picture">
-                                <?php _mde( 'Picture:' ); ?>
+                                <?php _e( 'Picture:', 'media-downloader' ); ?>
                             </label>
                         </td>
                         <td>
                             <?php if ( $current_img ) : ?>
                                 <img src="data:image/jpeg;base64,<?php echo base64_encode( $current_img ); ?>" class="audiofile_picture" alt="<?php echo esc_attr( stripslashes( $ftags[ 'title' ][0] ) ); ?>" />
                                 <label for="edit_tag_picture">
-                                    <?php _mde( 'Replace picture:' ); ?>
+                                    <?php _e( 'Replace picture:', 'media-downloader' ); ?>
                                 </label>
                             <?php endif; ?>
                             <input type="file" id="edit_tag_picture" name="edit_tag_picture" accept="image/*" />
@@ -275,18 +302,18 @@ endforeach;
                 </table>
                 
                 <p class="submit">
-                <input type="submit" value="<?php _mde( 'Save Changes' ) ;?>" class="button button-primary" />
-                <a href="<?php echo add_query_arg( array( 'mdfile' => null ) );?>" class="button alignright button-cancel"><?php _mde( 'Cancel' ) ;?></a>
+                <input type="submit" value="<?php _e( 'Save Changes', 'media-downloader' ) ;?>" class="button button-primary" />
+                <a href="<?php echo add_query_arg( array( 'mdfile' => null ) );?>" class="button alignright button-cancel"><?php _e( 'Cancel', 'media-downloader' ) ;?></a>
                 </p>
 
                 </form>
             <?php else: ?>
-                <div class="error settings-error"><p><strong><?php printf( _md( 'Could not read: <code>%s</code>' ), $mdfolder . '/' . stripslashes( $mdfile ) ); ?></strong></p></div>
+                <div class="error settings-error"><p><strong><?php printf( __( 'Could not read: <code>%s</code>', 'media-downloader' ), $mdfolder . '/' . stripslashes( $mdfile ) ); ?></strong></p></div>
             <?php endif; ?>
 
         <?php elseif ( '*' == $mdfile ) : ?>
         
-                <h3><?php printf( _md( 'Batch editing: <code>%s</code>' ), $mdbreadcrumbs . ' /' . stripslashes( $mdfile ) ); ?></h3>
+                <h3><?php printf( __( 'Batch editing: <code>%s</code>', 'media-downloader' ), $mdbreadcrumbs . ' /' . stripslashes( $mdfile ) ); ?></h3>
                 
                 <form method="post" action="<?php self_link(); ?>" enctype="multipart/form-data">
                 <input type="hidden" name="mdaction" value="batchedit" />
@@ -294,23 +321,50 @@ endforeach;
                 <table class="widefat batchedit">
                 <thead>
                     <tr>
-                        <th><?php _mde( 'Overwrite Tag' ); ?></th>
-                        <th><?php _mde( 'Value' ); ?></th>
+                        <th><?php _e( 'Overwrite Tag', 'media-downloader' ); ?></th>
+                        <th><?php _e( 'Value', 'media-downloader' ); ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     $edit_tags = array(
-                                        'title' => array( 'Title', 'text' ),
-                                        'artist' => array( 'Artist', 'text' ),
-                                        'album' => array( 'Album', 'text' ),
-                                        'year' => array( 'Year', 'number' ),
-                                        'genre' => array( 'Genre', 'genre' ),
-                                        'comment' => array( 'Comment', 'textarea' ),
-                                        'user_text' => array( 'Formatted Comment', 'richtext' ),
-                                        'recording_dates' => array( 'Recording Date', 'date' ),
-                                        'track_number' => array( 'Track Number', 'number' ),
-                                    );
+                        'title' => array(
+                            __( 'Title', 'media-downloader' ),
+                            'text'
+                        ),
+                        'artist' => array(
+                            __( 'Artist', 'media-downloader' ),
+                            'text'
+                        ),
+                        'album' => array(
+                            __( 'Album', 'media-downloader' ),
+                            'text'
+                        ),
+                        'year' => array(
+                            __( 'Year', 'media-downloader' ),
+                            'number'
+                        ),
+                        'genre' => array(
+                            __( 'Genre', 'media-downloader' ),
+                            'genre'
+                        ),
+                        'comment' => array(
+                            __( 'Comment', 'media-downloader' ),
+                            'textarea'
+                        ),
+                        'user_text' => array(
+                            __( 'Formatted Comment', 'media-downloader' ),
+                            'richtext'
+                        ),
+                        'recording_dates' => array(
+                            __( 'Recording Date', 'media-downloader' ),
+                            'date'
+                        ),
+                        'track_number' => array(
+                            __( 'Track Number', 'media-downloader' ),
+                            'number'
+                        ),
+                    );
                     foreach ( $edit_tags as $mdtag => $tagoptions ) :
                         $tagvalue = stripslashes( $_REQUEST[ 'edit_tag_' . $mdtag ] );
                         ?>
@@ -318,7 +372,7 @@ endforeach;
                             <td>
                                 <input type="checkbox" name="enable_tag[]" id="enable_<?php echo $mdtag; ?>" value="<?php echo $mdtag; ?>" <?php if ( $_REQUEST['enable_' . $mdtag] ) : ?>checked="checked" <?php endif; ?>/>
                                 <label for="enable_<?php echo $mdtag; ?>">
-                                    <?php _mde( $tagoptions[0] ); ?>
+                                    <?php echo $tagoptions[0]; ?>
                                 </label>
                             </td>
                             <td>
@@ -346,7 +400,7 @@ endforeach;
                         <td>
                             <input type="checkbox" name="enable_tag[]" id="enable_picture" value="picture" <?php if ( $_REQUEST['enable_picture'] ) : ?>checked="checked" <?php endif; ?>/>
                             <label for="edit_tag_picture">
-                                <?php _mde( 'Picture:' ); ?>
+                                <?php _e( 'Picture:', 'media-downloader' ); ?>
                             </label>
                         </td>
                         <td>
@@ -357,15 +411,15 @@ endforeach;
                 </table>
 
                 <p class="submit">
-                <input type="submit" value="<?php _mde( 'Save Changes' ) ;?>" class="button button-primary" />
-                <a href="<?php echo add_query_arg( array( 'mdfile' => null ) );?>" class="button alignright button-cancel"><?php _mde( 'Cancel' ) ;?></a>
+                <input type="submit" value="<?php _e( 'Save Changes', 'media-downloader' ) ;?>" class="button button-primary" />
+                <a href="<?php echo add_query_arg( array( 'mdfile' => null ) );?>" class="button alignright button-cancel"><?php _e( 'Cancel', 'media-downloader' ) ;?></a>
                 </p>
 
                 </form>
 
         <?php else: ?>
 
-            <div class="error settings-error"><p><strong><?php printf( _md( 'Could not read: <code>%s</code>' ), $mdfolder . '/' . stripslashes( $mdfile ) ); ?></strong></p></div>
+            <div class="error settings-error"><p><strong><?php printf( __( 'Could not read: <code>%s</code>', 'media-downloader' ), $mdfolder . '/' . stripslashes( $mdfile ) ); ?></strong></p></div>
 
         <?php endif; ?>
 
@@ -384,7 +438,7 @@ endforeach;
                 }
             }
         } else {
-            $errors[] = sprintf( _md( 'Could not read: <code>%s</code>' ), $ipath );
+            $errors[] = sprintf( __( 'Could not read: <code>%s</code>', 'media-downloader' ), $ipath );
         }
 
         // If set, sorting array
@@ -430,21 +484,21 @@ endforeach;
                 <?php endforeach; ?>
                 <div class="tablenav top">
                 <div class="alignleft actions">
-                    <h3><?php printf( _md( 'Directory: <code>%s</code>' ), $mdbreadcrumbs ); ?></h3>
+                    <h3><?php printf( __( 'Directory: <code>%s</code>', 'media-downloader' ), $mdbreadcrumbs ); ?></h3>
                 </div>
                 <div class="tablenav-pages">
-                    <span class="displaying-num"><?php printf( _mdn( '%d item', '%d items', count( $iall ) ), count( $iall ) ); ?></span>
+                    <span class="displaying-num"><?php printf( _n( '%d item', '%d items', count( $iall ) ), count( $iall ), 'media-downloader' ); ?></span>
                     <?php if ( $ipages > 1 ) : ?>
-                        <span class="pagination-links"><a class="first-page<?php if ( $ipaged <= 1 ) : ?> disabled<?php endif; ?>" title="<?php _mde( 'Go to first page' ); ?>" href="<?php echo add_query_arg( array( 'paged' => null ) ); ?>">«</a>
-                        <a class="prev-page<?php if ( $ipaged <= 1 ) : ?> disabled<?php endif; ?>" title="<?php _mde( 'Go to previous page' ); ?>" href="<?php echo add_query_arg( array( 'paged' => $ipaged > 1 ? $ipaged - 1 : null ) ); ?>">‹</a>
-                        <span class="paging-input"><?php printf( _md( '%s of <span class="total-pages">%d</span>' ), '<input class="current-page" title="' . _md( 'Current page' ) . '" type="text" name="paged" value="' . $ipaged . '" size="1">', $ipages ); ?></span>
-                        <a class="next-page<?php if ( $ipaged >= $ipages ) : ?> disabled<?php endif; ?>" title="<?php _mde( 'Go to next page' ); ?>" href="<?php echo add_query_arg( array( 'paged' => min( $ipaged + 1, $ipages ) ) ); ?>">›</a>
-                        <a class="last-page<?php if ( $ipaged >= $ipages ) : ?> disabled<?php endif; ?>" title="<?php _mde( 'Go to last page' ); ?>" href="<?php echo add_query_arg( array( 'paged' => $ipages ) ); ?>">»</a></span>
+                        <span class="pagination-links"><a class="first-page<?php if ( $ipaged <= 1 ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to first page', 'media-downloader' ); ?>" href="<?php echo add_query_arg( array( 'paged' => null ) ); ?>">«</a>
+                        <a class="prev-page<?php if ( $ipaged <= 1 ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to previous page', 'media-downloader' ); ?>" href="<?php echo add_query_arg( array( 'paged' => $ipaged > 1 ? $ipaged - 1 : null ) ); ?>">‹</a>
+                        <span class="paging-input"><?php printf( __( '%s of <span class="total-pages">%d</span>', 'media-downloader' ), '<input class="current-page" title="' . __( 'Current page', 'media-downloader' ) . '" type="text" name="paged" value="' . $ipaged . '" size="1">', $ipages ); ?></span>
+                        <a class="next-page<?php if ( $ipaged >= $ipages ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to next page', 'media-downloader' ); ?>" href="<?php echo add_query_arg( array( 'paged' => min( $ipaged + 1, $ipages ) ) ); ?>">›</a>
+                        <a class="last-page<?php if ( $ipaged >= $ipages ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to last page', 'media-downloader' ); ?>" href="<?php echo add_query_arg( array( 'paged' => $ipages ) ); ?>">»</a></span>
                     <?php endif; ?>
                 </div>
                 <?php /* if ( $counteditables > 1 ) : ?>
                     <div class="alignright actions batchedit">
-                        <a href="<?php echo add_query_arg( array( 'mdfile' => '*' ) ); ?>"><?php printf( _md( 'Batch edit %d files in this folder!' ), $counteditables ); ?></a>
+                        <a href="<?php echo add_query_arg( array( 'mdfile' => '*' ) ); ?>"><?php printf( __( 'Batch edit %d files in this folder!', 'media-downloader' ), $counteditables ); ?></a>
                     </div>
                 <?php endif; */ ?>
                 </div>
@@ -453,9 +507,9 @@ endforeach;
             <table class="widefat">
                 <thead>
                     <tr>
-                        <th scope="col"><?php _mde( 'Name' ); ?></th>
-                        <th scope="col"><?php _mde( 'Size' ); ?></th>
-                        <th scope="col"><?php _mde( 'Modification Time' ); ?></th>
+                        <th scope="col"><?php _e( 'Name', 'media-downloader' ); ?></th>
+                        <th scope="col"><?php _e( 'Size', 'media-downloader' ); ?></th>
+                        <th scope="col"><?php _e( 'Modification Time', 'media-downloader' ); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -482,13 +536,13 @@ endforeach;
                                 <tr>
                                     <td><a href="<?php echo add_query_arg( array( 'mdfile' => $ifile ) ); ?>"><?php echo $ifile; ?></a></td>
                                     <td><?php echo byte_convert( filesize( $ipath . '/' . $ifile ) ); ?></td>
-                                    <td><?php $timemask = sprintf( _md( '%1$s \a\t %2$s' ), get_option('date_format'), get_option('time_format') ); echo date_i18n( $timemask, filemtime( $ipath . '/' . $ifile ) ); ?></td>                    
+                                    <td><?php $timemask = sprintf( __( '%1$s \a\t %2$s', 'media-downloader' ), get_option('date_format'), get_option('time_format') ); echo date_i18n( $timemask, filemtime( $ipath . '/' . $ifile ) ); ?></td>                    
                                 </tr>
                             <?php else: ?>
                                 <tr>
                                     <td><?php echo $ifile; ?></td>
                                     <td><?php echo byte_convert( filesize( $ipath . '/' . $ifile ) ); ?></td>
-                                    <td><?php $timemask = sprintf( _md( '%1$s \a\t %2$s' ), get_option('date_format'), get_option('time_format') ); echo date_i18n( $timemask, filemtime( $ipath . '/' . $ifile ) ); ?></td>                    
+                                    <td><?php $timemask = sprintf( __( '%1$s \a\t %2$s', 'media-downloader' ), get_option('date_format'), get_option('time_format') ); echo date_i18n( $timemask, filemtime( $ipath . '/' . $ifile ) ); ?></td>                    
                                 </tr>
                             <?php endif; ?>
                         <?php endif; ?>
@@ -496,8 +550,8 @@ endforeach;
                 </tbody>
             </table>
         <?php else: ?>
-            <h3><?php printf( _md( 'Directory: <code>%s</code>' ), $mdbreadcrumbs ); ?></h3>
-            <div class="error settings-error"><p><strong><?php _mde( 'Empty directory?' ); ?></strong></p></div>
+            <h3><?php printf( __( 'Directory: <code>%s</code>', 'media-downloader' ), $mdbreadcrumbs ); ?></h3>
+            <div class="error settings-error"><p><strong><?php _e( 'Empty directory?', 'media-downloader' ); ?></strong></p></div>
         <?php endif; ?>
 
     <?php endif; ?>

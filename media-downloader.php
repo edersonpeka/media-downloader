@@ -446,7 +446,7 @@ function buildMediaTable( $folder, $atts = false ) {
                 if ( mb_strtolower( preg_replace( '/\.jpeg/m', '.jpg', $ifile ) ) == 'folder.jpg' ) $cover = $ifile;
             }
         } else {
-            $errors[] = sprintf( _md( 'Could not read: %1$s' ), $ipath );
+            $errors[] = sprintf( __( 'Could not read: %1$s', 'media-downloader' ), $ipath );
         }
     } elseif ( file_exists( $ipath ) && is_readable( $ipath ) ) {
         $folderalone = implode( '/', array_slice( explode( '/', $folder ), 0, -1 ) );
@@ -499,13 +499,13 @@ function buildMediaTable( $folder, $atts = false ) {
 
         if ( $mshowcover && $cover ) {
             $coversrc = network_home_url($mdir) . '/' . ( $ufolder ? $ufolder . '/' : '' ) . $cover;
-            $icovermarkup = $covermarkup ? $covermarkup : '<img class="md_coverImage" src="[coverimage]" alt="' . _md( 'Album Cover' ) . '" />';
+            $icovermarkup = $covermarkup ? $covermarkup : '<img class="md_coverImage" src="[coverimage]" alt="' . __( 'Album Cover', 'media-downloader' ) . '" />';
             $ihtml .= str_replace( '[coverimage]', $coversrc, $icovermarkup );
         }
 
         if ( $mshowfeatured && has_post_thumbnail() ) {
             $coversrc = get_the_post_thumbnail_url( null, $mshowfeatured );
-            $icovermarkup = $covermarkup ? $covermarkup : '<img class="md_coverImage md_postThumbnail" src="[coverimage]" alt="' . _md( 'Album Cover' ) . '" />';
+            $icovermarkup = $covermarkup ? $covermarkup : '<img class="md_coverImage md_postThumbnail" src="[coverimage]" alt="' . __( 'Album Cover', 'media-downloader' ) . '" />';
             $ihtml .= str_replace( '[coverimage]', $coversrc, $icovermarkup );
         }
 
@@ -519,7 +519,7 @@ function buildMediaTable( $folder, $atts = false ) {
             foreach ( $packageextensions as $pext ) {
                 $cpf = 0; if ( count( $iall[$pext] ) ) foreach( $iall[$pext] as $pf ) {
                     $cpf++;
-                    $ptext = _md( 'Download ' . mb_strtoupper( $pext ) );
+                    $ptext = sprintf( __( 'Download %s', 'media-downloader' ), mb_strtoupper( $pext ) );
                     if ( array_key_exists( $pext, $packagetexts ) && $packagetexts[$pext] ) {
                         $ptext = preg_replace( '/\[filename\]/m', $pf, $packagetexts[$pext] );
                     }
@@ -608,7 +608,8 @@ function buildMediaTable( $folder, $atts = false ) {
             // Each tag list item
             foreach ( $mshowtags as $mshowtag ) {
                 $_t = $tagvalues[$mshowtag];
-                $tagvalue = array_key_exists( $ifile.'.'.$iext, $_t ) ? $_t[$ifile.'.'.$iext] : '';
+                $ifile_and_ext = $ifile.'.'.$iext;
+                $tagvalue = array_key_exists( $ifile_and_ext, $_t ) ? $_t[ $ifile_and_ext ] : '';
                 if ( '' == $tagvalue ) {
                     $tagvalue = '&nbsp;';
                 } else {
@@ -633,8 +634,10 @@ function buildMediaTable( $folder, $atts = false ) {
                     }
                 }
                 // Item markup
-                $columnheader = ucwords( _md( $mshowtag ) );
-                if ( array_key_exists( $mshowtag, $replaceheaders ) ) $columnheader = $replaceheaders[$mshowtag];
+                $columnheader = ucwords( $mshowtag );
+                if ( array_key_exists( $mshowtag, $replaceheaders ) ) {
+                    $columnheader = $replaceheaders[ $mshowtag ];
+                }
                 if ( 'table-cells' == $markuptemplate ) {
                     // For "table cells" markup template,
                     // we store a "row with headers", so it
@@ -672,7 +675,7 @@ function buildMediaTable( $folder, $atts = false ) {
         } elseif ( 'definition-list' == $markuptemplate ) {
             $ihtml .= "\n" . '<th class="mediaTitle">&nbsp;</th>' . "\n";
         }
-        $downloadheader = _md( 'Download' );
+        $downloadheader = __( 'Download', 'media-downloader' );
         if ( array_key_exists( 'download', $replaceheaders ) ) $downloadheader = $replaceheaders['download'];
         $ihtml .= '<th class="mediaDownload">'.$downloadheader.'</th>
 </tr>
@@ -751,7 +754,12 @@ function buildMediaTable( $folder, $atts = false ) {
 
     if ( count( $errors ) ) {
         $errorHtml = '<div class="mediaDownloaderErrors">';
-        foreach ( $errors as $error ) $errorHtml .= '<p><strong>' . _md( 'Error:' ) . '</strong> ' . $error . '</p>';
+        foreach ( $errors as $error ) {
+            $errorHtml .= '<p>';
+            $errorHtml .= '<strong>' . __( 'Error:', 'media-downloader' ) . '</strong> ';
+            $errorHtml .= $error;
+            $errorHtml .= '</p>';
+        }
         $errorHtml .= '</div>';
         $ihtml .= $errorHtml;
     }
@@ -848,7 +856,7 @@ function mediadownloader( $t ) {
             );
         };
     elseif ( is_feed() ) :
-        $t = preg_replace( '/<p>\[media:([^\]]*)\]<\/p>/i', '<p><small>' . _md( '(See attached files...)' ) . '</small></p>', $t );
+        $t = preg_replace( '/<p>\[media:([^\]]*)\]<\/p>/i', '<p><small>' . __( '(See attached files...)', 'media-downloader' ) . '</small></p>', $t );
     endif;
 
     /* -- CASE SPECIFIC: -- */
@@ -997,7 +1005,7 @@ function mediadownloaderRss(){
             //$t .= '<enclosure title="' . basename( $m ) . '" url="' . ( $m . '.' . $mext ) . '" length="' . mediadownloaderFileSize( $m, $mext ) . '" type="audio/mpeg" />';
             $t .= '</item>';
             $t .= '<item>';
-            $t .= '<title>' . sprintf( _md( 'Attached file: %1$s - %2$s' ), urldecode( basename( $m ) ), get_the_title($post->ID) ) . '</title>';
+            $t .= '<title>' . sprintf( __( 'Attached file: %1$s - %2$s', 'media-downloader' ), urldecode( basename( $m ) ), get_the_title($post->ID) ) . '</title>';
             $t .= '<link>' . get_permalink($post->ID) . '#mdfile_' . sanitize_title( basename( urldecode( $m ) ) ) . '</link>';
             $t .= '<description><![CDATA[' . $adjacentmarkup . ']]></description>';
             $t .= '<pubDate>' . date( DATE_RSS, $postdate ) . '</pubDate>';
@@ -1072,15 +1080,15 @@ function mediaDownloaderLocalizeScript() {
         if ( !trim($mdembedcolors[$mdcolor]) ) $mdembedcolors[$mdcolor] = $mddefault;
     }
     $replaceheaders = get_replaceheaders();
-    $playheader = _md( 'Play' );
+    $playheader = __( 'Play', 'media-downloader' );
     if ( array_key_exists( 'play', $replaceheaders ) ) $playheader = $replaceheaders['play'];
     wp_localize_script( 'mediadownloaderJs', 'mdEmbedColors', $mdembedcolors );
     wp_localize_script( 'mediadownloaderJs', 'mdStringTable', array(
         'pluginURL' => md_plugin_url() . '/',
         'playColumnText' => $playheader,
-        'downloadTitleText' => _md( 'Download:' ),
-        'playTitleText' => _md( 'Play:' ),
-        'stopTitleText' => _md( 'Stop:' ),
+        'downloadTitleText' => __( 'Download:', 'media-downloader' ),
+        'playTitleText' => __( 'Play:', 'media-downloader' ),
+        'stopTitleText' => __( 'Stop:', 'media-downloader' ),
     ) );
 }
 
@@ -1158,7 +1166,7 @@ function mediadownloader_settings_link( $links, $file ) {
     $_f = explode( DIRECTORY_SEPARATOR, dirname( __FILE__ ) );
     $this_plugin = plugin_basename( array_pop( $_f ) );
     if ( $file == $this_plugin ) {
-        $settings_link = '<a href="options-general.php?page=mediadownloader-options">' . _md( 'Settings' ) . '</a>';
+        $settings_link = '<a href="options-general.php?page=mediadownloader-options">' . __( 'Settings', 'media-downloader' ) . '</a>';
         array_unshift( $links, $settings_link );
     }
     return $links;
@@ -1237,40 +1245,6 @@ function sanitizeMarkupTemplate( $t ){
 }
 function sanitizeURL( $t ) {
     return filter_var( $t, FILTER_VALIDATE_URL );
-}
-
-
-// I used these functions below to "internationalize" (localize) some strings,
-// left them here for "backward compatibilaziness"
-
-function _md( $t ) {
-//    if ( function_exists( 'icl_register_string' ) ) {
-//        icl_register_string( 'Media Downloader', $t, $t );
-//        return icl_t( 'Media Downloader', $t, $t );
-//    } else {
-        return __( $t, 'media-downloader' );
-//    }
-}
-function _mde( $t ) {
-//    if ( function_exists( 'icl_register_string' ) ) {
-//        icl_register_string( 'Media Downloader', $t, $t );
-//        echo icl_t( 'Media Downloader', $t, $t );
-//    } else {
-        return _e( $t, 'media-downloader' );
-//    }
-}
-function _mdn( $ts, $tp, $n ) {
-//    if ( function_exists( 'icl_register_string' ) ) {
-//        icl_register_string( 'Media Downloader', $ts, $ts );
-//        icl_register_string( 'Media Downloader', $tp, $tp );
-//        if ( 1 != $n ) {
-//            return icl_t( 'Media Downloader', $tp, $tp );
-//        } else {
-//            return icl_t( 'Media Downloader', $ts, $ts );
-//        }
-//    } else {
-        return _n( $ts, $tp, $n, 'media-downloader' );
-//    }
 }
 
 

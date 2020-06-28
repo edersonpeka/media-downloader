@@ -41,16 +41,16 @@ $colordescriptions = array(
 <?php settings_fields( 'md_more_options' ); ?>
 
 <fieldset id="mdf_embedcolors">
-<h3><?php _mde( 'Old Embed Flash Player Colors:' ) ;?></h3>
-<p class="description"><?php _mde( 'Fallback for old browsers that don\'t support the <code>audio</code> tag.' ); ?></p>
+<h3><?php _e( 'Old Embed Flash Player Colors:', 'media-downloader' ) ;?></h3>
+<p class="description"><?php _e( 'Fallback for old browsers that don\'t support the <code>audio</code> tag.', 'media-downloader' ); ?></p>
 <br />
 
 <table cellpadding="3">
 <thead>
 <tr>
-<th><?php _mde( 'Property' ); ?></th>
-<th><?php _mde( 'Value' ); ?></th>
-<th><?php _mde( 'Default' ); ?></th>
+<th><?php _e( 'Property', 'media-downloader' ); ?></th>
+<th><?php _e( 'Value', 'media-downloader' ); ?></th>
+<th><?php _e( 'Default', 'media-downloader' ); ?></th>
 </tr>
 </thead>
 <tbody>
@@ -71,7 +71,7 @@ $colordescriptions = array(
 </table>
 
 <p class="submit">
-<input type="submit" class="button button-primary" value="<?php _mde( 'Update Options' ) ;?>" />
+<input type="submit" class="button button-primary" value="<?php _e( 'Update Options', 'media-downloader' ) ;?>" />
 </p>
 </fieldset>
 
