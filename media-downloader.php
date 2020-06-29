@@ -21,6 +21,7 @@ if ( ! defined( 'WP_PLUGIN_DIR' ) )
       define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 
 include_once( dirname( __FILE__ ) . '/multibyte-functions.php' );
+include_once( dirname( __FILE__ ) . '/blocks/mediadownloader.php' );
 
 // MarkDown, used for text formatting
 if( !class_exists( 'Parsedown' ) ) include_once( dirname( __FILE__ ) . '/Parsedown.php' );
@@ -252,11 +253,21 @@ function md_packageExtensions() {
     return array_filter( $ret );
 }
 
+function md_btoa( $str ) {
+    if ( mb_strpos( $str, 'base64:' ) === 0 ) {
+        $str = base64_decode( mb_substr( $str, 6 ) );
+    }
+    return $str;    
+}
+
 function buildMediaTable( $folder, $atts = false ) {
     global $mdtags, $tagvalues, $mdsortingfields, $mdmarkuptemplates;
     $errors = array();
     
     if ( !is_array( $atts ) ) $atts = array();
+
+    $folder = md_btoa( $folder );
+    $atts = array_map( 'md_btoa', $atts );
     
     $forcePrefix = array_key_exists( 'calculateprefix', $atts ) && ( $atts['calculateprefix'] == 'true' );
 
@@ -425,9 +436,9 @@ function buildMediaTable( $folder, $atts = false ) {
     $ifiles = array();
     $ititles = array();
     $ipath = $mpath . '/' . $folder;
+    $folderalone = $folder;
     // Populating arrays with respective files
     if ( is_dir( $ipath ) ) {
-        $folderalone = $folder;
         if ( is_readable( $ipath ) ) {
             $idir = dir( $ipath );
             while ( false !== ( $ifile = $idir->read() ) ) if ( !is_dir( $ifile ) ) {
@@ -740,14 +751,14 @@ function buildMediaTable( $folder, $atts = false ) {
             }
             // Play, Stop and Title (concatenated with Artist) texts
             // all packed in rel attribute, for embed player to read
-            // and do its black magic
+            // and do its misterious magic
             $irel = array();
-            if ( $iplaytext ) $irel[] = 'mediaDownloaderPlayText:' . htmlentities( $iplaytext, ENT_COMPAT, 'UTF-8' );
-            if ( $istoptext ) $irel[] = 'mediaDownloaderStopText:' . htmlentities( $istoptext, ENT_COMPAT, 'UTF-8' );
+            if ( $iplaytext ) $irel['mediaDownloaderPlayText'] = html_entity_decode( $iplaytext );
+            if ( $istoptext ) $irel['mediaDownloaderStopText'] = html_entity_decode( $istoptext );
             $ititletext = $iartisttext . $ititletext;
-            if ( $ititletext ) $irel[] = 'mediaDownloaderTitleText:' . htmlentities( $ititletext, ENT_COMPAT, 'UTF-8' );
-            $irel = implode( ';', $irel );
-            $ihtml .= '<td class="mediaDownload"><a href="'.network_home_url($mdir).'/'.($ufolder?$ufolder.'/':'').rawurlencode( $ifile ).'.'.$iext.'" title="' . htmlentities( $showifile, ENT_COMPAT, 'UTF-8' ) . '" ' . ( $irel ? 'rel="' . $irel . '"' : '' ) . ' id="mdfile_' . sanitize_title( $ifile ) . '" download="' . esc_attr( $ifile . '.' . $iext ) . '">'.$idownloadtext.'</a></td>'."\n" ;
+            if ( $ititletext ) $irel['mediaDownloaderTitleText'] = html_entity_decode(  $ititletext );
+            $irel = $irel ? json_encode( $irel ) : '';
+            $ihtml .= '<td class="mediaDownload"><a href="'.network_home_url($mdir).'/'.($ufolder?$ufolder.'/':'').rawurlencode( $ifile ).'.'.$iext.'" title="' . esc_attr( $showifile ) . '" ' . ( $irel ? 'rel="' . esc_attr( $irel ) . '"' : '' ) . ' id="mdfile_' . sanitize_title( $ifile ) . '" download="' . esc_attr( $ifile . '.' . $iext ) . '">'.$idownloadtext.'</a></td>'."\n" ;
             $ihtml .= '</tr>'."\n" ;
         }
         $ihtml .= '</tbody></table>'."\n" ;

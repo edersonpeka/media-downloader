@@ -1,0 +1,24 @@
+/**
+ * The following styles get applied inside the editor only.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-media-downloader-mediadownloader {
+	background-color: rgba(139,139,150,.1);
+	padding: 1em;
+}
+.wp-block-media-downloader-example th {
+	background-color: rgba(139,139,150,.15);
+}
+
+.wp-block-media-downloader-example th,
+.wp-block-media-downloader-example td,
+.wp-block-media-downloader-example th span,
+.wp-block-media-downloader-example td span {
+	font-size: 1.3em !important;
+}
+.wp-block-media-downloader-example th:nth-child(n+2),
+.wp-block-media-downloader-example td:nth-child(n+2) {
+	text-align: center;
+}

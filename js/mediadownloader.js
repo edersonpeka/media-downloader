@@ -28,20 +28,21 @@ function initMediaDownloader() {
         var title = jQuery(this).attr('title').replace(mediadownloaderDownloadTitleText, mediadownloaderPlayTitleText);
         var text = jQuery(this).html().replace(mediadownloaderDownloadTitleText, mediadownloaderPlayTitleText);
         var relattr = jQuery(this).html().replace(mediadownloaderDownloadTitleText, mediadownloaderStopTitleText);
-        var arrrel = (jQuery(this).attr('rel')+'').split(';');
-        for ( var r=0; r<arrrel.length; r++ ) {
-            var arrparm = arrrel[r].split(':');
-            if ( arrparm.length >= 2 ) {
-                var arr_resto = unescape( arrparm.slice(1,arrparm.length).join(':').replace( /\+/g, ' ' ) );
-                if ( arrparm[0] == 'mediaDownloaderPlayText' ) {
-                    text = arr_resto;
+        var arrrel = jQuery(this).attr('rel');
+        if ( arrrel ) {
+            try {
+                arrrel = JSON.parse( arrrel );
+                if ( 'mediaDownloaderPlayText' in arrrel ) {
+                    text = arrrel.mediaDownloaderPlayText;
                 }
-                if ( arrparm[0] == 'mediaDownloaderStopText' ) {
-                    relattr = arr_resto;
+                if ( 'mediaDownloaderStopText' in arrrel ) {
+                    relattr = arrrel.mediaDownloaderStopText;
                 }
-                if ( arrparm[0] == 'mediaDownloaderTitleText' ) {
-                    title = arr_resto;
+                if ( 'mediaDownloaderTitleText' in arrrel ) {
+                    title = arrrel.mediaDownloaderTitleText;
                 }
+            } catch( e ) {
+                console.log( 'Error parsing JSON', e );
             }
         }
         var tdcont = '<td class="mediaPlay"><a href="'+link+'" title="'+title+'" rel="' + escape(relattr) + '">'+text+'</a></td>';
