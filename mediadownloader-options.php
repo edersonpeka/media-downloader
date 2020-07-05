@@ -19,7 +19,7 @@ foreach( $mdsettings as $mdsetting => $mdsanitizefunction ) $mdoptions[$mdsettin
 <p>
 <label for="md_mp3folder"><code><?php echo ABSPATH ;?></code></label>
 <?php /* translators: %1$s will be replaced by the URL for wordpress documentation on file permissions */ ?>
-<input type="text" name="mp3folder" id="md_mp3folder" value="<?php echo $mdoptions['mp3folder'] ;?>" size="20" /> <small><?php echo sprintf( __( '(must be <a href="%1$s">readable</a>)', 'media-downloader' ), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small>
+<input type="text" name="mp3folder" id="md_mp3folder" value="<?php echo esc_attr( $mdoptions['mp3folder'] ); ?>" size="20" /> <small><?php echo sprintf( __( '(must be <a href="%1$s">readable</a>)', 'media-downloader' ), 'http://codex.wordpress.org/Changing_File_Permissions' ) ;?></small>
 
 <?php if( '' != trim( $mdoptions['mp3folder'] ) ){
     $dirok = is_readable( ABSPATH . '/' . $mdoptions['mp3folder'] ) ;?>

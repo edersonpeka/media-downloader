@@ -55,26 +55,29 @@ function initMediaDownloader() {
     jQuery('table.mediaTable.embedPlayer td.mediaPlay a').click( function () {
         var link = jQuery(this).attr('href');
         var linkText = jQuery(this).html();
+        var playText = jQuery(this).data('playtext');
+        if ( !playText ) {
+            playText = linkText;
+            jQuery(this).data('playtext', playText);
+        }
         var linkRel = unescape(jQuery(this).attr('rel'));
-        if( link != mediaplayerPlayingURL ){
-            mediaplayerPlay( link, jQuery(this).attr('title').replace(mediadownloaderPlayTitleText, '') );
-            jQuery('a.mediaStop').removeClass('mediaStop').each( function () {
-                var this_rel = jQuery(this).attr( 'rel' );
-                var this_html = jQuery(this).html();
-                jQuery(this).html( this_rel ).attr( 'rel', this_html );
-            } );
-            jQuery('td.mediaPlaying').removeClass('mediaPlaying');
+        var stopText = jQuery(this).data('stoptext');
+        if ( !stopText ) {
+            stopText = linkRel;
+            jQuery(this).data('stoptext', stopText);
+        }
+        mediaplayerStop();
+        var linkPlaying = jQuery(this).hasClass('mediaStop');
+        if( !linkPlaying ){
+            var title = jQuery(this).attr('title').replace(mediadownloaderPlayTitleText, '');
+            mediaplayerPlay( link, title, jQuery(this) );
             jQuery(this).addClass('mediaStop').parents('td.mediaPlay').addClass('mediaPlaying');
-        } else {
-            mediaplayerStop();
-            jQuery(this).removeClass('mediaStop').parents('td.mediaPlaying').removeClass('mediaPlaying');
         }
         jQuery(this).attr('rel', linkText).html(linkRel);
         return false;
     } );
 }
 
-//$.noConflict();
 jQuery(document).ready(function($) {
     initMediaDownloader();
 });
@@ -101,10 +104,13 @@ function mediaplayerStr( url, title, tdcolspan ) {
 }
     
 var mediaplayerPlayingURL = '';
-function mediaplayerPlay( url, title ) {
+function mediaplayerPlay( url, title, clicked ) {
     if( url != mediaplayerPlayingURL ) {
         mediaplayerStop();
-        var linktr = jQuery('a[href="'+url+'"]').first().parents('tr').first();
+        if ( typeof clicked == 'undefined' ) {
+            clicked = jQuery('a[href="'+url+'"]').first();
+        }
+        var linktr = clicked.parents('tr').first();
         var tdcolspan = 0;
         linktr.children('td').each( function () {
             var currentcolspan = parseInt( '0' + jQuery(this).attr('colspan'), 10 );
@@ -117,8 +123,10 @@ function mediaplayerPlay( url, title ) {
             if ( linktr.parents( 'table' ).hasClass( 'autoPlayList' ) ) {
                 o_browser_player.addEventListener( 'ended', function () {
                     var o_next_tr = jQuery( this ).parents( 'tr.mediaPlayer' ).next( 'tr.mdTags' );
-                    jQuery( this ).parents( 'table' ).find( '.mediaStop' ).trigger( 'click' );
-                    if ( o_next_tr.length ) jQuery( 'td.mediaPlay a', o_next_tr ).first().trigger( 'click' );
+                    mediaplayerStop();
+                    if ( o_next_tr.length ) {
+                        jQuery( 'td.mediaPlay a', o_next_tr ).first().trigger( 'click' );
+                    }
                 }, false );
             }
             o_browser_player.play();
@@ -128,7 +136,14 @@ function mediaplayerPlay( url, title ) {
 }
 
 function mediaplayerStop() {
-    if ( document.getElementById( 'browserplayer_1' ) ) document.getElementById( 'browserplayer_1' ).pause();
+    if ( document.getElementById( 'browserplayer_1' ) ) {
+        document.getElementById( 'browserplayer_1' ).pause();
+    }
     jQuery('tr.mediaPlayer').find('object').remove().end().find('audio').remove().end().remove();
+    jQuery('a.mediaStop').removeClass('mediaStop').each( function () {
+        jQuery(this).html( jQuery(this).data('playtext') ).attr( 'rel', jQuery(this).data('stoptext') );
+    } );
+    jQuery('td.mediaPlaying').removeClass('mediaPlaying');
+
     mediaplayerPlayingURL = '';
 }

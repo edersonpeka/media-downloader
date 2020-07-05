@@ -30,6 +30,9 @@ function mediadownloader_block_init() {
 		),
 		filemtime( "$dir/$index_js" )
 	);
+	wp_localize_script( 'mediadownloader-block-editor', 'mediadownloaderOptions', array(
+        'mp3folderurl' => home_url( '/' ) . rtrim( get_option('mp3folder'), '/' ) . '/',
+    ) );
 
 	$editor_css = 'mediadownloader/editor.css';
 	wp_register_style(
@@ -40,8 +43,13 @@ function mediadownloader_block_init() {
 	);
 
 	register_block_type( 'media-downloader/mediadownloader', array(
-		'editor_script' => 'mediadownloader-block-editor',
-		'editor_style'  => 'mediadownloader-block-editor',
+		'editor_script'   => 'mediadownloader-block-editor',
+		'editor_style'    => 'mediadownloader-block-editor',
+		'render_callback' => 'mediadownloader_block_render',
 	) );
 }
 add_action( 'init', 'mediadownloader_block_init' );
+
+function mediadownloader_block_render( $atts, $content ) {
+	return buildMediaTable( $atts['folder'], $atts );
+}

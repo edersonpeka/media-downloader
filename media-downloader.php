@@ -861,13 +861,6 @@ function md_plugin_url() {
 function mediadownloader( $t ) {
     if ( !is_feed() || !get_option( 'handlefeed' ) ) :
         $t = listMedia( $t );
-        if ( TRUE == get_option( 'removeextension' ) ) {
-            $t = preg_replace(
-                '/href\=[\\\'\"](.*?)'.preg_quote('.mp3').'[\\\'\"]/im',
-                "href=\"?md_getfile=$1\"",
-                $t
-            );
-        };
     elseif ( is_feed() ) :
         $t = preg_replace( '/<p>\[media:([^\]]*)\]<\/p>/i', '<p><small>' . __( '(See attached files...)', 'media-downloader' ) . '</small></p>', $t );
     endif;

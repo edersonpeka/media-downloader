@@ -221,18 +221,16 @@
 		 */
 		save: function( props ) {
 			var atts = props.attributes;
-			var shatts = [ 'mediadownloader' ];
-			Object.keys( atts ).sort().forEach( function( _key ) {
-				if ( 'example' != _key ) {
-					var _val = btoa( atts[ _key ].toString() );
-					shatts.push( _key + '="base64:' + _val + '"' );
-				}
-			} );
-			var shcode = '[' + shatts.join( ' ' ) + ']';
 			return el(
 				'p',
 				{},
-				shcode
+				__( 'Download media:', 'media-downloader' ),
+				' ',
+				el(
+					'a',
+					{ href: mediadownloaderOptions.mp3folderurl + atts.folder },
+					atts.folder
+				)
 			);
 		}
 	} );
