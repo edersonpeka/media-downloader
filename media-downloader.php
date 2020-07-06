@@ -820,7 +820,7 @@ function listMedia( $t ){
     $t = preg_replace( '/<p>\[media:([^\]]*)\]<\/p>/i', '[media:$1]', $t );
     preg_match_all( '/\[media:([^\]]*)\]/i', $t, $matches );
     // Any?
-    if ( count( $matches ) ) {
+    if ( count( $matches ) > 1 ) {
         // Each...
         foreach ( $matches[1] as $folder ) {
             // Removing paragraph
@@ -888,7 +888,8 @@ function mediadownloader( $t ) {
     if ( !is_feed() || !get_option( 'handlefeed' ) ) :
         $t = listMedia( $t );
     elseif ( is_feed() ) :
-        $t = preg_replace( '/<p>\[media:([^\]]*)\]<\/p>/i', '<p><small>' . __( '(See attached files...)', 'media-downloader' ) . '</small></p>', $t );
+        $att_str = '<p><small>' . __( '(See attached files...)', 'media-downloader' ) . '</small></p>';
+        $t = preg_replace( '/<p>\[media:([^\]]*)\]<\/p>/i', $att_str, $t );
     endif;
 
     /* -- CASE SPECIFIC: -- */
@@ -1143,7 +1144,7 @@ function md_admin_init() {
     wp_register_script(
         'md-admin-script',
         md_plugin_url() . '/js/admin.js',
-        array(),
+        array( 'jquery' ),
         mediaDownloaderModificationTime( '/js/admin.js' )
     );
 }
@@ -1192,19 +1193,6 @@ function mediadownloader_options() {
         require_once( dirname( __FILE__ ) . '/mediadownloader-options.php' );
     }
 }
-
-// Add Settings link to plugins - code from GD Star Ratings
-// (as seen in http://www.whypad.com/posts/wordpress-add-settings-link-to-plugins-page/785/ )
-function mediadownloader_settings_link( $links, $file ) {
-    $_f = explode( DIRECTORY_SEPARATOR, dirname( __FILE__ ) );
-    $this_plugin = plugin_basename( array_pop( $_f ) );
-    if ( $file == $this_plugin ) {
-        $settings_link = '<a href="options-general.php?page=mediadownloader-options">' . __( 'Settings', 'media-downloader' ) . '</a>';
-        array_unshift( $links, $settings_link );
-    }
-    return $links;
-}
-add_filter( 'plugin_action_links', 'mediadownloader_settings_link', 10, 2 );
 
 // Registering our settings...
 add_action( 'admin_init', 'mediadownloader_settings' );
@@ -1282,23 +1270,6 @@ function sanitizeURL( $t ) {
 
 
 /* -- CASE SPECIFIC: -- */
-
-add_filter( 'get_previous_post_where', 'corrige_qtrans_excludeUntransPosts' );
-add_filter( 'get_next_post_where', 'corrige_qtrans_excludeUntransPosts' );
-add_filter( 'posts_where_request', 'corrige_qtrans_excludeUntransPosts' );
-
-function corrige_qtrans_excludeUntransPosts( $where ) {
-    if ( function_exists( 'qtrans_getLanguage' ) ) {
-        $l = qtrans_getLanguage();
-        if ( trim( $l ) ) {
-	        global $q_config, $wpdb;
-	        if ( $q_config['hide_untranslated'] ) {
-		        $where .= " AND post_content LIKE '%<!--:".$l."-->%'";
-	        }
-	    }
-	}
-	return $where;
-}
 
 function listarCategorias($t){
     preg_match_all('/\[cat:([^\]]*)\]/i',$t,$matches);
