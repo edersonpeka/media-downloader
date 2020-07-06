@@ -24,28 +24,9 @@ function initMediaDownloader() {
         }
     } );
     jQuery('table.mediaTable.embedPlayer td.mediaDownload a').each( function () {
-        var link = jQuery(this).attr('href');
-        var title = jQuery(this).attr('title').replace(mediadownloaderDownloadTitleText, mediadownloaderPlayTitleText);
-        var text = jQuery(this).html().replace(mediadownloaderDownloadTitleText, mediadownloaderPlayTitleText);
-        var relattr = jQuery(this).html().replace(mediadownloaderDownloadTitleText, mediadownloaderStopTitleText);
-        var arrrel = jQuery(this).attr('rel');
-        if ( arrrel ) {
-            try {
-                arrrel = JSON.parse( arrrel );
-                if ( 'mediaDownloaderPlayText' in arrrel ) {
-                    text = arrrel.mediaDownloaderPlayText;
-                }
-                if ( 'mediaDownloaderStopText' in arrrel ) {
-                    relattr = arrrel.mediaDownloaderStopText;
-                }
-                if ( 'mediaDownloaderTitleText' in arrrel ) {
-                    title = arrrel.mediaDownloaderTitleText;
-                }
-            } catch( e ) {
-                console.log( 'Error parsing JSON', e );
-            }
-        }
-        var tdcont = '<td class="mediaPlay"><a href="'+link+'" title="'+title+'" rel="' + escape(relattr) + '">'+text+'</a></td>';
+        var playLink = jQuery( this ).clone();
+        playLink.html( jQuery(this).data('playtext') );
+        var tdcont = jQuery( '<td class="mediaPlay"></td>' ).append( playLink );
         if ( jQuery(this).parents('table.mediaTable').hasClass('embedposafter') ) {
             jQuery(this).parent().after(tdcont);
         } else {
@@ -60,20 +41,19 @@ function initMediaDownloader() {
             playText = linkText;
             jQuery(this).data('playtext', playText);
         }
-        var linkRel = unescape(jQuery(this).attr('rel'));
         var stopText = jQuery(this).data('stoptext');
         if ( !stopText ) {
-            stopText = linkRel;
+            stopText = linkText;
             jQuery(this).data('stoptext', stopText);
         }
-        mediaplayerStop();
         var linkPlaying = jQuery(this).hasClass('mediaStop');
+        mediaplayerStop();
         if( !linkPlaying ){
             var title = jQuery(this).attr('title').replace(mediadownloaderPlayTitleText, '');
             mediaplayerPlay( link, title, jQuery(this) );
             jQuery(this).addClass('mediaStop').parents('td.mediaPlay').addClass('mediaPlaying');
+            jQuery(this).html(stopText);
         }
-        jQuery(this).attr('rel', linkText).html(linkRel);
         return false;
     } );
 }
@@ -141,7 +121,7 @@ function mediaplayerStop() {
     }
     jQuery('tr.mediaPlayer').find('object').remove().end().find('audio').remove().end().remove();
     jQuery('a.mediaStop').removeClass('mediaStop').each( function () {
-        jQuery(this).html( jQuery(this).data('playtext') ).attr( 'rel', jQuery(this).data('stoptext') );
+        jQuery(this).html( jQuery(this).data('playtext') );
     } );
     jQuery('td.mediaPlaying').removeClass('mediaPlaying');
 

@@ -77,6 +77,51 @@ class media_downloader {
         }
 	    return $ret;
     }
+
+    public static function scandir( $ipath ) {
+        $iall = $ifiles = array();
+        // Populating arrays with respective files
+        if ( is_dir( $ipath ) ) {
+            if ( is_readable( $ipath ) ) {
+                $idir = dir( $ipath );
+                while ( false !== ( $ifile = $idir->read() ) ) if ( !is_dir( $ifile ) ) {
+                    $arrfile = explode( '.', $ifile );
+                    if ( count( $arrfile ) > 1 ) {
+                        $fext = array_pop( $arrfile );
+                    } else {
+                        $fext = '.none';
+                    }
+                    if ( in_array( $fext, md_mediaExtensions() ) ) {
+                        $ifiles[] = $ifile;
+                    } else {
+                        if ( !array_key_exists( $fext, $iall ) ) $iall[$fext] = array();
+                        $iall[$fext][] = $ifile;
+                    }
+                    if ( mb_strtolower( preg_replace( '/\.jpeg/m', '.jpg', $ifile ) ) == 'folder.jpg' ) $cover = $ifile;
+                }
+            } else {
+                /* translators: %1$s will be replaced by the unreadable path */
+                $errors[] = sprintf( __( 'Could not read: %1$s', 'media-downloader' ), $ipath );
+            }
+        } elseif ( file_exists( $ipath ) && is_readable( $ipath ) ) {
+            $apath = explode( '/', $ipath );
+            $ifile = array_pop( $apath );
+            $ipath = implode( '/', $apath );
+            $arrfile = explode( '.', $ifile );
+            if ( count( $arrfile ) > 1 ) {
+                $fext = array_pop( $arrfile );
+            } else {
+                $fext = '.none';
+            }
+            if ( in_array( $fext, md_mediaExtensions() ) ) {
+                $ifiles[] = $ifile;
+            } else {
+                if ( !array_key_exists( $fext, $iall ) ) $iall[$fext] = array();
+                $iall[$fext][] = $ifile;
+            }
+        }
+        return array( 'dir' => $ipath, 'other' => $iall, 'media' => $ifiles );
+    }
 }
 
 // Initialize
@@ -437,50 +482,18 @@ function buildMediaTable( $folder, $atts = false ) {
     $ititles = array();
     $ipath = $mpath . '/' . $folder;
     $folderalone = $folder;
-    // Populating arrays with respective files
-    if ( is_dir( $ipath ) ) {
-        if ( is_readable( $ipath ) ) {
-            $idir = dir( $ipath );
-            while ( false !== ( $ifile = $idir->read() ) ) if ( !is_dir( $ifile ) ) {
-                $arrfile = explode( '.', $ifile );
-                if ( count( $arrfile ) > 1 ) {
-                    $fext = array_pop( $arrfile );
-                } else {
-                    $fext = '.none';
-                }
-                if ( in_array( $fext, md_mediaExtensions() ) ) {
-                    $ifiles[] = $ifile;
-                } else {
-                    if ( !array_key_exists( $fext, $iall ) ) $iall[$fext] = array();
-                    $iall[$fext][] = $ifile;
-                }
-                if ( mb_strtolower( preg_replace( '/\.jpeg/m', '.jpg', $ifile ) ) == 'folder.jpg' ) $cover = $ifile;
-            }
-        } else {
-            /* translators: %1$s will be replaced by the unreadable path */
-            $errors[] = sprintf( __( 'Could not read: %1$s', 'media-downloader' ), $ipath );
-        }
-    } elseif ( file_exists( $ipath ) && is_readable( $ipath ) ) {
+    $scan = media_downloader::scandir( $ipath );
+    if ( $ipath != $scan['dir'] ) {
         $folderalone = implode( '/', array_slice( explode( '/', $folder ), 0, -1 ) );
-        $apath = explode( '/', $ipath );
-        $ifile = array_pop( $apath );
-        $arrfile = explode( '.', $ifile );
-        if ( count( $arrfile ) > 1 ) {
-            $fext = array_pop( $arrfile );
-        } else {
-            $fext = '.none';
-        }
-        if ( in_array( $fext, md_mediaExtensions() ) ) {
-            $ifiles[] = $ifile;
-        } else {
-            if ( !array_key_exists( $fext, $iall ) ) $iall[$fext] = array();
-            $iall[$fext][] = $ifile;
-        }
-        $ipath = implode( '/', $apath );
+        $ipath = $scan[ 'dir' ];
     }
+    $iall = $scan[ 'other' ];
+    $ifiles = $scan[ 'media' ];
+
     // Encoding folder name
     $pfolder = array_filter( explode( '/', $folderalone ) );
-    foreach( $pfolder as $p ) $p = rawurlencode( $p );
+    foreach( $pfolder as &$p ) $p = rawurlencode( $p );
+    unset( $p );
     $ufolder = implode( '/', $pfolder );
     if ( $ufolder ) {
         $afolder = explode( '/', $ufolder );
@@ -752,13 +765,26 @@ function buildMediaTable( $folder, $atts = false ) {
             // Play, Stop and Title (concatenated with Artist) texts
             // all packed in rel attribute, for embed player to read
             // and do its misterious magic
-            $irel = array();
-            if ( $iplaytext ) $irel['mediaDownloaderPlayText'] = html_entity_decode( $iplaytext );
-            if ( $istoptext ) $irel['mediaDownloaderStopText'] = html_entity_decode( $istoptext );
+            $data = array();
+            if ( $iplaytext ) $data['playtext'] = html_entity_decode( $iplaytext );
+            if ( $istoptext ) $data['stoptext'] = html_entity_decode( $istoptext );
             $ititletext = $iartisttext . $ititletext;
-            if ( $ititletext ) $irel['mediaDownloaderTitleText'] = html_entity_decode(  $ititletext );
-            $irel = $irel ? json_encode( $irel ) : '';
-            $ihtml .= '<td class="mediaDownload"><a href="'.network_home_url($mdir).'/'.($ufolder?$ufolder.'/':'').rawurlencode( $ifile ).'.'.$iext.'" title="' . esc_attr( $showifile ) . '" ' . ( $irel ? 'rel="' . esc_attr( $irel ) . '"' : '' ) . ' id="mdfile_' . sanitize_title( $ifile ) . '" download="' . esc_attr( $ifile . '.' . $iext ) . '">'.$idownloadtext.'</a></td>'."\n" ;
+            if ( $ititletext ) $data['titletext'] = html_entity_decode(  $ititletext );
+            $data_str = '';
+            foreach ( $data as $attr => $val ) {
+                $data_str .= 'data-' . $attr . '="' . esc_attr( $val ) . '" ';
+            }
+
+            $href = implode( '/', array_filter( array(
+                network_home_url($mdir),
+                $ufolder,
+                rawurlencode( $ifile ) . '.' . $iext
+            ) ) );
+            $ihtml .= '<td class="mediaDownload">';
+            $ihtml .= '<a href="'.$href.'" title="' . esc_attr( $showifile ) . '" ' . $data_str . ' id="mdfile_' . sanitize_title( $ifile ) . '" download="' . esc_attr( $ifile . '.' . $iext ) . '">';
+            $ihtml .= $idownloadtext;
+            $ihtml .= '</a>';
+            $ihtml .= '</td>'."\n" ;
             $ihtml .= '</tr>'."\n" ;
         }
         $ihtml .= '</tbody></table>'."\n" ;
