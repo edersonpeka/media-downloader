@@ -9,11 +9,12 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-06-28T19:08:39-03:00\n"
+"POT-Creation-Date: 2020-07-12T21:39:28-03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 
 #. Plugin Name of the plugin
+#: blocks/mediadownloader/index.js:34
 msgid "Media Downloader"
 msgstr ""
 
@@ -22,7 +23,7 @@ msgid "https://ederson.peka.nom.br"
 msgstr ""
 
 #. Description of the plugin
-#: mediadownloader-options.php:200
+#: mediadownloader-options.php:53
 msgid "Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode."
 msgstr ""
 
@@ -38,188 +39,291 @@ msgstr ""
 msgid "Error 404: File not found!"
 msgstr ""
 
-#: media-downloader.php:66
-#: media-downloader.php:1172
+#: media-downloader.php:67
 msgid "Settings"
 msgstr ""
 
-#: media-downloader.php:149
-msgid "<strong>\"DL\" mode:</strong> One table cell containing a definition list (one definition term for each tag)"
-msgstr ""
-
-#: media-downloader.php:150
-msgid "<strong>\"TR\" mode:</strong> One table cell for each tag"
-msgstr ""
-
 #. translators: %1$s will be replaced by the unreadable path
-#: media-downloader.php:450
+#: media-downloader.php:104
 msgid "Could not read: %1$s"
 msgstr ""
 
-#: media-downloader.php:503
-#: media-downloader.php:509
-#: mediadownloader-markup-options.php:55
+#: media-downloader.php:191
+msgid "<strong>\"DL\" mode:</strong> One table cell containing a definition list (one definition term for each tag)"
+msgstr ""
+
+#: media-downloader.php:192
+msgid "<strong>\"TR\" mode:</strong> One table cell for each tag"
+msgstr ""
+
+#: media-downloader.php:510
+#: media-downloader.php:516
+#: mediadownloader-markup-options.php:180
 msgid "Album Cover"
 msgstr ""
 
 #. translators: %1$s will be replaced by the file extension
-#: media-downloader.php:524
-#: mediadownloader-markup-options.php:87
+#: media-downloader.php:531
+#: mediadownloader-markup-options.php:216
 msgid "Download %1$s"
 msgstr ""
 
-#: media-downloader.php:680
+#: media-downloader.php:687
 msgid "Download"
 msgstr ""
 
-#: media-downloader.php:761
+#: media-downloader.php:781
 msgid "Error:"
 msgstr ""
 
-#: media-downloader.php:861
+#: media-downloader.php:874
 msgid "(See attached files...)"
 msgstr ""
 
 #. translators: on this rss feed item, %1$s and %2$s will be replaced by file name and post title, respectively
-#: media-downloader.php:1011
+#: media-downloader.php:1025
 msgid "Attached file: %1$s - %2$s"
 msgstr ""
 
-#: media-downloader.php:1086
+#: media-downloader.php:1094
 msgid "Play"
 msgstr ""
 
-#: media-downloader.php:1092
+#: media-downloader.php:1099
 msgid "Download:"
 msgstr ""
 
-#: media-downloader.php:1093
+#: media-downloader.php:1100
 msgid "Play:"
 msgstr ""
 
-#: media-downloader.php:1094
+#: media-downloader.php:1101
 msgid "Stop:"
 msgstr ""
 
 #. translators: Placeholders receive min and max 'per page' values (10 and 100)
-#: media-downloader.php:1142
+#: media-downloader.php:1149
 msgid "items (min: %1$d - max: %2$d)"
 msgstr ""
 
 #: mediadownloader-markup-options.php:19
+msgid "Media list options"
+msgstr ""
+
+#: mediadownloader-markup-options.php:21
 msgid "General tag info template"
 msgstr ""
 
-#: mediadownloader-markup-options.php:31
-msgid "List options"
-msgstr ""
-
-#: mediadownloader-markup-options.php:33
-msgid "Replace ID3 tags column headers"
-msgstr ""
-
-#: mediadownloader-markup-options.php:36
-msgid "Replaces default columns headers (ie: \"title\", \"comments\") with custom values:"
-msgstr ""
-
-#: mediadownloader-markup-options.php:38
-msgid "Syntax example: <br /><code>comments:Description</code><br /><code>title:Episode</code>"
+#: mediadownloader-markup-options.php:34
+msgid "Media files:"
 msgstr ""
 
 #: mediadownloader-markup-options.php:42
-#: mediadownloader-markup-options.php:59
-#: mediadownloader-markup-options.php:93
-#: mediadownloader-markup-options.php:125
-#: mediadownloader-more-options.php:74
-#: mediadownloader-options.php:42
-#: mediadownloader-options.php:65
-#: mediadownloader-options.php:191
-msgid "Update Options"
+msgid "Download Text:"
 msgstr ""
 
-#: mediadownloader-markup-options.php:50
-msgid "Cover image markup"
-msgstr ""
-
-#: mediadownloader-markup-options.php:52
-#: mediadownloader-markup-options.php:90
-#: mediadownloader-markup-options.php:104
-msgid "Wildcards:"
-msgstr ""
-
-#: mediadownloader-markup-options.php:55
-#: mediadownloader-markup-options.php:87
-#: mediadownloader-markup-options.php:109
-#: mediadownloader-markup-options.php:115
-#: mediadownloader-markup-options.php:121
-#: mediadownloader-options.php:56
+#: mediadownloader-markup-options.php:45
+#: mediadownloader-markup-options.php:62
+#: mediadownloader-markup-options.php:137
+#: mediadownloader-markup-options.php:144
+#: mediadownloader-markup-options.php:180
+#: mediadownloader-markup-options.php:216
 msgid "Default:"
 msgstr ""
 
-#: mediadownloader-markup-options.php:70
-msgid "Links for compacted files"
+#: mediadownloader-markup-options.php:46
+#: mediadownloader-markup-options.php:138
+#: mediadownloader-markup-options.php:145
+#: mediadownloader-markup-options.php:181
+#: mediadownloader-markup-options.php:217
+msgid "Wildcards:"
 msgstr ""
 
-#: mediadownloader-markup-options.php:72
+#: mediadownloader-markup-options.php:52
+#: mediadownloader-options.php:154
+#: blocks/mediadownloader/index.js:152
+msgid "Remove \".mp3\" from download URL"
+msgstr ""
+
+#: mediadownloader-markup-options.php:54
+msgid "(checking it may cause some server overloading)"
+msgstr ""
+
+#: mediadownloader-markup-options.php:58
+msgid "Comma-separated MP3 info to show for each file on the list:"
+msgstr ""
+
+#: mediadownloader-markup-options.php:63
+#: mediadownloader-options.php:66
+#: mediadownloader-options.php:72
+#: mediadownloader-options.php:78
+#: mediadownloader-options.php:97
+#: mediadownloader-options.php:103
+#: mediadownloader-options.php:111
+#: mediadownloader-options.php:117
+#: mediadownloader-options.php:131
+#: mediadownloader-options.php:137
+#: mediadownloader-options.php:143
+#: mediadownloader-options.php:149
+#: mediadownloader-options.php:155
+msgid "Possible values:"
+msgstr ""
+
+#: mediadownloader-markup-options.php:66
+msgid "Replace ID3 tags column headers"
+msgstr ""
+
+#: mediadownloader-markup-options.php:69
+msgid "Replaces default columns headers (ie: \"title\", \"comment\") with custom values:"
+msgstr ""
+
+#: mediadownloader-markup-options.php:71
+msgid "Syntax example: <br /><code>comment:Description</code><br /><code>title:Episode</code>"
+msgstr ""
+
+#: mediadownloader-markup-options.php:77
+#: mediadownloader-options.php:116
+#: blocks/mediadownloader/index.js:138
+msgid "Try to guess and remove a common \"prefix\" to all the files of the same folder"
+msgstr ""
+
+#: mediadownloader-markup-options.php:79
+#: mediadownloader-options.php:118
+msgid "(though a very helpful \"magic\" sometimes, this feature behaves in a unpredictably wild way)"
+msgstr ""
+
+#: mediadownloader-markup-options.php:84
+msgid "Sort by:"
+msgstr ""
+
+#: mediadownloader-markup-options.php:92
+#: mediadownloader-options.php:148
+#: blocks/mediadownloader/index.js:145
+msgid "Reverse order"
+msgstr ""
+
+#: mediadownloader-markup-options.php:96
+msgid "MP3 tag encoding:"
+msgstr ""
+
+#: mediadownloader-markup-options.php:105
+msgid "File name encoding:"
+msgstr ""
+
+#: mediadownloader-markup-options.php:119
+msgid "Audio player options"
+msgstr ""
+
+#: mediadownloader-markup-options.php:123
+msgid "Embed player"
+msgstr ""
+
+#: mediadownloader-markup-options.php:127
+msgid "Embed player's button position:"
+msgstr ""
+
+#: mediadownloader-markup-options.php:129
+msgid "Before download link"
+msgstr ""
+
+#: mediadownloader-markup-options.php:130
+msgid "After download link"
+msgstr ""
+
+#: mediadownloader-markup-options.php:134
+msgid "Play Text:"
+msgstr ""
+
+#: mediadownloader-markup-options.php:141
+msgid "Stop Text:"
+msgstr ""
+
+#: mediadownloader-markup-options.php:150
+msgid "Autoplay next file"
+msgstr ""
+
+#: mediadownloader-markup-options.php:159
+msgid "Cover image options"
+msgstr ""
+
+#: mediadownloader-markup-options.php:163
+#: mediadownloader-options.php:96
+msgid "Show cover (if a <code>folder.jpg</code> file is found)"
+msgstr ""
+
+#: mediadownloader-markup-options.php:167
+msgid "Show post thumbnail:"
+msgstr ""
+
+#: mediadownloader-markup-options.php:169
+msgid "Never"
+msgstr ""
+
+#: mediadownloader-markup-options.php:170
+msgid "If there is no \"cover\" image"
+msgstr ""
+
+#: mediadownloader-markup-options.php:172
+msgid "Size:"
+msgstr ""
+
+#: mediadownloader-markup-options.php:177
+msgid "Cover image markup"
+msgstr ""
+
+#: mediadownloader-markup-options.php:189
+msgid "Compacted files options"
+msgstr ""
+
+#: mediadownloader-markup-options.php:191
 msgid "File list title:"
 msgstr ""
 
-#: mediadownloader-markup-options.php:75
-#: mediadownloader-options.php:110
-#: mediadownloader-options.php:232
-#: mediadownloader-options.php:238
+#: mediadownloader-markup-options.php:194
+#: mediadownloader-markup-options.php:200
+#: mediadownloader-options.php:85
+#: mediadownloader-options.php:91
 msgid "Example:"
 msgstr ""
 
-#: mediadownloader-markup-options.php:75
-#: mediadownloader-options.php:232
+#: mediadownloader-markup-options.php:194
+#: mediadownloader-options.php:85
 msgid "Compacted Files"
 msgstr ""
 
-#: mediadownloader-markup-options.php:78
+#: mediadownloader-markup-options.php:197
+msgid "Comma-separated extensions for compacted files:"
+msgstr ""
+
+#: mediadownloader-markup-options.php:207
 msgid "Links texts:"
 msgstr ""
 
 #. translators: %1$s will be replaced by the file extensions
-#: mediadownloader-markup-options.php:85
+#: mediadownloader-markup-options.php:214
 msgid "<code>%1$s</code> file link text:"
 msgstr ""
 
-#: mediadownloader-markup-options.php:102
-msgid "Each item options"
+#: mediadownloader-markup-options.php:223
+#: mediadownloader-more-options.php:43
+#: mediadownloader-options.php:44
+msgid "Update Options"
 msgstr ""
 
-#: mediadownloader-markup-options.php:107
-msgid "Download Text:"
+#: mediadownloader-more-options.php:18
+msgid "Custom CSS"
 msgstr ""
 
-#: mediadownloader-markup-options.php:113
-msgid "Play Text:"
+#: mediadownloader-more-options.php:28
+msgid "RSS Feeds"
 msgstr ""
 
-#: mediadownloader-markup-options.php:119
-msgid "Stop Text:"
+#: mediadownloader-more-options.php:33
+msgid "Include MP3 files in wordpress feeds"
 msgstr ""
 
-#: mediadownloader-more-options.php:44
-msgid "Old Embed Flash Player Colors:"
-msgstr ""
-
-#: mediadownloader-more-options.php:45
-msgid "Fallback for old browsers that don't support the <code>audio</code> tag."
-msgstr ""
-
-#: mediadownloader-more-options.php:51
-msgid "Property"
-msgstr ""
-
-#: mediadownloader-more-options.php:52
-#: mediadownloader-tag-editor.php:327
-msgid "Value"
-msgstr ""
-
-#: mediadownloader-more-options.php:53
-msgid "Default"
+#: mediadownloader-more-options.php:38
+msgid "Overwrite feed link:"
 msgstr ""
 
 #: mediadownloader-options-header.php:3
@@ -231,7 +335,7 @@ msgid "General Options"
 msgstr ""
 
 #: mediadownloader-options-header.php:11
-msgid "Markup Options"
+msgid "Listing Options"
 msgstr ""
 
 #: mediadownloader-options-header.php:12
@@ -239,7 +343,7 @@ msgid "More Options"
 msgstr ""
 
 #: mediadownloader-options-header.php:13
-msgid "Tag Editor"
+msgid "Tag Editor Tool"
 msgstr ""
 
 #: mediadownloader-options.php:18
@@ -248,7 +352,7 @@ msgstr ""
 
 #. translators: %1$s will be replaced by the URL for wordpress documentation on file permissions
 #: mediadownloader-options.php:22
-#: mediadownloader-options.php:272
+#: mediadownloader-options.php:125
 msgid "(must be <a href=\"%1$s\">readable</a>)"
 msgstr ""
 
@@ -260,234 +364,109 @@ msgstr ""
 msgid "Could not read folder."
 msgstr ""
 
-#: mediadownloader-options.php:33
-msgid "Media files:"
-msgstr ""
-
-#: mediadownloader-options.php:49
-msgid "Show MP3 Info:"
-msgstr ""
-
-#: mediadownloader-options.php:51
-msgid "Comma-separated MP3 info to show for each file on the list:"
-msgstr ""
-
-#: mediadownloader-options.php:54
-#: mediadownloader-options.php:213
-#: mediadownloader-options.php:219
-#: mediadownloader-options.php:225
-#: mediadownloader-options.php:244
-#: mediadownloader-options.php:250
-#: mediadownloader-options.php:258
-#: mediadownloader-options.php:264
-#: mediadownloader-options.php:278
-#: mediadownloader-options.php:284
-#: mediadownloader-options.php:290
-#: mediadownloader-options.php:296
-#: mediadownloader-options.php:302
-msgid "Possible values:"
-msgstr ""
-
-#: mediadownloader-options.php:59
-msgid "Custom CSS:"
-msgstr ""
-
-#: mediadownloader-options.php:72
-msgid "Advanced:"
-msgstr ""
-
-#: mediadownloader-options.php:76
-#: mediadownloader-options.php:301
-msgid "Remove \".mp3\" from download URL"
-msgstr ""
-
-#: mediadownloader-options.php:78
-msgid "(checking it may cause some server overloading)"
-msgstr ""
-
-#: mediadownloader-options.php:85
-#: mediadownloader-options.php:263
-msgid "Try to guess and remove a common \"prefix\" to all the files of the same folder"
-msgstr ""
-
-#: mediadownloader-options.php:87
-#: mediadownloader-options.php:265
-msgid "(though a very helpful \"magic\" sometimes, this feature behaves in a unpredictably wild way)"
-msgstr ""
-
-#: mediadownloader-options.php:93
-#: mediadownloader-options.php:243
-msgid "Show cover (if a <code>folder.jpg</code> file is found)"
-msgstr ""
-
-#: mediadownloader-options.php:97
-msgid "Show post thumbnail:"
-msgstr ""
-
-#: mediadownloader-options.php:99
-msgid "Never"
-msgstr ""
-
-#: mediadownloader-options.php:100
-msgid "If there is no \"cover\" image"
-msgstr ""
-
-#: mediadownloader-options.php:102
-msgid "Size:"
-msgstr ""
-
-#: mediadownloader-options.php:108
-msgid "Comma-separated extensions for compacted files:"
-msgstr ""
-
-#: mediadownloader-options.php:115
-msgid "Embed player"
-msgstr ""
-
-#: mediadownloader-options.php:120
-msgid "Autoplay next file"
-msgstr ""
-
-#: mediadownloader-options.php:125
-msgid "Place embed player's javascript at the bottom of the <code>&lt;body&gt;</code> in <abbr title=\"HyperText Markup Language\">HTML</abbr> code"
-msgstr ""
-
-#: mediadownloader-options.php:129
-msgid "Embed player's button position:"
-msgstr ""
-
-#: mediadownloader-options.php:131
-msgid "Before download link"
-msgstr ""
-
-#: mediadownloader-options.php:132
-msgid "After download link"
-msgstr ""
-
-#: mediadownloader-options.php:137
-msgid "Sort by:"
-msgstr ""
-
-#: mediadownloader-options.php:145
-#: mediadownloader-options.php:295
-msgid "Reverse order"
-msgstr ""
-
-#: mediadownloader-options.php:149
-msgid "MP3 tag encoding:"
-msgstr ""
-
-#: mediadownloader-options.php:158
-msgid "File name encoding:"
-msgstr ""
-
-#: mediadownloader-options.php:167
+#: mediadownloader-options.php:32
 msgid "Cache dir:"
 msgstr ""
 
 #. translators: %1$s will be replaced by the URL for wordpress documentation on file permissions
-#: mediadownloader-options.php:169
+#: mediadownloader-options.php:34
 msgid "(must be <a href=\"%1$s\">writable</a>)"
 msgstr ""
 
-#: mediadownloader-options.php:173
+#: mediadownloader-options.php:38
 msgid "Folder successfully written on."
 msgstr ""
 
-#: mediadownloader-options.php:173
+#: mediadownloader-options.php:38
 msgid "Could not write on folder."
 msgstr ""
 
-#: mediadownloader-options.php:181
-msgid "Include MP3 files in wordpress feeds"
-msgstr ""
-
-#: mediadownloader-options.php:186
-msgid "Overwrite feed link:"
-msgstr ""
-
-#: mediadownloader-options.php:199
+#: mediadownloader-options.php:52
 msgid "Sample Usage"
 msgstr ""
 
-#: mediadownloader-options.php:202
+#: mediadownloader-options.php:55
 msgid "An example may help... Say you have a folder called <em>\"music\"</em> under your root folder, and it has some subfolders, as: <em>\"Beethoven\",</em> <em>\"Mozart\",</em> <em>\"Bach\"</em> and <em>\"Haendel\".</em>"
 msgstr ""
 
-#: mediadownloader-options.php:204
+#: mediadownloader-options.php:57
 msgid "First of all, you should configure Media Downloader by typing <em>\"music\"</em> in the <label for=\"md_mp3folder\"><em>\"MP3 Folder\"</em> field.</label> That done, you can edit a post talking about Johann Sebastian Bach and insert anywhere on it the shortcode <code>[mediadownloader folder=\"Bach\"]</code>, then Media Downloader will create a list of all files under the <em>\"music/Bach\"</em> directory."
 msgstr ""
 
-#: mediadownloader-options.php:206
+#: mediadownloader-options.php:59
 msgid "The [mediadownloader] shortcode also accepts the following parameters:"
 msgstr ""
 
-#: mediadownloader-options.php:212
+#: mediadownloader-options.php:65
 msgid "Comma-separated MP3 info to show for each file on the list"
 msgstr ""
 
-#: mediadownloader-options.php:218
+#: mediadownloader-options.php:71
+#: blocks/mediadownloader/index.js:124
 msgid "Show media playlist and player"
 msgstr ""
 
-#: mediadownloader-options.php:224
+#: mediadownloader-options.php:77
 msgid "Show links for compacted files"
 msgstr ""
 
-#: mediadownloader-options.php:225
+#: mediadownloader-options.php:78
 msgid "or comma-separated extensions"
 msgstr ""
 
-#: mediadownloader-options.php:231
+#: mediadownloader-options.php:84
 msgid "Compacted files list title"
 msgstr ""
 
-#: mediadownloader-options.php:237
+#: mediadownloader-options.php:90
 msgid "Compacted files link texts"
 msgstr ""
 
-#: mediadownloader-options.php:238
+#: mediadownloader-options.php:91
 msgid "zip: Download ZIP; rar: Download RAR;"
 msgstr ""
 
-#: mediadownloader-options.php:249
+#: mediadownloader-options.php:102
 msgid "Show post thumbnail"
 msgstr ""
 
 #. translators: %1$s will be replaced by the "fallback" keyword (used in a shortcode attribute)
-#: mediadownloader-options.php:252
+#: mediadownloader-options.php:105
 msgid "(If set to %1$s, the post thumbnail will be shown only if there is no \"cover\" image)"
 msgstr ""
 
-#: mediadownloader-options.php:257
+#: mediadownloader-options.php:110
 msgid "Embed player's button position"
 msgstr ""
 
-#: mediadownloader-options.php:270
+#: mediadownloader-options.php:123
 msgid "MP3 Folder."
 msgstr ""
 
-#: mediadownloader-options.php:277
+#: mediadownloader-options.php:130
 msgid "MP3 tag encoding"
 msgstr ""
 
-#: mediadownloader-options.php:283
+#: mediadownloader-options.php:136
 msgid "File name encoding"
 msgstr ""
 
-#: mediadownloader-options.php:289
+#: mediadownloader-options.php:142
 msgid "Sort files by"
 msgstr ""
 
-#: mediadownloader-options.php:307
+#: mediadownloader-options.php:160
+#: blocks/mediadownloader/index.js:159
 msgid "Download button's text"
 msgstr ""
 
-#: mediadownloader-options.php:312
+#: mediadownloader-options.php:165
+#: blocks/mediadownloader/index.js:166
 msgid "Play button's text"
 msgstr ""
 
-#: mediadownloader-options.php:317
+#: mediadownloader-options.php:170
+#: blocks/mediadownloader/index.js:173
 msgid "Stop button's text"
 msgstr ""
 
@@ -645,6 +624,10 @@ msgstr ""
 msgid "Overwrite Tag"
 msgstr ""
 
+#: mediadownloader-tag-editor.php:327
+msgid "Value"
+msgstr ""
+
 #: mediadownloader-tag-editor.php:358
 msgid "Formatted Comment"
 msgstr ""
@@ -708,4 +691,20 @@ msgstr ""
 
 #: mediadownloader-tag-editor.php:560
 msgid "Empty directory?"
+msgstr ""
+
+#: blocks/mediadownloader/index.js:35
+msgid "Lists MP3 files from a folder."
+msgstr ""
+
+#: blocks/mediadownloader/index.js:131
+msgid "Show cover (if a folder.jpg file is found)"
+msgstr ""
+
+#: blocks/mediadownloader/index.js:198
+msgid "Media Folder"
+msgstr ""
+
+#: blocks/mediadownloader/index.js:227
+msgid "Download media:"
 msgstr ""
