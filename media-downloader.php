@@ -21,6 +21,9 @@ if ( ! defined( 'WP_PLUGIN_DIR' ) )
       define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 
 include_once( dirname( __FILE__ ) . '/multibyte-functions.php' );
+include_once( dirname( __FILE__ ) . '/useful-functions.php' );
+include_once( dirname( __FILE__ ) . '/sanitize-functions.php' );
+include_once( dirname( __FILE__ ) . '/_deprecated-functions.php' );
 include_once( dirname( __FILE__ ) . '/blocks/mediadownloader.php' );
 
 // MarkDown, used for text formatting
@@ -198,63 +201,6 @@ $mdmoresettings = array(
     'handlefeed' => 'sanitizeBoolean',
     'overwritefeedlink' => 'sanitizeURL',
 );
-
-// Friendly file size
-if( !function_exists( 'byte_convert' ) ){
-    function byte_convert( $bytes ){
-        $symbol = array( 'B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB' );
-
-        $exp = 0;
-        $converted_value = 0;
-        if( $bytes > 0 )
-        {
-          $exp = floor( log($bytes)/log(1024) );
-          $converted_value = ( $bytes/pow(1024,floor($exp)) );
-        }
-
-        return sprintf( '%.2f '.$symbol[$exp], $converted_value );
-    }
-}
-
-// Friendly frequency size
-if( !function_exists( 'hertz_convert' ) ){
-    function hertz_convert( $hertz ){
-        $symbol = array( 'Hz', 'kHz', 'MHz', 'GHz', 'THz', 'PHz', 'EHz', 'ZHz', 'YHz' );
-
-        $exp = 0;
-        $converted_value = 0;
-        if( $hertz > 0 ) {
-          $exp = floor( log( $hertz, 10 ) / 3 );
-          $converted_value = ( $hertz / pow( 1000 , floor( $exp ) ) );
-        }
-
-        return sprintf( '%.2f '.$symbol[$exp], $converted_value );
-    }
-}
-
-// Scans an array of strings searching for a common prefix in all items
-function calculatePrefix( $arr, $force = false ){
-    $prefix = '';
-    if ( ( $force || get_option( 'calculateprefix' ) ) && count( $arr ) > 1 ) {
-        $prefix = strip_tags( array_pop( $arr ) );
-        foreach ( $arr as $i ) {
-            for ( $c=1; $c<mb_strlen($i); $c++ ) {
-                if ( strncasecmp( $prefix, $i, $c ) != 0 ) break;
-            }
-            $prefix = mb_substr( $prefix, 0, $c-1 );
-        }
-    }
-    return $prefix;
-}
-
-function replaceUnderscores( $t ) {
-    if ( $t && false === mb_strpos(' ', $t) ) {
-        //if ( false === mb_strpos('_', $t) ) $t = str_replace( '-', '_', $t );
-        $t = preg_replace( '/_(_+)/im', ' - ', $t );
-        $t = preg_replace( '/_/m', ' ', $t );
-    }
-    return $t ;
-}
 
 function get_replaceheaders() {
     $replaceheaders = array();
@@ -1205,118 +1151,3 @@ function md_filter_feed_link( $link, $type = 'rss2' ) {
 add_filter( 'md_self_link', 'md_filter_feed_link' );
 add_filter( 'feed_link', 'md_filter_feed_link' );
 
-// Functions to sanitize user input
-function sanitizeRDir( $d ){
-    return is_readable( ABSPATH . $d ) ? $d : '' ;
-}
-function sanitizeWDir( $d ){
-    return is_writeable( ABSPATH . $d ) ? $d : '' ;
-}
-if ( !function_exists( 'sanitizeArray' ) ) {
-function sanitizeArray( $i, $a ){
-    if ( is_array( $i ) ) {
-        return array_intersect( $i, $a );
-    } else {
-        return in_array( $i, $a ) ? $i : '' ;
-    }
-}
-}
-function sanitizeMediaExtensions( $t ) {
-    return sanitizeArray( $t, md_mediaAllExtensions() );
-}
-function sanitizeSortingField( $t ){
-    global $mdsortingfields;
-    return sanitizeArray( $t, array_keys( $mdsortingfields ) );
-}
-function sanitizeBeforeAfter( $t ){
-    return sanitizeArray( $t, array( 'before', 'after' ) );
-}
-function sanitizeTagEncoding( $t ){
-    global $mdencodings;
-    return sanitizeArray( $t, $mdencodings );
-}
-function sanitizeBoolean( $b ){
-    return $b == 1 ;
-}
-function sanitizeImageSize( $size ){
-    $sizes = get_intermediate_image_sizes();
-    array_unshift( $sizes, 'fallback' );
-    return sanitizeArray( $size, $sizes );
-}
-function sanitizeHEXColor( $c ){
-    return preg_match( '/^\s*#?[0-9A-F]{3,6}\s*$/i', $c, $m ) ? trim( str_replace( '#', '', $c ) ) : '';
-}
-function sanitizeMarkupTemplate( $t ){
-    global $mdmarkuptemplates;
-    return sanitizeArray( $t, array_keys( $mdmarkuptemplates ) );
-}
-function sanitizeURL( $t ) {
-    return filter_var( $t, FILTER_VALIDATE_URL );
-}
-
-
-/* -- CASE SPECIFIC: -- */
-
-function listarCategorias($t){
-    preg_match_all('/\[cat:([^\]]*)\]/i',$t,$matches);
-    if(count($matches)){
-        foreach($matches[1] as $catname){
-            $myposts = get_posts(array('numberposts'=>-1,'post_type'=>'post','category_name'=>$catname,'suppress_filters'=>0));
-            $listposts='';
-
-            if(count($myposts)){
-                global $post;
-                $prepost=$post;
-                $listposts.='<ul class="inner-cat">';
-                foreach($myposts as $post) $listposts.='<li><a href="'.get_permalink().'">'.get_the_title().'</a></li>';
-                $listposts.='</ul>';
-                $post=$prepost;
-            }
-            $t = tiraDoParagrafo('[cat:'.$catname.']', $t);
-            $t = str_replace('[cat:'.$catname.']', $listposts, $t);
-        }
-    }
-    return $t;
-}
-
-function listarCategoriasEx($t){
-    preg_match_all('/\[catex:([^\]]*)\]/i',$t,$matches);
-    if(count($matches)){
-        foreach($matches[1] as $catname){
-            $myposts = get_posts(array('post_type'=>'post','category_name'=>$catname,'suppress_filters'=>0));
-            $listposts='';
-            if(count($myposts)){
-                global $post;
-                $prepost=$post;
-                $listposts.='<dl class="inner-cat">';
-                foreach($myposts as $post) $listposts.='<dt><a href="'.get_permalink().'">'.get_the_title().'</a></dt>'.(trim($post->post_excerpt)?'<dd>'.$post->post_excerpt.'</dd>':'');
-                $listposts.='</dl>';
-                $post=$prepost;
-            }
-            $t = tiraDoParagrafo('[catex:'.$catname.']', $t);
-            $t = str_replace('[catex:'.$catname.']', $listposts, $t);
-        }
-    }
-    return $t;
-}
-
-function listarIdiomas($t){
-    if ( mb_stripos($t, '[languages]')!==false && function_exists('qtrans_generateLanguageSelectCode') ){
-        ob_start();
-        qtrans_generateLanguageSelectCode();
-        $i=ob_get_contents();
-        ob_end_clean();
-        ob_end_flush();
-        $t = tiraDoParagrafo('[languages]', $t);
-        $t = str_replace('[languages]', $i, $t);
-    }
-    return $t;
-}
-
-function tiraDoParagrafo($tag, $t){
-    return str_replace('<p>'.$tag.'</p>', $tag, $t);
-}
-
-/* -- END CASE SPECIFIC; -- */
-
-?>
