@@ -224,7 +224,7 @@
 			return el(
 				'p',
 				{},
-				__( 'Download media:', 'media-downloader' ),
+				'Download media:',
 				' ',
 				el(
 					'a',

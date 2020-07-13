@@ -32,7 +32,8 @@ function mediadownloader_block_init() {
 	);
 	wp_localize_script( 'mediadownloader-block-editor', 'mediadownloaderOptions', array(
         'mp3folderurl' => home_url( '/' ) . rtrim( get_option('mp3folder'), '/' ) . '/',
-    ) );
+	) );
+	wp_set_script_translations( 'mediadownloader-block-editor', 'media-downloader', $dir . '/../languages' );
 
 	$editor_css = 'mediadownloader/editor.css';
 	wp_register_style(
