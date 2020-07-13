@@ -8,9 +8,9 @@
 // Tabs array
 $mdtabs = array(
     'general' => __( 'General Options', 'media-downloader' ),
-    'markup-options' => __( 'Markup Options', 'media-downloader' ),
+    'markup-options' => __( 'Listing Options', 'media-downloader' ),
     'more-options' => __( 'More Options', 'media-downloader' ),
-    'tag-editor' => __( 'Tag Editor', 'media-downloader' ),
+    'tag-editor' => __( 'Tag Editor Tool', 'media-downloader' ),
 );
 // If no tab is set as active, we set the first
 $anyTab = false;

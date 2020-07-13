@@ -64,7 +64,7 @@ class media_downloader {
     public static function settings_link( $links, $file ) {
         $this_plugin = plugin_basename(__FILE__);
         if ( $file == $this_plugin ) {
-            $settings_link = '<a href="' . admin_url( 'options-general.php?page=mediadownloader-options' ) . '">' . __( 'Settings', 'media-downloader' ) . '</a>';
+            $settings_link = '<a href="' . admin_url( 'admin.php?page=mediadownloader-options' ) . '">' . __( 'Settings', 'media-downloader' ) . '</a>';
             array_unshift( $links, $settings_link );
         }
         return $links;
@@ -156,11 +156,17 @@ $mdsortingfields = array(
 // Settings and respective sanitize functions
 $mdsettings = array(
     'mp3folder' => 'sanitizeRDir',
+    'cachedir' => 'sanitizeWDir',
+);
+// Possible ID3 tags
+$mdtags = array( 'title', 'artist', 'album', 'year', 'recording_dates', 'genre', 'comment', 'track_number', 'bitrate', 'filesize', 'filedate', 'directory', 'file', 'sample_rate', 'playtime_string' );
+
+// Markup settings and respective sanitize functions
+$mdmarkupsettings = array(
     'mediaextensions' => 'sanitizeMediaExtensions',
     'sortfiles' => 'sanitizeSortingField',
     'reversefiles' => 'sanitizeBoolean',
     'showtags' => null,
-    'customcss' => null,
     'removeextension' => 'sanitizeBoolean',
     'showcover' => 'sanitizeBoolean',
     'showfeatured' => 'sanitizeImageSize',
@@ -170,17 +176,7 @@ $mdsettings = array(
     'embedwhere' => 'sanitizeBeforeAfter',
     'tagencoding' => 'sanitizeTagEncoding',
     'filenameencoding' => 'sanitizeTagEncoding',
-    'cachedir' => 'sanitizeWDir',
-    'scriptinfooter' => 'sanitizeBoolean',
-    'handlefeed' => 'sanitizeBoolean',
-    'overwritefeedlink' => 'sanitizeURL',
     'calculateprefix' => 'sanitizeBoolean',
-);
-// Possible ID3 tags
-$mdtags = array( 'title', 'artist', 'album', 'year', 'recording_dates', 'genre', 'comment', 'track_number', 'bitrate', 'filesize', 'filedate', 'directory', 'file', 'sample_rate', 'playtime_string' );
-
-// Markup settings and respective sanitize functions
-$mdmarkupsettings = array(
     'covermarkup' => null,
     'packagetitle' => null,
     'packagetexts' => null,
@@ -196,25 +192,12 @@ $mdmarkuptemplates = array(
     'table-cells' => __( '<strong>"TR" mode:</strong> One table cell for each tag', 'media-downloader' ),
 );
 
-// Default player colors
-$mdembedplayerdefaultcolors = array(
-    'bg' => 'E7E7E7',
-    'text' => '333333',
-    'leftbg' => 'CCCCCC',
-    'lefticon' => '333333',
-    'volslider' => '666666',
-    'voltrack' => 'FFFFFF',
-    'rightbg' => 'B4B4B4',
-    'rightbghover' => '999999',
-    'righticon' => '333333',
-    'righticonhover' => 'FFFFFF',
-    'track' => 'FFFFFF',
-    'loader' => 'A2CC39',
-    'border' => 'CCCCCC',
-    'tracker' => 'DDDDDD',
-    'skip' => '666666',
+// More settings and respective sanitize functions
+$mdmoresettings = array(
+    'customcss' => null,
+    'handlefeed' => 'sanitizeBoolean',
+    'overwritefeedlink' => 'sanitizeURL',
 );
-
 
 // Friendly file size
 if( !function_exists( 'byte_convert' ) ){
@@ -1099,7 +1082,7 @@ function mediaDownloaderEnqueueScripts() {
     }
 
     // Enqueuing our javascript
-    wp_enqueue_script( 'mediadownloaderJs', md_plugin_url() . '/js/mediadownloader.js', array('jquery'), mediaDownloaderModificationTime( '/js/mediadownloader.js' ), get_option( 'scriptinfooter' ) );
+    wp_enqueue_script( 'mediadownloaderJs', md_plugin_url() . '/js/mediadownloader.js', array('jquery'), mediaDownloaderModificationTime( '/js/mediadownloader.js' ), true );
 
     // Passing options to our javascript
     add_action( 'get_header', 'mediaDownloaderLocalizeScript' );
@@ -1107,16 +1090,9 @@ function mediaDownloaderEnqueueScripts() {
 
 // Passing options to our javascript
 function mediaDownloaderLocalizeScript() {
-    global $mdembedplayerdefaultcolors;
-    $mdembedcolors = array();
-    foreach( $mdembedplayerdefaultcolors as $mdcolor => $mddefault ) {
-        $mdembedcolors[$mdcolor] = str_replace( '#', '', get_option( $mdcolor . '_embed_color' ) );
-        if ( !trim($mdembedcolors[$mdcolor]) ) $mdembedcolors[$mdcolor] = $mddefault;
-    }
     $replaceheaders = get_replaceheaders();
     $playheader = __( 'Play', 'media-downloader' );
     if ( array_key_exists( 'play', $replaceheaders ) ) $playheader = $replaceheaders['play'];
-    wp_localize_script( 'mediadownloaderJs', 'mdEmbedColors', $mdembedcolors );
     wp_localize_script( 'mediadownloaderJs', 'mdStringTable', array(
         'pluginURL' => md_plugin_url() . '/',
         'playColumnText' => $playheader,
@@ -1159,7 +1135,7 @@ function md_admin_scripts() {
 add_action( 'admin_menu', 'mediadownloader_menu' );
 
 function mediadownloader_menu() {
-    $oppage = add_options_page( 'Media Downloader Options', 'Media Downloader', 'manage_options', 'mediadownloader-options', 'mediadownloader_options' );
+    $oppage = add_menu_page( 'Media Downloader Options', 'Media Downloader', 'manage_options', 'mediadownloader-options', 'mediadownloader_options', 'dashicons-playlist-audio' );
     add_action( 'admin_print_styles-' . $oppage, 'md_admin_styles' );
     add_action( 'admin_print_scripts-' . $oppage, 'md_admin_scripts');
     if ( array_key_exists( 'tag-editor', $_GET ) ) add_action( "load-$oppage", 'mediadownloader_adm_add_options' );
@@ -1177,8 +1153,12 @@ function mediadownloader_adm_add_options() {
     add_screen_option( $option, $args );
 }
 function mediadownloader_adm_save_options( $status, $option, $value ) {
-    if ( 'mediadownloader_adm_items_per_page' == $option ) return ( $value >= 10 && $value <= 100 ) ? $value : false;
-    //return $value; // I can't remember why I did that... :-/
+    if ( 'mediadownloader_adm_items_per_page' == $option ) {
+        if ( $value >= 10 && $value <= 100 ) {
+            return $value;
+        }
+    }
+    return false;
 }
 
 function mediadownloader_options() {
@@ -1199,13 +1179,19 @@ add_action( 'admin_init', 'mediadownloader_settings' );
 
 function mediadownloader_settings() {
     global $mdsettings;
-    foreach ( $mdsettings as $mdsetting => $mdsanitizefunction ) register_setting( 'md_options', $mdsetting, $mdsanitizefunction );
+    foreach ( $mdsettings as $mdsetting => $mdsanitizefunction ) {
+        register_setting( 'md_options', $mdsetting, $mdsanitizefunction );
+    }
 
     global $mdmarkupsettings;
-    foreach ( $mdmarkupsettings as $mdmarkupsetting => $mdsanitizefunction ) register_setting( 'md_markup_options', $mdmarkupsetting, $mdsanitizefunction );
+    foreach ( $mdmarkupsettings as $mdmarkupsetting => $mdsanitizefunction ) {
+        register_setting( 'md_markup_options', $mdmarkupsetting, $mdsanitizefunction );
+    }
 
-    global $mdembedplayerdefaultcolors;
-    foreach ( $mdembedplayerdefaultcolors as $mdcolor => $mddefault ) register_setting( 'md_more_options', $mdcolor . '_embed_color', 'sanitizeHEXColor' );
+    global $mdmoresettings;
+    foreach ( $mdmoresettings as $mdsetting => $mdsanitizefunction ) {
+        register_setting( 'md_more_options', $mdsetting, $mdsanitizefunction );
+    }
 }
 
 function md_self_link() {
