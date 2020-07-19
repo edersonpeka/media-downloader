@@ -20,14 +20,14 @@ if ( ! defined( 'WP_PLUGIN_URL' ) )
 if ( ! defined( 'WP_PLUGIN_DIR' ) )
       define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 
-include_once( dirname( __FILE__ ) . '/multibyte-functions.php' );
-include_once( dirname( __FILE__ ) . '/useful-functions.php' );
-include_once( dirname( __FILE__ ) . '/sanitize-functions.php' );
-include_once( dirname( __FILE__ ) . '/_deprecated-functions.php' );
-include_once( dirname( __FILE__ ) . '/blocks/mediadownloader.php' );
+require_once( dirname( __FILE__ ) . '/inc/multibyte-functions.php' );
+require_once( dirname( __FILE__ ) . '/inc/useful-functions.php' );
+require_once( dirname( __FILE__ ) . '/inc/sanitize-functions.php' );
+include_once( dirname( __FILE__ ) . '/inc/_deprecated-functions.php' );
+require_once( dirname( __FILE__ ) . '/blocks/mediadownloader.php' );
 
 // MarkDown, used for text formatting
-if( !class_exists( 'Parsedown' ) ) include_once( dirname( __FILE__ ) . '/Parsedown.php' );
+if( !class_exists( 'Parsedown' ) ) require_once( dirname( __FILE__ ) . '/inc/Parsedown.php' );
 
 if ( !class_exists( 'media_downloader' ) ) :
 

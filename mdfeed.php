@@ -1,6 +1,6 @@
 <?php
 
-if ( !class_exists( 'Parsedown' ) ) include_once( './Parsedown.php' );
+if ( !class_exists( 'Parsedown' ) ) require_once( dirname( __FILE__ ) . '/inc/Parsedown.php' );
 $Parsedown = new Parsedown();
 
 // Backwards compatibility: redirecting old parameters
