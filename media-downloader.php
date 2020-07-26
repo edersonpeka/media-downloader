@@ -9,6 +9,16 @@ Author URI: https://profiles.wordpress.org/edersonpeka/
 Text Domain: media-downloader
 */
 
+if ( !function_exists( 'iconv' ) ) {
+    add_action( 'admin_notices', function () {
+        ?>
+        <div class="notice notice-error is-dismissible">
+            <p><?php _e( 'Media Downloader plugin requires <a href="https://www.php.net/manual/en/ref.iconv.php" target="_blank">iconv</a> PHP extension.', 'media-downloader' ); ?></p>
+        </div>
+        <?php
+    } );
+    return;
+}
 
 // Pre-2.6 compatibility ( From: http://codex.wordpress.org/Determining_Plugin_and_Content_Directories )
 if ( ! defined( 'WP_CONTENT_URL' ) )
@@ -27,7 +37,7 @@ include_once( dirname( __FILE__ ) . '/inc/_deprecated-functions.php' );
 require_once( dirname( __FILE__ ) . '/blocks/mediadownloader.php' );
 
 // MarkDown, used for text formatting
-if( !class_exists( 'Parsedown' ) ) require_once( dirname( __FILE__ ) . '/inc/Parsedown.php' );
+if ( !class_exists( 'Parsedown' ) ) require_once( dirname( __FILE__ ) . '/inc/Parsedown.php' );
 
 if ( !class_exists( 'media_downloader' ) ) :
 
