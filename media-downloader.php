@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: https://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.
-Version: 0.4.5
+Version: 0.4.6
 Author: Ederson Peka
 Author URI: https://profiles.wordpress.org/edersonpeka/
 Text Domain: media-downloader
@@ -578,8 +578,7 @@ function buildMediaTable( $folder, $atts = false ) {
                     // Removing "prefix" of this tag
                     if ( array_key_exists( $mshowtag, $tagprefixes ) )
                         if ( '' != $tagprefixes[$mshowtag] )
-                            $tagvalue = str_replace( $tagprefixes[$mshowtag], '', $tagvalue );
-                    // $tagvalue = str_replace( $prefix, '', $tagvalue ); // Causing weird behavior in some cases
+                            $tagvalue = preg_replace( '/^' . preg_quote( $tagprefixes[$mshowtag], '/' ) . '/', '', $tagvalue );
                     // Cleaning...
                     $tagvalue = replaceUnderscores( $tagvalue );
                     // Encoding...
@@ -877,7 +876,8 @@ function mediadownloaderFileInfo( $f, $ext ) {
         // Initialize getID3 engine
         $getID3 = new getID3;
         $mdoencode = get_option( 'tagencoding' );
-        $mdoencode = array_shift( explode( ' + ', $mdoencode ) );
+        $mdoencode = explode( ' + ', $mdoencode );
+        $mdoencode = array_shift( $mdoencode );
         if ( 'UTF-8' != $mdoencode ) $getID3->setOption( array( 'encoding' => $mdoencode ) );
         // Analyze file and store returned data in $ThisFileInfo
         if ( $ThisFileInfo = $getID3->analyze( $f ) ) {
