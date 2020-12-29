@@ -40,8 +40,12 @@ if( !function_exists( 'calculatePrefix' ) ){
         if ( ( $force || get_option( 'calculateprefix' ) ) && count( $arr ) > 1 ) {
             $prefix = strip_tags( array_pop( $arr ) );
             foreach ( $arr as $i ) {
-                for ( $c=1; $c<mb_strlen($i); $c++ ) {
-                    if ( strncasecmp( $prefix, $i, $c ) != 0 ) break;
+                $l_prefix = mb_strtolower( $prefix );
+                $l_i = mb_strtolower( $i );
+                for ( $c=1; $c<mb_strlen($l_i); $c++ ) {
+                    if ( mb_substr( $l_prefix, 0, $c ) != mb_substr( $l_i, 0, $c ) ) {
+                        break;
+                    }
                 }
                 $prefix = mb_substr( $prefix, 0, $c-1 );
             }

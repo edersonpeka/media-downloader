@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: https://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.
-Version: 0.4.6
+Version: 0.4.7
 Author: Ederson Peka
 Author URI: https://profiles.wordpress.org/edersonpeka/
 Text Domain: media-downloader
@@ -511,7 +511,22 @@ function buildMediaTable( $folder, $atts = false ) {
             $iext = array_pop( $ifile );
             $ifile = implode( '.', $ifile );
             // Getting ID3 info
+            $blank = array(
+                'tags' => array(),
+                'audio' => array(),
+                'filesize' => '',
+                'filepath' => '',
+                'filename' => '',
+                'playtime_string' => '',
+            );
             $finfo = mediadownloaderFileInfo( $mrelative.'/'.$folderalone.'/'.$ifile, $iext );
+            $finfo = array_merge( $blank, $finfo );
+            if ( !array_key_exists( 'bitrate', $finfo['audio'] ) ) {
+                $finfo['audio']['bitrate'] = '';
+            }
+            if ( !array_key_exists( 'sample_rate', $finfo['audio'] ) ) {
+                $finfo['audio']['sample_rate'] = '';
+            }
             // Loading all possible tags
             $ftags = array();
             foreach ( array( 'id3v2', 'quicktime', 'ogg', 'asf', 'flac', 'real', 'riff', 'ape', 'id3v1', 'comments' ) as $poss ) {
