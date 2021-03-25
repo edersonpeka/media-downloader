@@ -65,6 +65,9 @@ class media_downloader {
         endif;
 
         add_shortcode( 'mediadownloader', array( __CLASS__, 'shortcode' ) );
+        if ( array_key_exists( 'mediadownloader', $_GET ) ) {
+            add_action( 'rest_api_init', array( __CLASS__, 'register_rest_field' ) );
+        }
     }
 
     public static function admin_init() {
@@ -89,6 +92,81 @@ class media_downloader {
             $ret = buildMediaTable( $atts['folder'], $atts );
         }
 	    return $ret;
+    }
+
+    public static function register_rest_field() {
+        register_rest_field( array( 'post', 'page' ),
+            'mediadownloader',
+            array(
+                'get_callback'      => array( __CLASS__, 'rest_field' ),
+                'update_callback'   => null,
+                'schema'            => null,
+            )
+        );
+    }
+
+    public static function rest_field( $post ) {
+        $folders = array();
+        $mdir = '/' . get_option( 'mp3folder' );        
+        $mpath = ABSPATH . trim( $mdir, '/' ) . '/';
+
+        // MP3 folder URL
+        if ( function_exists( 'switch_to_blog' ) ) switch_to_blog(1);
+        $murl = get_option( 'siteurl' ) . $mdir;
+        if ( function_exists( 'restore_current_blog' ) ) restore_current_blog();
+        // MP3 folder relative URL
+        $mrelative = preg_replace( '/^https?\:/m', '', $murl );
+        $mrelative = preg_replace( '/^\/\//', '', $mrelative );
+        $mrelative = explode( '/', $mrelative );
+        array_shift( $mrelative );
+        $mrelative = '/' . implode( '/', $mrelative );
+
+        $ret = array(
+            'relativepath' => '/' . trim( $mrelative, '/' ) . '/',
+            'mediasets' => array(),
+        );
+
+        $cont = $post['content']['raw'];
+        $cont = preg_replace( '|\[media\:(.*?)\]|ms', '[mediadownloader folder="$1"]', $cont );
+        $sh_regexp = get_shortcode_regex( array( 'mediadownloader' ) );
+        $blocks = parse_blocks( $cont );
+        foreach ( $blocks as $block ) :
+            if ( 'media-downloader/mediadownloader' == $block['blockName'] ) :
+                $folders[] = $block['attrs'];
+            else :
+                $block_cont = implode( PHP_EOL, $block['innerContent'] );
+                if ( preg_match_all( "/$sh_regexp/", $block_cont, $sh_matches ) ) :
+                    $attrs = shortcode_parse_atts( implode( ' ', $sh_matches[3] ) );
+                    $folders[] = $attrs;
+                endif;
+            endif;
+        endforeach;
+        foreach ( $folders as $folderinfo ) :
+            $_path = $mpath;
+            if ( array_key_exists( 'mp3folder', $folderinfo ) ) $_path = ABSPATH . trim( $folderinfo['mp3folder'], '/' ) . '/';
+            $scan = buildMediaTable( $folderinfo['folder'], $folderinfo, true );
+            $scan['folder'] = $folderinfo['folder'];
+            
+            $files = $scan['files'];
+            $tags = $scan['tags'];
+            unset($scan['tags']);
+            $scan['files'] = array();
+            foreach ( $files as $file ) :
+                $filetags = array();
+                foreach ( $tags as $tag => $tagvalues ) :
+                    if ( array_key_exists( $file, $tagvalues ) ) :
+                        $filetags[ $tag ] = $tagvalues[ $file ];
+                    endif;
+                endforeach;
+                $scan['files'][] = array(
+                    'file' => $file,
+                    'tags' => $filetags,
+                );
+            endforeach;
+
+            $ret['mediasets'][] = $scan;
+        endforeach;
+        return $ret;
     }
 
     public static function scandir( $ipath ) {
@@ -245,7 +323,7 @@ function md_btoa( $str ) {
     return $str;    
 }
 
-function buildMediaTable( $folder, $atts = false ) {
+function buildMediaTable( $folder, $atts = false, $onlyjson = false ) {
     global $mdtags, $tagvalues, $mdsortingfields, $mdmarkuptemplates;
     $errors = array();
     
@@ -260,7 +338,7 @@ function buildMediaTable( $folder, $atts = false ) {
     $mdir = '/' . get_option( 'mp3folder' );
     if ( array_key_exists( 'mp3folder', $atts ) )
         $mdir = '/' . $atts['mp3folder'];
-        
+    
     // MP3 folder URL
     if ( function_exists( 'switch_to_blog' ) ) switch_to_blog(1);
     $murl = get_option( 'siteurl' ) . $mdir;
@@ -574,6 +652,8 @@ function buildMediaTable( $folder, $atts = false ) {
         // If set, reversing array
         if ( $mreverse ) $ifiles = array_reverse( $ifiles );
 
+        if ( $onlyjson ) return array( 'files' => $ifiles, 'tags' => $tagvalues, 'prefixes' => $tagprefixes );
+
         $tablecellsmode_header = '';
         $tablecellsmode_firstfile = true;
         // Building markup for each file...
@@ -740,6 +820,8 @@ function buildMediaTable( $folder, $atts = false ) {
         }
         $ihtml .= '</tbody></table>'."\n" ;
 
+    } elseif ( $onlyjson ) {
+        return array( 'files' => array(), 'tags' => array(), 'prefixes' => array() );
     }
 
     if ( count( $errors ) ) {
