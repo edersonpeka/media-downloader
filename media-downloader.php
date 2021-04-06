@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: https://ederson.peka.nom.br
 Description: Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.
-Version: 0.4.7.1
+Version: 0.4.7.2
 Author: Ederson Peka
 Author URI: https://profiles.wordpress.org/edersonpeka/
 Text Domain: media-downloader
@@ -652,7 +652,7 @@ function buildMediaTable( $folder, $atts = false, $onlyjson = false ) {
         // If set, reversing array
         if ( $mreverse ) $ifiles = array_reverse( $ifiles );
 
-        if ( $onlyjson ) return array( 'files' => $ifiles, 'tags' => $tagvalues, 'prefixes' => $tagprefixes );
+        if ( $onlyjson ) return array( 'files' => $ifiles, 'tags' => $tagvalues, 'prefixes' => $tagprefixes, 'cover' => $cover );
 
         $tablecellsmode_header = '';
         $tablecellsmode_firstfile = true;
