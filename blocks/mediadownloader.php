@@ -43,11 +43,11 @@ function mediadownloader_block_init() {
 		filemtime( "$dir/$editor_css" )
 	);
 
-	register_block_type( 'media-downloader/mediadownloader', array(
+	$reg = register_block_type( 'media-downloader/mediadownloader', array(
 		'editor_script'   => 'mediadownloader-block-editor',
 		'editor_style'    => 'mediadownloader-block-editor',
-		'render_callback' => 'mediadownloader_block_render',
-	) );
+        'render_callback' => 'mediadownloader_block_render',
+    ) );
 }
 add_action( 'init', 'mediadownloader_block_init' );
 

@@ -5,11 +5,6 @@
 	 */
 	var registerBlockType = wp.blocks.registerBlockType;
 	var withInstanceId = wp.compose.withInstanceId;
-	var InspectorControls = wp.editor.InspectorControls;
-	var PanelBody = wp.components.PanelBody;
-	var PanelRow = wp.components.PanelRow;
-	var TextControl = wp.components.TextControl;
-	var ToggleControl = wp.components.ToggleControl;
 
 	/**
 	 * Returns a new element of given type. Element is an abstraction layer atop React.
@@ -118,58 +113,58 @@
 				);
 			}
 			return [
-                el( InspectorControls, {},
-					el(	PanelBody, {},
-						el(	PanelRow, {}, el( ToggleControl, {
+                el( wp.editor.InspectorControls, {},
+					el(	wp.components.PanelBody, {},
+						el(	wp.components.PanelRow, {}, el( wp.components.ToggleControl, {
 							label: __( 'Show media playlist and player', 'media-downloader' ),
 							checked: props.attributes.showplaylist,
 							onChange: function( val ) {
 								props.setAttributes( { showplaylist: val } );
 							}
 						} ) ),
-						el(	PanelRow, {}, el( ToggleControl, {
+						el(	wp.components.PanelRow, {}, el( wp.components.ToggleControl, {
 							label: __( 'Show cover (if a folder.jpg file is found)', 'media-downloader' ),
 							checked: props.attributes.showcover,
 							onChange: function( val ) {
 								props.setAttributes( { showcover: val } );
 							}
 						} ) ),
-						el(	PanelRow, {}, el( ToggleControl, {
+						el(	wp.components.PanelRow, {}, el( wp.components.ToggleControl, {
 							label: __( 'Try to guess and remove a common "prefix" to all the files of the same folder', 'media-downloader' ),
 							checked: props.attributes.calculateprefix,
 							onChange: function( val ) {
 								props.setAttributes( { calculateprefix: val } );
 							}
 						} ) ),
-						el(	PanelRow, {}, el( ToggleControl, {
+						el(	wp.components.PanelRow, {}, el( wp.components.ToggleControl, {
 							label: __( 'Reverse order', 'media-downloader' ),
 							checked: props.attributes.reversefiles,
 							onChange: function( val ) {
 								props.setAttributes( { reversefiles: val } );
 							}
 						} ) ),
-						el(	PanelRow, {}, el( ToggleControl, {
+						el(	wp.components.PanelRow, {}, el( wp.components.ToggleControl, {
 							label: __( 'Remove ".mp3" from download URL', 'media-downloader' ),
 							checked: props.attributes.removeextension,
 							onChange: function( val ) {
 								props.setAttributes( { removeextension: val } );
 							}
 						} ) ),
-						el(	PanelRow, {}, el( TextControl, {
+						el(	wp.components.PanelRow, {}, el( wp.components.TextControl, {
 							label: __( 'Download button\'s text', 'media-downloader' ),
 							value: props.attributes.downloadtext,
 							onChange: function( val ) {
 								props.setAttributes( { downloadtext: val } );
 							}
 						} ) ),
-						el(	PanelRow, {}, el( TextControl, {
+						el(	wp.components.PanelRow, {}, el( wp.components.TextControl, {
 							label: __( 'Play button\'s text', 'media-downloader' ),
 							value: props.attributes.playtext,
 							onChange: function( val ) {
 								props.setAttributes( { playtext: val } );
 							}
 						} ) ),
-						el(	PanelRow, {}, el( TextControl, {
+						el(	wp.components.PanelRow, {}, el( wp.components.TextControl, {
 							label: __( 'Stop button\'s text', 'media-downloader' ),
 							value: props.attributes.stoptext,
 							onChange: function( val ) {
