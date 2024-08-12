@@ -207,7 +207,7 @@ if ( count( $pexts ) ) :
     <h4><?php _e( 'Links texts:', 'media-downloader' ); ?></h4>
     <?php foreach ( $pexts as $pext ) : $pext = trim( $pext ); ?>
         <?php
-        $ptexts = $mdoptions['packagetexts'];
+        $ptexts = $mdoptions['packagetexts'] ?: array();
         $pext_text = array_key_exists( $pext, $ptexts ) ? $ptexts[$pext] : ''; ?>
         <p>
         <?php /* translators: %1$s will be replaced by the file extensions */ ?>
