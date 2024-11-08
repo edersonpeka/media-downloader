@@ -8,10 +8,12 @@ global $mdtags, $mdsortingfields;
 $mdfile = array_key_exists( 'mdfile', $_REQUEST ) ? str_replace( '../', '/', $_REQUEST[ 'mdfile' ] ) : '';
 while ( stripos( $mdfile, '//' ) !== false ) $mdfile = str_replace( '//', '/', $mdfile );
 if ( '/' == substr( $mdfile, 0, 1 ) ) $mdfile = substr( $mdfile, 1 );
+$mdfile = stripslashes( $mdfile );
 
 $mdfolder = array_key_exists( 'mdfolder', $_REQUEST ) ? str_replace( '../', '/', $_REQUEST[ 'mdfolder' ] ) : '';
 while ( stripos( $mdfolder, '//' ) !== false ) $mdfolder = str_replace( '//', '/', $mdfolder );
 if ( '/' == substr( $mdfolder, 0, 1 ) ) $mdfolder = substr( $mdfolder, 1 );
+$mdfolder = stripslashes( $mdfolder );
 
 // MP3 folder
 $mdir = '/' . get_option( 'mp3folder' );
@@ -48,11 +50,11 @@ $idirs = array();
 $ipath = $mpath . '/' . $mdfolder;
 if ( $mdofnencode != 'UTF-8' ) $ipath = iconv( $mdofnencode, 'UTF-8', $ipath );
 
-$mdbreadcrumbs = '<a href="' . add_query_arg( array( 'mdfolder' => null, 'mdfile' => null ) ) . '">' . $mdir . '</a>';
+$mdbreadcrumbs = '<a href="' . esc_url( add_query_arg( array( 'mdfolder' => null, 'mdfile' => null ) ) ) . '">' . htmlentities( $mdir, ENT_QUOTES ) . '</a>';
 $buildlevels = array();
 if ( trim( $mdfolder ) ) foreach ( explode( '/', $mdfolder ) as $mdlevel ) :
-    $buildlevels[] = $mdlevel;
-    $mdbreadcrumbs .= ' <a href="' . add_query_arg( array( 'mdfolder' => implode( '/', $buildlevels ), 'mdfile' => null ) ) . '">/' . $mdlevel . '</a>';
+    $buildlevels[] = htmlentities( $mdlevel, ENT_QUOTES );
+    $mdbreadcrumbs .= ' <a href="' . esc_url( add_query_arg( array( 'mdfolder' => implode( '/', $buildlevels ), 'mdfile' => null ) ) ) . '">/' . htmlentities( $mdlevel, ENT_QUOTES ) . '</a>';
 endforeach;
 
 ?>
@@ -65,7 +67,7 @@ endforeach;
     
         $mdaction = array_key_exists( 'mdaction', $_REQUEST ) ? $_REQUEST[ 'mdaction' ] : '';
         if ( 'batchedit' == $mdaction ) {
-            die( '<div class="error settings-error"><p>' . __( 'Batch save not implemented yet.', 'media-downloader' ) . ' <a href="' . add_query_arg() . '">' . __( 'Back', 'media-downloader' ) . '</a></p></div>' );
+            die( '<div class="error settings-error"><p>' . __( 'Batch save not implemented yet.', 'media-downloader' ) . ' <a href="' . esc_url( add_query_arg() ) . '">' . __( 'Back', 'media-downloader' ) . '</a></p></div>' );
         }
 
         if ( file_exists( $mpath . '/' . $mdfolder . '/' . $mdfile ) ) :
@@ -102,6 +104,13 @@ endforeach;
                 $tagwriter->tag_encoding = $mdoencode_writing;
                 $tagwriter->remove_other_tags = true;
 
+                $empty_tags_keys = array( 'title', 'artist', 'band', 'album', 'year', 'genre',
+                                          'comment', 'user_text', 'track_number', 'recording_dates' );
+                foreach ( $empty_tags_keys as $empty_tags_key ) :
+                    if ( !array_key_exists( $empty_tags_key, $tags ) ) :
+                        $tags[ $empty_tags_key ] = '';
+                    endif;
+                endforeach;
                 // populate data array
                 $TagData = array(
 	                'title'         => array( $tags['title'] ),
@@ -166,7 +175,7 @@ endforeach;
                 $ret = array();
                 // write tags
                 if ( $tagwriter->WriteTags() ) {
-	                $ret[] = '<strong>' . __( 'File saved!', 'media-downloader' ) . '</strong><br /><a href="' . add_query_arg( array( 'mdfile' => null ) ) . '">' . __( '&larr; Back', 'media-downloader' ) . '</a>';
+	                $ret[] = '<strong>' . __( 'File saved!', 'media-downloader' ) . '</strong><br /><a href="' . esc_url( add_query_arg( array( 'mdfile' => null ) ) ) . '">' . __( '&larr; Back', 'media-downloader' ) . '</a>';
 	                $allwarnings = $tagwriter->warnings;
 	                if ( !empty( $picwarnings ) ) $allwarnings = array_merge( $allwarnings, $picwarnings );
 	                if ( !empty( $allwarnings ) ) {
@@ -305,12 +314,12 @@ endforeach;
                 
                 <p class="submit">
                 <input type="submit" value="<?php _e( 'Save Changes', 'media-downloader' ) ;?>" class="button button-primary" />
-                <a href="<?php echo add_query_arg( array( 'mdfile' => null ) );?>" class="button alignright button-cancel"><?php _e( 'Cancel', 'media-downloader' ) ;?></a>
+                <a href="<?php echo esc_url( add_query_arg( array( 'mdfile' => null ) ) );?>" class="button alignright button-cancel"><?php _e( 'Cancel', 'media-downloader' ) ;?></a>
                 </p>
 
                 </form>
             <?php else: ?>
-                <div class="error settings-error"><p><strong><?php printf( __( 'Could not read: <code>%1$s</code>', 'media-downloader' ), $mdfolder . '/' . stripslashes( $mdfile ) ); ?></strong></p></div>
+                <div class="error settings-error"><p><strong><?php printf( __( 'Could not read: <code>%1$s</code>', 'media-downloader' ), htmlentities( $mdfolder, ENT_QUOTES ) . '/' . stripslashes( $mdfile ) ); ?></strong></p></div>
             <?php endif; ?>
 
         <?php elseif ( '*' == $mdfile ) : ?>
@@ -414,13 +423,13 @@ endforeach;
 
                 <p class="submit">
                 <input type="submit" value="<?php _e( 'Save Changes', 'media-downloader' ) ;?>" class="button button-primary" />
-                <a href="<?php echo add_query_arg( array( 'mdfile' => null ) );?>" class="button alignright button-cancel"><?php _e( 'Cancel', 'media-downloader' ) ;?></a>
+                <a href="<?php echo esc_url( add_query_arg( array( 'mdfile' => null ) ) );?>" class="button alignright button-cancel"><?php _e( 'Cancel', 'media-downloader' ) ;?></a>
                 </p>
 
                 </form>
 
         <?php else: ?>
-            <div class="error settings-error"><p><strong><?php printf( __( 'Could not read: <code>%1$s</code>', 'media-downloader' ), $mdfolder . '/' . stripslashes( $mdfile ) ); ?></strong></p></div>
+            <div class="error settings-error"><p><strong><?php printf( __( 'Could not read: <code>%1$s</code>', 'media-downloader' ), htmlentities( $mdfolder, ENT_QUOTES ) . '/' . stripslashes( $mdfile ) ); ?></strong></p></div>
 
         <?php endif; ?>
 
@@ -478,12 +487,17 @@ endforeach;
 
             <form method="get" action="?">
                 <?php
+                $parm_allowed = array( 'page', 'paged', 'tag-editor', 'mdfile', 'mdfolder' );
                 $furl = explode( '?', add_query_arg( array( 'paged' => null ) ) );
                 array_shift( $furl );
                 $furl = implode( '?', $furl );
-                foreach ( explode( '&', $furl ) as $parm ) : $parm = explode( '=', $parm ); ?>
-                    <input type="hidden" name="<?php echo array_shift( $parm ); ?>" <?php if ( count( $parm ) ) : ?>value="<?php echo urldecode( implode( '=', $parm ) ); ?>" <?php endif; ?>/>
-                <?php endforeach; ?>
+                foreach ( explode( '&', $furl ) as $parm ) :
+                    $parm = explode( '=', $parm );
+                    $kparm = array_shift( $parm );
+                    if ( in_array( $kparm, $parm_allowed ) ) :
+                        ?>
+                        <input type="hidden" name="<?php echo esc_attr( $kparm ); ?>" <?php if ( count( $parm ) ) : ?>value="<?php echo esc_attr( urldecode( implode( '=', $parm ) ) ); ?>" <?php endif; ?>/>
+                <?php endif; endforeach; ?>
                 <div class="tablenav top">
                 <div class="alignleft actions">
                     <?php /* translators: %1$s will be replaced by the name of the directory being displayed */ ?>
@@ -493,17 +507,17 @@ endforeach;
                     <?php /* translators: %d will be replaced by the number of files in the current directory */ ?>
                     <span class="displaying-num"><?php printf( _n( '%d item', '%d items', count( $iall ) ), count( $iall ), 'media-downloader' ); ?></span>
                     <?php if ( $ipages > 1 ) : ?>
-                        <span class="pagination-links"><a class="first-page<?php if ( $ipaged <= 1 ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to first page', 'media-downloader' ); ?>" href="<?php echo add_query_arg( array( 'paged' => null ) ); ?>">«</a>
-                        <a class="prev-page<?php if ( $ipaged <= 1 ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to previous page', 'media-downloader' ); ?>" href="<?php echo add_query_arg( array( 'paged' => $ipaged > 1 ? $ipaged - 1 : null ) ); ?>">‹</a>
+                        <span class="pagination-links"><a class="first-page<?php if ( $ipaged <= 1 ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to first page', 'media-downloader' ); ?>" href="<?php echo esc_url( add_query_arg( array( 'paged' => null ) ) ); ?>">«</a>
+                        <a class="prev-page<?php if ( $ipaged <= 1 ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to previous page', 'media-downloader' ); ?>" href="<?php echo esc_url( add_query_arg( array( 'paged' => $ipaged > 1 ? $ipaged - 1 : null ) ) ); ?>">‹</a>
                         <?php /* translators: %1$s will be replaced by a HTML input displaying the number of the current page, and %2$d will be replaced by the number of pages */ ?>
                         <span class="paging-input"><?php printf( __( '%1$s of <span class="total-pages">%2$d</span>', 'media-downloader' ), '<input class="current-page" title="' . __( 'Current page', 'media-downloader' ) . '" type="text" name="paged" value="' . $ipaged . '" size="1">', $ipages ); ?></span>
-                        <a class="next-page<?php if ( $ipaged >= $ipages ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to next page', 'media-downloader' ); ?>" href="<?php echo add_query_arg( array( 'paged' => min( $ipaged + 1, $ipages ) ) ); ?>">›</a>
-                        <a class="last-page<?php if ( $ipaged >= $ipages ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to last page', 'media-downloader' ); ?>" href="<?php echo add_query_arg( array( 'paged' => $ipages ) ); ?>">»</a></span>
+                        <a class="next-page<?php if ( $ipaged >= $ipages ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to next page', 'media-downloader' ); ?>" href="<?php echo esc_url( add_query_arg( array( 'paged' => min( $ipaged + 1, $ipages ) ) ) ); ?>">›</a>
+                        <a class="last-page<?php if ( $ipaged >= $ipages ) : ?> disabled<?php endif; ?>" title="<?php _e( 'Go to last page', 'media-downloader' ); ?>" href="<?php echo esc_url( add_query_arg( array( 'paged' => $ipages ) ) ); ?>">»</a></span>
                     <?php endif; ?>
                 </div>
                 <?php /* if ( $counteditables > 1 ) : ?>
                     <div class="alignright actions batchedit">
-                        <a href="<?php echo add_query_arg( array( 'mdfile' => '*' ) ); ?>"><?php printf( __( 'Batch edit %d files in this folder!', 'media-downloader' ), $counteditables ); ?></a>
+                        <a href="<?php echo esc_url( add_query_arg( array( 'mdfile' => '*' ) ) ); ?>"><?php printf( __( 'Batch edit %d files in this folder!', 'media-downloader' ), $counteditables ); ?></a>
                     </div>
                 <?php endif; */ ?>
                 </div>
@@ -520,7 +534,7 @@ endforeach;
                 <tbody>
                     <?php if ( trim( str_replace( '/', '', $mdfolder ) ) ) : ?>
                         <tr>
-                            <td class="dirlink"><a href="<?php echo add_query_arg( array( 'mdfolder' => implode( '/', array_slice( explode( '/', $mdfolder ), 0, -1 ) ) ) ); ?>"><?php echo '../'; ?></a></td>
+                            <td class="dirlink"><a href="<?php echo esc_url( add_query_arg( array( 'mdfolder' => implode( '/', array_slice( explode( '/', $mdfolder ), 0, -1 ) ) ) ) ); ?>"><?php echo '../'; ?></a></td>
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
                         </tr>
@@ -528,7 +542,7 @@ endforeach;
                     <?php foreach ( $pageditems as $ifile ) :
                         if ( is_dir( $ipath . '/' . $ifile ) ) : ?>
                             <tr>
-                                <td class="dirlink"><a href="<?php echo add_query_arg( array( 'mdfolder' => $mdfolder . '/' . $ifile ) ); ?>"><?php echo './' . $ifile; ?></a></td>
+                                <td class="dirlink"><a href="<?php echo esc_url( add_query_arg( array( 'mdfolder' => $mdfolder . '/' . $ifile ) ) ); ?>"><?php echo './' . htmlentities( $ifile, ENT_QUOTES ); ?></a></td>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
                             </tr>
@@ -539,7 +553,7 @@ endforeach;
                             if ( in_array( $fext, md_mediaExtensions() ) ) :
                                 ?>
                                 <tr>
-                                    <td><a href="<?php echo add_query_arg( array( 'mdfile' => $ifile ) ); ?>"><?php echo $ifile; ?></a></td>
+                                    <td><a href="<?php echo esc_url( add_query_arg( array( 'mdfile' => $ifile ) ) ); ?>"><?php echo $ifile; ?></a></td>
                                     <td><?php echo byte_convert( filesize( $ipath . '/' . $ifile ) ); ?></td>
                                     <?php /* translators: %1$s will be replaced by the modification date, and %2$s by the modification time. Every other character must be escaped by a backslash. */ ?>
                                     <td><?php $timemask = sprintf( __( '%1$s \a\t %2$s', 'media-downloader' ), get_option('date_format'), get_option('time_format') ); echo date_i18n( $timemask, filemtime( $ipath . '/' . $ifile ) ); ?></td>                    
