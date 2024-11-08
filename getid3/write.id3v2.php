@@ -14,6 +14,9 @@
 //                                                            ///
 /////////////////////////////////////////////////////////////////
 
+if (!defined('GETID3_INCLUDEPATH')) { // prevent path-exposing attacks that access modules directly on public webservers
+	exit;
+}
 getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'module.tag.id3v2.php', __FILE__, true);
 
 class getid3_write_id3v2
@@ -123,26 +126,12 @@ class getid3_write_id3v2
 				if (file_exists($this->filename) && getID3::is_writable($this->filename) && isset($OldThisFileInfo['id3v2']['headerlength']) && ($OldThisFileInfo['id3v2']['headerlength'] == strlen($NewID3v2Tag))) {
 
 					// best and fastest method - insert-overwrite existing tag (padded to length of old tag if neccesary)
-					if (file_exists($this->filename)) {
-
-						if (is_readable($this->filename) && getID3::is_writable($this->filename) && is_file($this->filename) && ($fp = fopen($this->filename, 'r+b'))) {
-							rewind($fp);
-							fwrite($fp, $NewID3v2Tag, strlen($NewID3v2Tag));
-							fclose($fp);
-						} else {
-							$this->errors[] = 'Could not fopen("'.$this->filename.'", "r+b")';
-						}
-
+					if (is_readable($this->filename) && is_file($this->filename) && ($fp = fopen($this->filename, 'r+b'))) {
+						rewind($fp);
+						fwrite($fp, $NewID3v2Tag, strlen($NewID3v2Tag));
+						fclose($fp);
 					} else {
-
-						if (getID3::is_writable($this->filename) && is_file($this->filename) && ($fp = fopen($this->filename, 'wb'))) {
-							rewind($fp);
-							fwrite($fp, $NewID3v2Tag, strlen($NewID3v2Tag));
-							fclose($fp);
-						} else {
-							$this->errors[] = 'Could not fopen("'.$this->filename.'", "wb")';
-						}
-
+						$this->errors[] = 'Could not fopen("'.$this->filename.'", "r+b")';
 					}
 
 				} else {
@@ -221,7 +210,7 @@ class getid3_write_id3v2
 				if ($OldThisFileInfo['avdataoffset'] !== false) {
 					fseek($fp_source, $OldThisFileInfo['avdataoffset']);
 				}
-				if (getID3::is_writable($this->filename) && is_file($this->filename) && ($fp_temp = fopen($this->filename.'getid3tmp', 'w+b'))) {
+				if (getID3::is_writable($this->filename) && ($fp_temp = fopen($this->filename.'getid3tmp', 'w+b'))) {
 					while ($buffer = fread($fp_source, $this->fread_buffer_size)) {
 						fwrite($fp_temp, $buffer, strlen($buffer));
 					}
@@ -261,7 +250,7 @@ class getid3_write_id3v2
 						fwrite($fp_temp, $buffer, strlen($buffer));
 					}
 					fclose($fp_source);
-					if (getID3::is_writable($this->filename) && is_file($this->filename) && ($fp_source = fopen($this->filename, 'wb'))) {
+					if ($fp_source = fopen($this->filename, 'wb')) {
 						rewind($fp_temp);
 						while ($buffer = fread($fp_temp, $this->fread_buffer_size)) {
 							fwrite($fp_source, $buffer, strlen($buffer));
@@ -903,10 +892,14 @@ class getid3_write_id3v2
 					// Email to user   <text string> $00
 					// Rating          $xx
 					// Counter         $xx xx xx xx (xx ...)
+					if (!$this->IsValidEmail($source_data_array['email'])) {
+						// https://github.com/JamesHeinrich/getID3/issues/216
+						// https://en.wikipedia.org/wiki/ID3#ID3v2_rating_tag_issue
+						// ID3v2 specs say it should be an email address, but Windows instead uses string like "Windows Media Player 9 Series"
+						$this->warnings[] = 'Invalid Email in '.$frame_name.' ('.$source_data_array['email'].')';
+					}
 					if (!$this->IsWithinBitRange($source_data_array['rating'], 8, false)) {
 						$this->errors[] = 'Invalid Rating byte in '.$frame_name.' ('.$source_data_array['rating'].') (range = 0 to 255)';
-					} elseif (!$this->IsValidEmail($source_data_array['email'])) {
-						$this->errors[] = 'Invalid Email in '.$frame_name.' ('.$source_data_array['email'].')';
 					} else {
 						$framedata .= str_replace("\x00", '', $source_data_array['email'])."\x00";
 						$framedata .= chr($source_data_array['rating']);
@@ -1977,8 +1970,8 @@ class getid3_write_id3v2
 		if (is_array($var)) {
 			$keys = array_keys($var);
 			$all_num = true;
-			for ($i = 0; $i < count($keys); $i++) {
-				if (is_string($keys[$i])) {
+			foreach ($keys as $key) {
+				if (is_string($key)) {
 					return true;
 				}
 			}

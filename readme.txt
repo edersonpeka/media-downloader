@@ -1,9 +1,11 @@
 === Media Downloader ===
-Contributors: edersonpeka, Jonathan Jose from www.flowconversatilidad.net (Spanish Translation)
-Tags: media, audio, podcast, post, player, mp3, flash
+Contributors: edersonpeka
+Tags: media, audio, podcast, player, mp3
 Requires at least: 5.0
 Tested up to: 6.6.2
 Stable tag: 0.4.7.5
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ederson@gmail.com&lc=BR&currency_code=BRL&item_name=Media%20Downloader%20Wordpress%20Plugin
 
 Lists MP3 files from a folder. Portuguese: Lista arquivos MP3 de um diretório. Spanish: Lista todos los MP3 de un directorio.
@@ -75,3 +77,8 @@ En primer lugar, deberá configurar Media Downloader tecleando "clásica" en la 
 Ese hecho, puede editar un puesto hablando sobre Johann Sebastian Bach y insertar en cualquier lugar en el lo shortcode [mediadownloader folder="Bach"]. Media Downloader creará una lista de todos los archivos del "musica/Bach" directorio. Este es realmente muy simple. ;-)
 
 (Lo shortcode [mediadownloader] acepta varios parámetros. Puede obtener más información sobre ellos en la página de configuración del plugin.)
+
+--
+
+Spanish translation: Jonathan Jose from www.flowconversatilidad.net
+

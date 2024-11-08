@@ -6,6 +6,8 @@ Description: Media Downloader plugin lists MP3 files from a folder through the [
 Version: 0.4.7.5
 Author: Ederson Peka
 Author URI: https://profiles.wordpress.org/edersonpeka/
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: media-downloader
 */
 
