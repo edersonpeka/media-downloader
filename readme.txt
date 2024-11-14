@@ -2,7 +2,7 @@
 Contributors: edersonpeka
 Tags: media, audio, podcast, player, mp3
 Requires at least: 5.0
-Tested up to: 6.6.2
+Tested up to: 6.7
 Stable tag: 0.4.7.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
