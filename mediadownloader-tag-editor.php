@@ -394,7 +394,7 @@ endforeach;
                                         <?php endforeach; ?>
                                     </select>
                                 <?php elseif ( 'textarea' == $tagoptions[1] ) : ?>
-                                    <textarea id="edit_tag_<?php echo $mdtag; ?>" name="edit_tag_<?php echo $mdtag; ?>" cols="150" rows="10" class="widefat"><?php echo $tagvalue; ?></textarea>
+                                    <textarea id="edit_tag_<?php echo $mdtag; ?>" name="edit_tag_<?php echo $mdtag; ?>" cols="150" rows="10" class="widefat"><?php echo htmlentities( $tagvalue, ENT_COMPAT, 'UTF-8' ); ?></textarea>
                                 <?php elseif ( 'richtext' == $tagoptions[1] ) : ?>
                                     <?php wp_editor( $tagvalue, 'edit_tag_' . $mdtag, array( 'media_buttons' => false, 'textarea_rows' => 10, 'quicktags' => false ) ); ?>
                                 <?php elseif ( 'text' == $tagoptions[1] ) : ?>
@@ -402,7 +402,7 @@ endforeach;
                                 <?php elseif ( 'number' == $tagoptions[1] ) : ?>
                                     <input id="edit_tag_<?php echo $mdtag; ?>" name="edit_tag_<?php echo $mdtag; ?>" type="number" size="4" class="small-text" value="<?php echo esc_attr( $tagvalue ); ?>" />
                                 <?php else : ?>
-                                    <input id="edit_tag_<?php echo $mdtag; ?>" name="edit_tag_<?php echo $mdtag; ?>" type="<?php echo $tagoptions[1]; ?>" class="medium-text feature-filter" value="<?php echo $tagvalue; ?>" />
+                                    <input id="edit_tag_<?php echo $mdtag; ?>" name="edit_tag_<?php echo $mdtag; ?>" type="<?php echo $tagoptions[1]; ?>" class="medium-text feature-filter" value="<?php echo esc_attr( $tagvalue ); ?>" />
                                 <?php endif; ?>
                             </td>
                         </tr>
