@@ -3,12 +3,11 @@
 Plugin Name: Media Downloader
 Plugin URI: https://ederson.ferreira.tec.br
 Description: Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.
-Version: 0.4.7.6
+Version: 0.4.7.7
 Author: Ederson Peka
 Author URI: https://profiles.wordpress.org/edersonpeka/
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: media-downloader
 */
 
 if ( !function_exists( 'iconv' ) ) {
@@ -47,8 +46,6 @@ class media_downloader {
 
     // Init
     public static function init() {
-        // Internationalization
-        load_plugin_textdomain( 'media-downloader', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
         // Hooking into admin's screens
         add_action( 'admin_init', array( __CLASS__, 'admin_init' ) );
         // If query string 'md_getfile' parameter is set, we stream the file and quit
@@ -630,7 +627,7 @@ function buildMediaTable( $folder, $atts = false, $onlyjson = false ) {
             foreach ( $mdtags as $mshowtag ) {
                 $_v = array_key_exists( $mshowtag, $ftags ) ? $ftags[$mshowtag][0] : '';
                 if ( 'comment' == $mshowtag ) {
-                    if ( array_key_exists( 'text', $ftags ) && is_array( $ftags['text'] ) && trim( strip_tags( $ftags['text'][0] ) ) ) {
+                    if ( array_key_exists( 'text', $ftags ) && is_array( $ftags['text'] ) && $ftags['text'] && trim( strip_tags( $ftags['text'][0] ) ) ) {
                         $tagvalues[$mshowtag][$ifile.'.'.$iext] = $ftags['text'][0];
                     } else {
                         $tagvalues[$mshowtag][$ifile.'.'.$iext] = $Parsedown->text( $_v );
