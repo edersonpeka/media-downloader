@@ -67,7 +67,7 @@ msgstr ""
 #: media-downloader.php:510 media-downloader.php:516
 #: mediadownloader-markup-options.php:180
 msgid "Album Cover"
-msgstr "Capa do Álbum"
+msgstr "Capa do álbum"
 
 #. translators: %1$s will be replaced by the file extension
 #: media-downloader.php:531 mediadownloader-markup-options.php:216
@@ -298,7 +298,7 @@ msgstr "Exemplo:"
 
 #: mediadownloader-markup-options.php:194 mediadownloader-options.php:85
 msgid "Compacted Files"
-msgstr "Arquivos Compactados"
+msgstr "Arquivos compactados"
 
 #: mediadownloader-markup-options.php:197
 msgid "Comma-separated extensions for compacted files:"
@@ -316,11 +316,11 @@ msgstr "Texto do link de arquivos <code>%1$s</code>:"
 #: mediadownloader-markup-options.php:223 mediadownloader-more-options.php:43
 #: mediadownloader-options.php:44
 msgid "Update Options"
-msgstr "Atualizar Opções"
+msgstr "Atualizar opções"
 
 #: mediadownloader-more-options.php:18
 msgid "Custom CSS"
-msgstr "CSS Personalizado"
+msgstr "CSS personalizado"
 
 #: mediadownloader-more-options.php:28
 msgid "RSS Feeds"
@@ -340,19 +340,19 @@ msgstr "Media Downloader:"
 
 #: mediadownloader-options-header.php:10
 msgid "General Options"
-msgstr "Opções Gerais"
+msgstr "Opções gerais"
 
 #: mediadownloader-options-header.php:11
 msgid "Listing Options"
-msgstr "Opções de Listagem"
+msgstr "Opções de listagem"
 
 #: mediadownloader-options-header.php:12
 msgid "More Options"
-msgstr "Opções Adicionais"
+msgstr "Opções adicionais"
 
 #: mediadownloader-options-header.php:13
 msgid "Tag Editor Tool"
-msgstr "Ferramenta de Edição de Tags"
+msgstr "Ferramenta de edição de tags"
 
 #: mediadownloader-options.php:18
 msgid "MP3 Folder:"
@@ -390,7 +390,7 @@ msgstr "Não é possível escrever no diretório."
 
 #: mediadownloader-options.php:52
 msgid "Sample Usage"
-msgstr "Exemplo de Utilização"
+msgstr "Exemplo de utilização"
 
 #: mediadownloader-options.php:55
 msgid ""
@@ -581,7 +581,7 @@ msgstr "Erros:"
 #. translators: %1$s will be replaced by the name of the file being edited
 #: mediadownloader-tag-editor.php:206
 msgid "Editing File: <code>%1$s</code>"
-msgstr "Edição do Arquivo: <code>%1$s</code>"
+msgstr "Edição do arquivo: <code>%1$s</code>"
 
 #: mediadownloader-tag-editor.php:215 mediadownloader-tag-editor.php:334
 msgid "Title"
@@ -609,11 +609,11 @@ msgstr "Descrição"
 
 #: mediadownloader-tag-editor.php:243 mediadownloader-tag-editor.php:362
 msgid "Recording Date"
-msgstr "Data de Gravação"
+msgstr "Data de gravação"
 
 #: mediadownloader-tag-editor.php:247 mediadownloader-tag-editor.php:366
 msgid "Track Number"
-msgstr "Número da Faixa"
+msgstr "Número da faixa"
 
 #. translators: Placeholder receives markdown syntax documentation link
 #: mediadownloader-tag-editor.php:273
@@ -630,7 +630,7 @@ msgstr "Substituir imagem:"
 
 #: mediadownloader-tag-editor.php:307 mediadownloader-tag-editor.php:416
 msgid "Save Changes"
-msgstr "Salvar Alterações"
+msgstr "Salvar alterações"
 
 #: mediadownloader-tag-editor.php:308 mediadownloader-tag-editor.php:417
 msgid "Cancel"
@@ -649,7 +649,7 @@ msgstr "Edição em lote: <code>%1$s</code>"
 
 #: mediadownloader-tag-editor.php:326
 msgid "Overwrite Tag"
-msgstr "Sobrescrever Tag"
+msgstr "Sobrescrever tag"
 
 #: mediadownloader-tag-editor.php:327
 msgid "Value"
@@ -657,7 +657,7 @@ msgstr "Valor"
 
 #: mediadownloader-tag-editor.php:358
 msgid "Formatted Comment"
-msgstr "Descrição Formatada"
+msgstr "Descrição formatada"
 
 #. translators: %1$s will be replaced by the name of the directory being displayed
 #: mediadownloader-tag-editor.php:490 mediadownloader-tag-editor.php:559
@@ -707,7 +707,7 @@ msgstr "Tamanho"
 
 #: mediadownloader-tag-editor.php:517
 msgid "Modification Time"
-msgstr "Data de Modificação"
+msgstr "Data de modificação"
 
 #. translators: %1$s will be replaced by the modification date, and %2$s by the modification time. Every other character must be escaped by a backslash.
 #: mediadownloader-tag-editor.php:545 mediadownloader-tag-editor.php:551
@@ -728,7 +728,7 @@ msgstr "Mostrar \"capa\" (se houver um arquivo <code>folder.jpg</code>)"
 
 #: blocks/mediadownloader/index.js:198
 msgid "Media Folder"
-msgstr "Diretório de Mídia"
+msgstr "Diretório de mídia"
 
 #: blocks/mediadownloader/index.js:227
 msgid "Download media:"
