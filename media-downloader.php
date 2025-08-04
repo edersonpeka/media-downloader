@@ -3,7 +3,7 @@
 Plugin Name: Media Downloader
 Plugin URI: https://ederson.ferreira.tec.br
 Description: Media Downloader plugin lists MP3 files from a folder through the [mediadownloader] shortcode.
-Version: 0.4.7.7
+Version: 0.4.7.8
 Author: Ederson Peka
 Author URI: https://profiles.wordpress.org/edersonpeka/
 License: GPLv2 or later
@@ -70,6 +70,11 @@ class media_downloader {
     }
 
     public static function admin_init() {
+        global $mdmarkuptemplates;
+        $mdmarkuptemplates = array(
+            'definition-list' => __( '<strong>"DL" mode:</strong> One table cell containing a definition list (one definition term for each tag)', 'media-downloader' ),
+            'table-cells' => __( '<strong>"TR" mode:</strong> One table cell for each tag', 'media-downloader' ),
+        );
         // Create "settings" link for this plugin on plugins list
         add_filter( 'plugin_action_links', array( __CLASS__, 'settings_link' ), 10, 2 );
     }
@@ -279,8 +284,8 @@ $mdmarkupsettings = array(
 );
 // Possible markup templates
 $mdmarkuptemplates = array(
-    'definition-list' => __( '<strong>"DL" mode:</strong> One table cell containing a definition list (one definition term for each tag)', 'media-downloader' ),
-    'table-cells' => __( '<strong>"TR" mode:</strong> One table cell for each tag', 'media-downloader' ),
+    'definition-list' => '<strong>"DL" mode:</strong> One table cell containing a definition list (one definition term for each tag)',
+    'table-cells' => '<strong>"TR" mode:</strong> One table cell for each tag',
 );
 
 // More settings and respective sanitize functions
